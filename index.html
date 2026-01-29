@@ -65,9 +65,8 @@
   </form>
 
   <script>
-    // 1) Replace with your Apps Script Web App *exec* URL
-    //    (Deploy > Manage deployments > Web app URL ending with /exec)
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyEEnpvOvxHxXhLMEl0ttEJGIVlTORXcqiGJLP9hpRaJQ4tpxqn6sBCisDj4OZZSIC6Tw/exec';
+    // IMPORTANT: Replace with your Apps Script Web App URL (ends with /exec)
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyJi9kMIbAe8igRm3F4XOYst6H_nFR5Q0BfW-Hy3pkAtVWYn6y83MFB7xmuC1wNQ0eQkw/exec';
 
     const form = document.getElementById('surveyForm');
     const msg = document.getElementById('msg');
@@ -79,7 +78,6 @@
     }
 
     function validateForm() {
-      // Simple client-side validation (HTML5 will also help)
       const name = form.name.value.trim();
       const email = form.email.value.trim();
       const answer = form.answer.value.trim();
@@ -88,11 +86,12 @@
         setStatus('Please fill in all required fields.', 'error');
         return false;
       }
-      // Basic email format check (optional)
+      
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         setStatus('Please enter a valid email address.', 'error');
         return false;
       }
+      
       return true;
     }
 
@@ -103,30 +102,70 @@
 
       if (!validateForm()) return;
 
-      // 2) Build FormData—browser sets proper Content-Type boundary automatically
-      const fd = new FormData(form);
-      // Optional shared secret if you add token verification server-side:
-      // fd.append('token', 'YOUR_SHARED_SECRET');
-
-      // Prevent double submits
       submitBtn.disabled = true;
 
       try {
-        // 3) Use no-cors to avoid CORS preflight; request becomes opaque, but it still reaches Apps Script.
-        await fetch(ENDPOINT, {
+        // Collect form data
+        const formData = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          answer: form.answer.value.trim()
+        };
+
+        // Send as JSON (better for Apps Script)
+        const response = await fetch(ENDPOINT, {
           method: 'POST',
-          mode: 'no-cors',
-          body: fd
+          mode: 'cors', // Changed from 'no-cors'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
         });
 
-        // In no-cors you cannot read the response. Assume success if no network error thrown.
-        setStatus('Thanks! Your response was submitted.', 'success');
-        form.reset();
+        const result = await response.json();
+        
+        if (result.ok) {
+          setStatus('Success! Your response has been saved.', 'success');
+          form.reset();
+        } else {
+          setStatus(`Error: ${result.error || 'Submission failed'}`, 'error');
+          console.error('Server error:', result);
+        }
+        
       } catch (err) {
-        console.error(err);
-        setStatus('Sorry, something went wrong. Please try again.', 'error');
+        console.error('Network error:', err);
+        
+        // Fallback method using FormData if JSON fails
+        try {
+          const fd = new FormData(form);
+          const response = await fetch(ENDPOINT, {
+            method: 'POST',
+            body: fd
+          });
+          
+          const result = await response.json();
+          if (result.ok) {
+            setStatus('Success! Your response has been saved.', 'success');
+            form.reset();
+          } else {
+            setStatus(`Error: ${result.error || 'Submission failed'}`, 'error');
+          }
+        } catch (fallbackErr) {
+          setStatus('Network error. Please check your connection and try again.', 'error');
+        }
       } finally {
         submitBtn.disabled = false;
+      }
+    });
+
+    // Test the endpoint on page load
+    window.addEventListener('load', async () => {
+      try {
+        const testResponse = await fetch(ENDPOINT);
+        const testResult = await testResponse.json();
+        console.log('Endpoint test:', testResult);
+      } catch (err) {
+        console.warn('Could not test endpoint:', err.message);
       }
     });
   </script>
