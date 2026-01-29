@@ -1,25 +1,134 @@
-<script>
-  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyEEnpvOvxHxXhLMEl0ttEJGIVlTORXcqiGJLP9hpRaJQ4tpxqn6sBCisDj4OZZSIC6Tw/exec';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Data Collection Form</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body { 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+      margin: 2rem; 
+      line-height: 1.5;
+    }
+    form { 
+      max-width: 520px; 
+      display: grid; 
+      gap: 0.9rem; 
+      padding: 1rem; 
+      border: 1px solid #ddd; 
+      border-radius: 8px;
+    }
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-bottom: 0.25rem;
+    }
+    input, textarea, button { 
+      font-size: 1rem; 
+      padding: 0.6rem; 
+      width: 100%; 
+      box-sizing: border-box; 
+    }
+    button {
+      width: fit-content;
+      cursor: pointer;
+    }
+    .row { display: grid; gap: 0.25rem; }
+    .success { color: #0a7f3f; }
+    .error   { color: #a11212; }
+    .muted   { opacity: 0.85; }
+  </style>
+</head>
+<body>
+  <h1>Survey</h1>
+  <p class="muted">Please fill in the form below. Fields marked * are required.</p>
 
-  const form = document.getElementById('surveyForm');
-  const msg = document.getElementById('msg');
+  <form id="surveyForm" novalidate>
+    <div class="row">
+      <label for="name">Name *</label>
+      <input id="name" name="name" required autocomplete="name" />
+    </div>
+    <div class="row">
+      <label for="email">Email *</label>
+      <input id="email" name="email" type="email" required autocomplete="email" />
+    </div>
+    <div class="row">
+      <label for="answer">Your answer *</label>
+      <textarea id="answer" name="answer" rows="4" required></textarea>
+    </div>
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    msg.textContent = 'Submitting...';
-    msg.className = '';
+    <button type="submit" id="submitBtn">Submit</button>
+    <p id="msg" role="status" aria-live="polite"></p>
+  </form>
 
-    const fd = new FormData();
-    fd.append('name', form.name.value.trim());
-    fd.append('email', form.email.value.trim());
-    fd.append('answer', form.answer.value.trim());
+  <script>
+    // 1) Replace with your Apps Script Web App *exec* URL
+    //    (Deploy > Manage deployments > Web app URL ending with /exec)
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyEEnpvOvxHxXhLMEl0ttEJGIVlTORXcqiGJLP9hpRaJQ4tpxqn6sBCisDj4OZZSIC6Tw/exec';
 
-    try {
-      await fetch(ENDPOINT, {
-        method: 'POST',
-        mode: 'no-cors',        // keep no-cors to avoid CORS errors
-        body: fd                // DO NOT set Content-Type; browser will set properly
-      });
+    const form = document.getElementById('surveyForm');
+    const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submitBtn');
 
-      // You can't read the JSON response in no-cors mode, but the POST will go through.
-      msg.textContent = 'Thanks! Your
+    function setStatus(text, cls = '') {
+      msg.textContent = text;
+      msg.className = cls;
+    }
+
+    function validateForm() {
+      // Simple client-side validation (HTML5 will also help)
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const answer = form.answer.value.trim();
+
+      if (!name || !email || !answer) {
+        setStatus('Please fill in all required fields.', 'error');
+        return false;
+      }
+      // Basic email format check (optional)
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setStatus('Please enter a valid email address.', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      setStatus('Submitting...', 'muted');
+
+      if (!validateForm()) return;
+
+      // 2) Build FormData—browser sets proper Content-Type boundary automatically
+      const fd = new FormData(form);
+      // Optional shared secret if you add token verification server-side:
+      // fd.append('token', 'YOUR_SHARED_SECRET');
+
+      // Prevent double submits
+      submitBtn.disabled = true;
+
+      try {
+        // 3) Use no-cors to avoid CORS preflight; request becomes opaque, but it still reaches Apps Script.
+        await fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: fd
+        });
+
+        // In no-cors you cannot read the response. Assume success if no network error thrown.
+        setStatus('Thanks! Your response was submitted.', 'success');
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        setStatus('Sorry, something went wrong. Please try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
