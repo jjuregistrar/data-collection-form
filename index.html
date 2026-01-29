@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Data Collection Form</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
+    form { max-width: 480px; display: grid; gap: 0.75rem; }
+    label { display: block; font-weight: 600; }
+    input, textarea, button { font-size: 1rem; padding: 0.6rem; }
+    .success { color: #0a7f3f; }
+    .error { color: #a11212; }
+  </style>
+</head>
+<body>
+  <h1>Survey</h1>
+  <p>Please fill in the form below.</p>
+
+  <form id="surveyForm">
+    <div>
+      <label for="name">Name *</label>
+      <input id="name" name="name" required />
+    </div>
+    <div>
+      <label for="email">Email *</label>
+      <input id="email" name="email" type="email" required />
+    </div>
+    <div>
+      <label for="answer">Your answer *</label>
+      <textarea id="answer" name="answer" rows="4" required></textarea>
+    </div>
+
+    <button type="submit">Submit</button>
+    <p id="msg"></p>
+  </form>
+
+  <script>
+    // Paste your Apps Script Web App URL here:
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyEEnpvOvxHxXhLMEl0ttEJGIVlTORXcqiGJLP9hpRaJQ4tpxqn6sBCisDj4OZZSIC6Tw/exec';
+
+    const form = document.getElementById('surveyForm');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = 'Submitting...';
+      msg.className = '';
+
+      const payload = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        answer: form.answer.value.trim(),
+        // token: 'OPTIONAL_SHARED_SECRET' // if you added token check on server
+      };
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors', // Use 'no-cors' if CORS errors occur; note you won't see JSON response in that case
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        // If you can omit 'no-cors' and server returns CORS-OK, handle JSON response like this:
+        // const data = await res.json();
+        // if (data.ok) { ... } else { ... }
+
+        msg.textContent = 'Thanks! Your response was submitted.';
+        msg.className = 'success';
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        msg.textContent = 'Sorry, something went wrong. Please try again.';
+        msg.className = 'error';
+      }
+    });
+  </script>
+</body>
+</html>
