@@ -1,376 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Survey Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
-            padding: 20px;
+            line-height: 1.6; color: #333; background-color: #f5f5f5; padding: 20px;
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #2c3e50; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 1.1em; }
+
+        .main-layout { display: flex; gap: 30px; margin-top: 30px; }
+        .form-section {
+            flex: 3; background: white; padding: 30px; border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+        .admin-section {
+            flex: 1; min-width: 350px; background: white; padding: 30px; border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
-        
-        .form-group {
-            margin-bottom: 20px;
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; }
+        label.required::after { content: " *"; color: #e74c3c; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select, textarea {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; transition: border-color 0.3s;
         }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus,
+        input[type="password"]:focus, select:focus, textarea:focus {
+            outline: none; border-color: #3498db;
         }
-        
-        label.required::after {
-            content: " *";
-            color: #e74c3c;
-        }
-        
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="tel"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .char-count {
-            text-align: right;
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .char-count.warning {
-            color: #f39c12;
-        }
-        
-        .char-count.error {
-            color: #e74c3c;
-        }
-        
+        textarea { min-height: 120px; resize: vertical; }
+
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
+        input[type="checkbox"] { width: 20px; height: 20px; }
+
+        .char-count { text-align: right; font-size: 12px; color: #666; margin-top: 5px; }
+        .char-count.warning { color: #f39c12; }
+        .char-count.error { color: #e74c3c; }
+
         button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s;
-            width: 100%;
-            margin-top: 10px;
+            background: #3498db; color: white; border: none; padding: 12px 24px;
+            font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: 600; transition: background 0.3s;
         }
-        
-        button:hover {
-            background: #2980b9;
-        }
-        
-        button:disabled {
-            background: #95a5a6;
-            cursor: not-allowed;
-        }
-        
+        button:hover { background: #2980b9; }
+        button:disabled { background: #95a5a6; cursor: not-allowed; }
+
+        .btn-success { background: #27ae60; }
+        .btn-success:hover { background: #219653; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-full { width: 100%; margin: 10px 0; }
+
         .message {
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            font-weight: 600;
+            padding: 15px; border-radius: 5px; margin: 20px 0; font-weight: 600;
         }
-        
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .message.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+
+        .error-field { border-color: #e74c3c !important; }
+        .error-text { color: #e74c3c; font-size: 14px; margin-top: 5px; display: none; }
+
+        .form-container { padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; }
+
+        /* Admin panel */
+        .admin-panel { border-left: 4px solid #3498db; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .admin-panel h2 { color: #2c3e50; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+
+        .form-status { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-left: 10px; }
+        .status-open { background: #d4edda; color: #155724; }
+        .status-closed { background: #f8d7da; color: #721c24; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+        .stat-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 1.5em; font-weight: bold; color: #3498db; margin: 5px 0; }
+        .stat-label { color: #666; font-size: 0.85em; }
+
+        .admin-login { background: #e8f4fc; border: 2px solid #3498db; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .admin-login h3 { margin-top: 0; color: #2c3e50; }
+
+        .hidden { display: none !important; }
+
+        .recent-activity {
+            background: white; padding: 15px; border-radius: 8px; margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto;
         }
-        
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .activity-item { padding: 10px 0; border-bottom: 1px solid #eee; }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-time { font-size: 0.85em; color: #666; }
+        .activity-text { margin-top: 5px; font-size: 0.95em; }
+
+        /* Floating admin button */
+        .admin-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .toggle-btn {
+            background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px;
+            cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;
         }
-        
-        .message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .toggle-btn.admin-active { background: #e74c3c; }
+
+        /* Login modal */
+        .login-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center;
         }
-        
-        .message.warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
+        .login-form {
+            background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            width: 90%; max-width: 400px;
         }
-        
-        .error-field {
-            border-color: #e74c3c !important;
+
+        @media (max-width: 1024px) {
+            .main-layout { flex-direction: column; }
+            .admin-section { min-width: 100%; }
         }
-        
-        .error-text {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        .form-status {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        
-        .status-open {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-closed {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .instructions {
-            background: #e8f4fc;
-            border: 2px solid #3498db;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        
-        .instructions h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            margin: 10px 0;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            button {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
+            body { padding: 10px; }
+            .form-section, .admin-section { padding: 15px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            button { padding: 10px 15px; font-size: 14px; }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1><i class="fas fa-edit"></i> Survey Form</h1>
-        
-        <!-- Form Status Message -->
-        <div id="formStatusMessage" class="message info">
-            <span id="formStatusText">Checking form status...</span>
-            <span id="formStatusBadge" class="form-status status-open">OPEN</span>
-        </div>
-        
-        <!-- Instructions -->
-        <div class="instructions">
-            <h3><i class="fas fa-info-circle"></i> How to Open/Close Submissions:</h3>
-            <p><strong>To control form submissions (OPEN/CLOSE):</strong></p>
-            <ul>
-                <li>Go to your Google Apps Script project</li>
-                <li>Run the <code>setFormStatus()</code> function</li>
-                <li>Or use this URL: <code id="endpointUrl"></code></li>
-                <li>Add <code>?action=setStatus&status=open</code> to OPEN</li>
-                <li>Add <code>?action=setStatus&status=closed</code> to CLOSE</li>
-            </ul>
-        </div>
-        
-        <form id="surveyForm">
-            <!-- Name -->
-            <div class="form-group">
-                <label for="name" class="required"><i class="fas fa-user"></i> Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-                <div class="error-text" id="nameError">Please enter your name (2-100 characters)</div>
-            </div>
-            
-            <!-- Email -->
-            <div class="form-group">
-                <label for="email" class="required"><i class="fas fa-envelope"></i> Email Address</label>
-                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
-                <div class="error-text" id="emailError">Please enter a valid email address</div>
-            </div>
-            
-            <!-- Phone (Optional) -->
-            <div class="form-group">
-                <label for="phone"><i class="fas fa-phone"></i> Phone Number (Optional)</label>
-                <input type="tel" id="phone" name="phone" placeholder="+1 (123) 456-7890">
-            </div>
-            
-            <!-- Age Group -->
-            <div class="form-group">
-                <label for="age" class="required"><i class="fas fa-user-friends"></i> Age Group</label>
-                <select id="age" name="age" required>
-                    <option value="">Select your age group</option>
-                    <option value="under18">Under 18</option>
-                    <option value="18-25">18-25</option>
-                    <option value="26-35">26-35</option>
-                    <option value="36-50">36-50</option>
-                    <option value="51-65">51-65</option>
-                    <option value="over65">Over 65</option>
-                </select>
-                <div class="error-text" id="ageError">Please select your age group</div>
-            </div>
-            
-            <!-- Country -->
-            <div class="form-group">
-                <label for="country" class="required"><i class="fas fa-globe"></i> Country</label>
-                <select id="country" name="country" required>
-                    <option value="">Select your country</option>
-                    <option value="US">United States</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                    <option value="IN">India</option>
-                    <option value="other">Other</option>
-                </select>
-                <div class="error-text" id="countryError">Please select your country</div>
-            </div>
-            
-            <!-- Rating -->
-            <div class="form-group">
-                <label for="rating" class="required"><i class="fas fa-star"></i> Service Rating</label>
-                <select id="rating" name="rating" required>
-                    <option value="">Select a rating</option>
-                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-                    <option value="4">⭐⭐⭐⭐ - Very Good</option>
-                    <option value="3">⭐⭐⭐ - Good</option>
-                    <option value="2">⭐⭐ - Fair</option>
-                    <option value="1">⭐ - Poor</option>
-                </select>
-                <div class="error-text" id="ratingError">Please select a rating</div>
-            </div>
-            
-            <!-- Subscription -->
-            <div class="form-group">
-                <label for="subscription" class="required"><i class="fas fa-crown"></i> Subscription Type</label>
-                <select id="subscription" name="subscription" required>
-                    <option value="">Select subscription type</option>
-                    <option value="free">Free</option>
-                    <option value="basic">Basic ($9.99/month)</option>
-                    <option value="premium">Premium ($19.99/month)</option>
-                    <option value="enterprise">Enterprise (Custom)</option>
-                </select>
-                <div class="error-text" id="subscriptionError">Please select subscription type</div>
-            </div>
-            
-            <!-- Feedback -->
-            <div class="form-group">
-                <label for="feedback" class="required"><i class="fas fa-comment"></i> Your Feedback</label>
-                <textarea id="feedback" name="feedback" placeholder="Please share your detailed feedback here..." maxlength="500" required></textarea>
-                <div class="char-count" id="charCount">0/500 characters</div>
-                <div class="error-text" id="feedbackError">Please enter feedback (10-500 characters)</div>
-            </div>
-            
-            <!-- Source -->
-            <div class="form-group">
-                <label for="source" class="required"><i class="fas fa-bullhorn"></i> How did you hear about us?</label>
-                <select id="source" name="source" required>
-                    <option value="">Select an option</option>
-                    <option value="search">Search Engine</option>
-                    <option value="social">Social Media</option>
-                    <option value="friend">Friend/Word of Mouth</option>
-                    <option value="ad">Advertisement</option>
-                    <option value="email">Email Newsletter</option>
-                    <option value="other">Other</option>
-                </select>
-                <div class="error-text" id="sourceError">Please tell us how you heard about us</div>
-            </div>
-            
-            <!-- Terms -->
-            <div class="checkbox-group">
-                <input type="checkbox" id="terms" name="terms" required>
-                <label for="terms" class="required"><i class="fas fa-file-contract"></i> I agree to the Terms and Conditions</label>
-            </div>
-            <div class="error-text" id="termsError">You must agree to the terms</div>
-            
-            <button type="submit" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> Submit Survey
-            </button>
-        </form>
-        
-        <div id="responseMessage" class="message"></div>
+    <!-- Floating Admin Button -->
+    <div class="admin-toggle">
+        <button id="adminToggleBtn" class="toggle-btn" onclick="toggleAdminPanel()">
+            <i class="fas fa-user-shield"></i>
+            <span id="adminToggleText">Admin</span>
+        </button>
     </div>
+
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="login-modal hidden">
+        <div class="login-form">
+            <h2 class="login-title"><i class="fas fa-lock"></i> Admin Login</h2>
+            <div class="form-group">
+                <label for="adminPassword">Admin Password</label>
+                <input type="password" id="adminPassword" placeholder="Enter admin password" />
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="login()" style="flex: 1;"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button onclick="closeLoginModal()" style="flex: 1; background: #95a5a6;"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-edit"></i> Survey Form</h1>
+            <p>Please fill out the form below. All fields marked with * are required.</p>
+        </div>
+
+        <div class="main-layout">
+            <!-- Left: Survey Form -->
+            <div class="form-section">
+                <div id="formStatusMessage" class="message info">
+                    <span id="formStatusText">Form is open for submissions</span>
+                    <span id="formStatusBadge" class="form-status status-open">OPEN</span>
+                </div>
+
+                <form id="surveyForm" class="form-container">
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label for="name" class="required"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+                        <div class="error-text" id="nameError">Please enter your name (2-100 characters)</div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="required"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required />
+                        <div class="error-text" id="emailError">Please enter a valid email address</div>
+                    </div>
+
+                    <!-- Phone (Optional) -->
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Phone Number (Optional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (123) 456-7890" />
+                    </div>
+
+                    <!-- Age Group -->
+                    <div class="form-group">
+                        <label for="age" class="required"><i class="fas fa-user-friends"></i> Age Group</label>
+                        <select id="age" name="age" required>
+                            <option value="">Select your age group</option>
+                            <option value="under18">Under 18</option>
+                            <option value="18-25">18-25</option>
+                            <option value="26-35">26-35</option>
+                            <option value="36-50">36-50</option>
+                            <option value="51-65">51-65</option>
+                            <option value="over65">Over 65</option>
+                        </select>
+                        <div class="error-text" id="ageError">Please select your age group</div>
+                    </div>
+
+                    <!-- Country -->
+                    <div class="form-group">
+                        <label for="country" class="required"><i class="fas fa-globe"></i> Country</label>
+                        <select id="country" name="country" required>
+                            <option value="">Select your country</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="CA">Canada</option>
+                            <option value="AU">Australia</option>
+                            <option value="IN">India</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="error-text" id="countryError">Please select your country</div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="form-group">
+                        <label for="rating" class="required"><i class="fas fa-star"></i> Service Rating</label>
+                        <select id="rating" name="rating" required>
+                            <option value="">Select a rating</option>
+                            <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ - Very Good</option>
+                            <option value="3">⭐⭐⭐ - Good</option>
+                            <option value="2">⭐⭐ - Fair</option>
+                            <option value="1">⭐ - Poor</option>
+                        </select>
+                        <div class="error-text" id="ratingError">Please select a rating</div>
+                    </div>
+
+                    <!-- Subscription -->
+                    <div class="form-group">
+                        <label for="subscription" class="required"><i class="fas fa-crown"></i> Subscription Type</label>
+                        <select id="subscription" name="subscription" required>
+                            <option value="">Select subscription type</option>
+                            <option value="free">Free</option>
+                            <option value="basic">Basic ($9.99/month)</option>
+                            <option value="premium">Premium ($19.99/month)</option>
+                            <option value="enterprise">Enterprise (Custom)</option>
+                        </select>
+                        <div class="error-text" id="subscriptionError">Please select subscription type</div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div class="form-group">
+                        <label for="feedback" class="required"><i class="fas fa-comment"></i> Your Feedback</label>
+                        <textarea id="feedback" name="feedback" placeholder="Please share your detailed feedback here..." maxlength="500" required></textarea>
+                        <div class="char-count" id="charCount">0/500 characters</div>
+                        <div class="error-text" id="feedbackError">Please enter feedback (10-500 characters)</div>
+                    </div>
+
+                    <!-- Source -->
+                    <div class="form-group">
+                        <label for="source" class="required"><i class="fas fa-bullhorn"></i> How did you hear about us?</label>
+                        <select id="source" name="source" required>
+                            <option value="">Select an option</option>
+                            <option value="search">Search Engine</option>
+                            <option value="social">Social Media</option>
+                            <option value="friend">Friend/Word of Mouth</option>
+                            <option value="ad">Advertisement</option>
+                            <option value="email">Email Newsletter</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="error-text" id="sourceError">Please tell us how you heard about us</div>
+                    </div>
+
+                    <!-- Terms -->
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required />
+                        <label for="terms" class="required"><i class="fas fa-file-contract"></i> I agree to the Terms and Conditions</label>
+                    </div>
+                    <div class="error-text" id="termsError">You must agree to the terms</div>
+
+                    <button type="submit" id="submitBtn" class="btn-full">
+                        <i class="fas fa-paper-plane"></i> Submit Survey
+                    </button>
+                </form>
+
+                <div id="responseMessage" class="message" style="display:none;"></div>
+            </div>
+
+            <!-- Right: Admin Panel (only visible after admin login) -->
+            <div class="admin-section hidden" id="adminPanel">
+                <div class="admin-panel">
+                    <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+
+                    <!-- Admin Login Section (kept, but panel itself is hidden until admin) -->
+                    <div id="adminLoginSection" class="admin-login hidden">
+                        <h3>Admin Login Required</h3>
+                        <p>Use the floating Admin button to log in.</p>
+                    </div>
+
+                    <!-- Admin Controls -->
+                    <div id="adminControls" class="">
+                        <!-- Quick Stats -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalSubmissions">0</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="todaySubmissions">0</div>
+                                <div class="stat-label">Today</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="averageRating">0</div>
+                                <div class="stat-label">Avg Rating</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="formStatusValue">OPEN</div>
+                                <div class="stat-label">Status</div>
+                            </div>
+                        </div>
+
+                        <!-- Form Control -->
+                        <div class="admin-controls" style="display:flex; flex-direction:column; gap:10px; margin: 20px 0;">
+                            <button class="btn-success btn-full" onclick="setFormStatus(true)"><i class="fas fa-lock-open"></i> Open Form</button>
+                            <button class="btn-danger btn-full" onclick="setFormStatus(false)"><i class="fas fa-lock"></i> Close Form</button>
+                            <button onclick="exportToCSV()" class="btn-full"><i class="fas fa-download"></i> Export Data</button>
+                            <button onclick="viewSheet()" class="btn-full"><i class="fas fa-table"></i> View Spreadsheet</button>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                        <div class="recent-activity" id="recentActivity">
+                            <div class="activity-item">
+                                <div class="activity-time">Just now</div>
+                                <div class="activity-text">Admin panel loaded</div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Actions -->
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+                            <button onclick="testForm()" class="btn-small"><i class="fas fa-vial"></i> Test</button>
+                            <button onclick="generateReport()" class="btn-small"><i class="fas fa-chart-bar"></i> Report</button>
+                            <button onclick="refreshStats()" class="btn-small"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            <button onclick="adminLogout()" class="btn-small btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        </div>
+
+                        <div id="adminMessageContainer" class="message info" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- /main-layout -->
+    </div> <!-- /container -->
 
     <script>
         // ================= CONFIGURATION =================
         const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
+        const ADMIN_PASSWORD = "admin123"; // Change to your preferred password
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1JyfrhYh2g-zelVNkNuZhBod-YNV8ihnawsxFa1Z0BWw/edit";
 
         // ================= APPLICATION STATE =================
-        let formStatus = true;
+        let isAdmin = false;
+        let formStatus = true; // default; will be updated by loadFormStatus()
+        let recentActivities = [];
 
         // ================= DOM ELEMENTS =================
+        const loginModal = document.getElementById('loginModal');
+        const adminToggleBtn = document.getElementById('adminToggleBtn');
+        const adminToggleText = document.getElementById('adminToggleText');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminLoginSection = document.getElementById('adminLoginSection');
+        const adminControls = document.getElementById('adminControls');
+
         const form = document.getElementById('surveyForm');
         const submitBtn = document.getElementById('submitBtn');
         const formStatusMessage = document.getElementById('formStatusMessage');
@@ -379,133 +376,300 @@
         const responseMessage = document.getElementById('responseMessage');
         const charCount = document.getElementById('charCount');
         const feedback = document.getElementById('feedback');
-        const endpointUrl = document.getElementById('endpointUrl');
+
+        const totalSubmissions = document.getElementById('totalSubmissions');
+        const todaySubmissions = document.getElementById('todaySubmissions');
+        const averageRating = document.getElementById('averageRating');
+        const formStatusValue = document.getElementById('formStatusValue');
+        const recentActivity = document.getElementById('recentActivity');
+        const adminMessageContainer = document.getElementById('adminMessageContainer');
 
         // ================= INITIALIZATION =================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Survey Form Initialized');
-            
-            // Show endpoint URL in instructions
-            endpointUrl.textContent = ENDPOINT;
-            
-            // Setup character counter
+            // Character counter
             feedback.addEventListener('input', updateCharCount);
             updateCharCount();
-            
-            // Setup form submission
+
+            // Form submission
             form.addEventListener('submit', handleSubmit);
-            
-            // Setup real-time validation
+
+            // Validation
             setupValidation();
-            
-            // Load initial form status
+
+            // Load initial form status (enforces open/closed)
             loadFormStatus();
+
+            // Restore admin login state
+            const savedAdminState = localStorage.getItem('adminLoggedIn');
+            if (savedAdminState === 'true') {
+                autoLogin();
+            }
+
+            // By default, keep admin sidebar hidden for respondents
+            adminPanel.classList.add('hidden');
+
+            addActivity('Form loaded', 'info');
         });
 
-        // ================= FORM STATUS MANAGEMENT =================
+        // ================= ADMIN UX =================
+        function toggleAdminPanel() {
+            if (!isAdmin) {
+                // For non-admins, clicking the button opens login modal instead of showing sidebar
+                showLoginModal();
+                return;
+            }
+            // Admin can toggle panel visibility
+            adminPanel.classList.toggle('hidden');
+            adminToggleBtn.classList.toggle('admin-active');
+            adminToggleText.textContent = adminPanel.classList.contains('hidden') ? 'Admin' : 'Admin ✓';
+        }
+
+        function showLoginModal() {
+            loginModal.classList.remove('hidden');
+            document.getElementById('adminPassword').focus();
+        }
+
+        function closeLoginModal() {
+            loginModal.classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function autoLogin() {
+            isAdmin = true;
+            updateAdminUI();
+            loadAdminData();
+        }
+
+        function login() {
+            const password = document.getElementById('adminPassword').value;
+            performLogin(password);
+        }
+
+        function performLogin(password) {
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                localStorage.setItem('adminLoggedIn', 'true');
+                updateAdminUI();
+                closeLoginModal();
+                showMessage('✅ Admin login successful', 'success', adminMessageContainer);
+                addActivity('Admin logged in', 'success');
+                loadAdminData();
+            } else {
+                showMessage('❌ Incorrect password', 'error', adminMessageContainer);
+                addActivity('Failed login attempt', 'error');
+            }
+        }
+
+        function updateAdminUI() {
+            if (isAdmin) {
+                adminLoginSection.classList.add('hidden');
+                adminControls.classList.remove('hidden');
+                adminToggleBtn.classList.add('admin-active');
+                adminToggleText.textContent = 'Admin ✓';
+                adminPanel.classList.remove('hidden'); // show the sidebar once admin
+            } else {
+                adminLoginSection.classList.remove('hidden');
+                adminControls.classList.add('hidden');
+                adminToggleBtn.classList.remove('admin-active');
+                adminToggleText.textContent = 'Admin';
+                adminPanel.classList.add('hidden');
+            }
+        }
+
+        function adminLogout() {
+            isAdmin = false;
+            localStorage.removeItem('adminLoggedIn');
+            updateAdminUI();
+            showMessage('✅ Logged out successfully', 'success', responseMessage);
+            addActivity('Admin logged out', 'info');
+        }
+
+        function refreshStats() {
+            if (!isAdmin) return;
+            loadAdminData();
+            showMessage('✅ Stats refreshed', 'success', adminMessageContainer);
+        }
+
+        // ================= FORM STATUS MANAGEMENT (OPEN/CLOSED) =================
         async function loadFormStatus() {
             try {
                 const response = await fetch(ENDPOINT + '?action=getStatus');
                 const data = await response.json();
-                
+
                 if (data.ok) {
                     formStatus = data.status === 'open';
-                    updateFormStatusUI();
                 }
             } catch (error) {
                 console.error('Error loading form status:', error);
+                // Fallback: keep existing formStatus value
+            } finally {
                 updateFormStatusUI();
             }
         }
-        
+
         function updateFormStatusUI() {
             if (formStatus) {
-                formStatusText.textContent = '✅ Form is OPEN for submissions';
+                formStatusText.textContent = '✅ Form is open for submissions';
                 formStatusBadge.textContent = 'OPEN';
                 formStatusBadge.className = 'form-status status-open';
                 formStatusMessage.className = 'message success';
                 submitBtn.disabled = false;
             } else {
-                formStatusText.textContent = '❌ Form is CLOSED for submissions';
+                formStatusText.textContent = '❌ Form submissions are currently closed';
                 formStatusBadge.textContent = 'CLOSED';
                 formStatusBadge.className = 'form-status status-closed';
                 formStatusMessage.className = 'message error';
                 submitBtn.disabled = true;
             }
-        }
 
-        // ================= FORM VALIDATION & SUBMISSION =================
-        function setupValidation() {
-            const fields = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source'];
-            
-            fields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.addEventListener('blur', () => validateField(fieldId));
-                }
-            });
-            
-            const terms = document.getElementById('terms');
-            if (terms) {
-                terms.addEventListener('change', () => validateField('terms'));
+            // Mirror in admin stat box if admin
+            if (isAdmin) {
+                formStatusValue.textContent = formStatus ? 'OPEN' : 'CLOSED';
+                formStatusValue.style.color = formStatus ? '#27ae60' : '#e74c3c';
             }
         }
-        
+
+        async function setFormStatus(isOpen) {
+            if (!isAdmin) {
+                showMessage('❌ Admin access required', 'error', adminMessageContainer);
+                return;
+            }
+
+            try {
+                const response = await fetch(ENDPOINT + '?action=setStatus&status=' + (isOpen ? 'open' : 'closed') + '&admin=true');
+                const data = await response.json();
+
+                if (data.ok) {
+                    formStatus = isOpen;
+                    updateFormStatusUI();
+                    showMessage('✅ Form status updated successfully', 'success', adminMessageContainer);
+                    addActivity(`Form ${isOpen ? 'opened' : 'closed'}`, 'success');
+                    loadAdminData();
+                } else {
+                    showMessage('❌ ' + (data.error || 'Failed to update status'), 'error', adminMessageContainer);
+                }
+            } catch (error) {
+                console.error('Error setting form status:', error);
+                showMessage('❌ Network error', 'error', adminMessageContainer);
+            }
+        }
+
+        // ================= ADMIN DATA LOADING =================
+        async function loadAdminData() {
+            if (!isAdmin) return;
+            try {
+                const statsResponse = await fetch(ENDPOINT + '?action=getStats&admin=true');
+                const statsData = await statsResponse.json();
+
+                if (statsData.ok && statsData.stats) {
+                    const s = statsData.stats;
+                    totalSubmissions.textContent = s.totalSubmissions || 0;
+                    todaySubmissions.textContent = s.todaySubmissions || 0;
+                    averageRating.textContent = s.averageRating ? s.averageRating.toFixed(1) : '0';
+                    formStatusValue.textContent = formStatus ? 'OPEN' : 'CLOSED';
+                    formStatusValue.style.color = formStatus ? '#27ae60' : '#e74c3c';
+                }
+
+                loadRecentActivity();
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            if (!isAdmin) return;
+            try {
+                const response = await fetch(ENDPOINT + '?action=getRecent&admin=true&limit=5');
+                const data = await response.json();
+                if (data.ok && data.recent) {
+                    updateRecentActivityUI(data.recent);
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                updateRecentActivityUI(recentActivities.slice(-5).reverse());
+            }
+        }
+
+        function updateRecentActivityUI(activities) {
+            recentActivity.innerHTML = '';
+            if (!activities || activities.length === 0) {
+                recentActivity.innerHTML = '<div class="activity-item"><em>No recent activity</em></div>';
+                return;
+            }
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-time">${activity.time || 'Just now'}</div>
+                    <div class="activity-text">${activity.text || 'Activity'}</div>
+                `;
+                recentActivity.appendChild(item);
+            });
+        }
+
+        function addActivity(text, type = 'info') {
+            const activity = {
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                text, type
+            };
+            recentActivities.push(activity);
+            if (isAdmin) {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-time">${activity.time}</div>
+                    <div class="activity-text">${activity.text}</div>
+                `;
+                recentActivity.appendChild(item);
+                // trim to last 5
+                const items = recentActivity.getElementsByClassName('activity-item');
+                if (items.length > 5) recentActivity.removeChild(items[0]);
+            }
+        }
+
+        // ================= VALIDATION & SUBMISSION =================
+        function setupValidation() {
+            const fields = ['name','email','age','country','rating','subscription','feedback','source'];
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) field.addEventListener('blur', () => validateField(fieldId));
+            });
+            const terms = document.getElementById('terms');
+            if (terms) terms.addEventListener('change', () => validateField('terms'));
+        }
+
         function validateField(fieldId) {
             const field = document.getElementById(fieldId);
             const errorElement = document.getElementById(fieldId + 'Error');
-            
             if (!field || !errorElement) return true;
-            
+
             let isValid = true;
             let errorMessage = '';
-            
             const value = field.type === 'checkbox' ? field.checked : field.value.trim();
-            
+
             switch(fieldId) {
                 case 'name':
-                    if (!value || value.length < 2) {
-                        isValid = false;
-                        errorMessage = 'Name must be at least 2 characters';
-                    }
+                    if (!value || value.length < 2) { isValid = false; errorMessage = 'Name must be at least 2 characters'; }
                     break;
-                    
                 case 'email':
-                    if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                        isValid = false;
-                        errorMessage = 'Please enter a valid email address';
-                    }
+                    if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { isValid = false; errorMessage = 'Please enter a valid email address'; }
                     break;
-                    
                 case 'age':
                 case 'country':
                 case 'rating':
                 case 'subscription':
                 case 'source':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'Please select an option';
-                    }
+                    if (!value) { isValid = false; errorMessage = 'Please select an option'; }
                     break;
-                    
                 case 'feedback':
-                    if (!value || value.length < 10) {
-                        isValid = false;
-                        errorMessage = 'Feedback must be at least 10 characters';
-                    } else if (value.length > 500) {
-                        isValid = false;
-                        errorMessage = 'Feedback cannot exceed 500 characters';
-                    }
+                    if (!value || value.length < 10) { isValid = false; errorMessage = 'Feedback must be at least 10 characters'; }
+                    else if (value.length > 500) { isValid = false; errorMessage = 'Feedback cannot exceed 500 characters'; }
                     break;
-                    
                 case 'terms':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'You must agree to the terms';
-                    }
+                    if (!value) { isValid = false; errorMessage = 'You must agree to the terms'; }
                     break;
             }
-            
+
             if (isValid) {
                 field.classList.remove('error-field');
                 errorElement.style.display = 'none';
@@ -514,43 +678,36 @@
                 errorElement.textContent = errorMessage;
                 errorElement.style.display = 'block';
             }
-            
             return isValid;
         }
-        
+
         function validateForm() {
             let isValid = true;
-            
-            const fieldsToValidate = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'];
-            
-            fieldsToValidate.forEach(fieldId => {
-                if (!validateField(fieldId)) {
-                    isValid = false;
-                }
-            });
-            
+            const fieldsToValidate = ['name','email','age','country','rating','subscription','feedback','source','terms'];
+            fieldsToValidate.forEach(id => { if (!validateField(id)) isValid = false; });
             return isValid;
         }
-        
+
         async function handleSubmit(event) {
             event.preventDefault();
-            
-            // Check if form is open
+
+            // Enforce status-gated submission
             if (!formStatus) {
-                showMessage('❌ Form submissions are currently closed. Please try again later.', 'error', responseMessage);
+                showMessage('❌ Form submissions are currently closed', 'error', responseMessage);
                 return;
             }
-            
-            // Validate form
+
+            // Validate
             if (!validateForm()) {
                 showMessage('❌ Please fix the errors above', 'error', responseMessage);
                 return;
             }
-            
-            // Disable submit button
+
+            // Disable submit while sending
             submitBtn.disabled = true;
+            const original = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-            
+
             // Collect form data
             const formData = {
                 name: document.getElementById('name').value.trim(),
@@ -564,80 +721,142 @@
                 source: document.getElementById('source').value,
                 terms: document.getElementById('terms').checked ? 'Agreed' : 'Not agreed'
             };
-            
+
             try {
-                // Send data to Apps Script
-                const formDataEncoded = new URLSearchParams();
-                Object.keys(formData).forEach(key => {
-                    if (formData[key]) {
-                        formDataEncoded.append(key, formData[key]);
-                    }
-                });
-                
+                const encoded = new URLSearchParams();
+                Object.keys(formData).forEach(key => { if (formData[key] !== undefined && formData[key] !== null) encoded.append(key, formData[key]); });
+
                 const response = await fetch(ENDPOINT, {
                     method: 'POST',
-                    body: formDataEncoded
+                    body: encoded
                 });
-                
                 const result = await response.json();
-                
+
                 if (result.ok) {
                     showMessage('✅ Thank you! Your response has been successfully submitted.', 'success', responseMessage);
-                    
-                    // Reset form
+                    addActivity(`New submission: ${formData.name}`, 'success');
                     form.reset();
                     updateCharCount();
-                    
-                    // Clear error styles
-                    document.querySelectorAll('.error-field').forEach(el => {
-                        el.classList.remove('error-field');
-                    });
-                    document.querySelectorAll('.error-text').forEach(el => {
-                        el.style.display = 'none';
-                    });
-                    
+                    document.querySelectorAll('.error-field').forEach(el => el.classList.remove('error-field'));
+                    document.querySelectorAll('.error-text').forEach(el => el.style.display = 'none');
+
+                    if (isAdmin) loadAdminData();
                 } else {
                     showMessage(`❌ Error: ${result.error || 'Submission failed'}`, 'error', responseMessage);
                 }
-                
             } catch (error) {
                 console.error('Submission error:', error);
                 showMessage('❌ Network error. Please check your connection and try again.', 'error', responseMessage);
             } finally {
-                // Re-enable submit button
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Survey';
-            }
-        }
-        
-        function updateCharCount() {
-            const length = feedback.value.length;
-            charCount.textContent = `${length}/500 characters`;
-            
-            charCount.className = 'char-count';
-            if (length > 450) {
-                charCount.classList.add('warning');
-            }
-            if (length > 500) {
-                charCount.classList.add('error');
+                submitBtn.innerHTML = original;
             }
         }
 
-        // ================= HELPER FUNCTIONS =================
+        function updateCharCount() {
+            const length = feedback.value.length;
+            charCount.textContent = `${length}/500 characters`;
+            charCount.className = 'char-count';
+            if (length > 450) charCount.classList.add('warning');
+            if (length > 500) charCount.classList.add('error');
+        }
+
+        // ================= ADMIN UTILITY FUNCTIONS =================
+        async function exportToCSV() {
+            if (!isAdmin) { showMessage('❌ Admin access required', 'error', adminMessageContainer); return; }
+            try {
+                showMessage('⏳ Generating CSV export...', 'info', adminMessageContainer);
+                window.open(SHEET_URL + '/export?format=csv', '_blank');
+                showMessage('✅ CSV export started', 'success', adminMessageContainer);
+                addActivity('CSV export generated', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showMessage('❌ Export failed', 'error', adminMessageContainer);
+            }
+        }
+
+        function testForm() {
+            if (!isAdmin) { showMessage('❌ Admin access required', 'error', adminMessageContainer); return; }
+            document.getElementById('name').value = 'Test User ' + new Date().getTime();
+            document.getElementById('email').value = 'test' + new Date().getTime() + '@example.com';
+            document.getElementById('phone').value = '+1 (555) 123-4567';
+            document.getElementById('age').value = '26-35';
+            document.getElementById('country').value = 'US';
+            document.getElementById('rating').value = '4';
+            document.getElementById('subscription').value = 'premium';
+            document.getElementById('feedback').value = 'This is a test submission to verify the form is working correctly. The system appears to be functioning properly.';
+            document.getElementById('source').value = 'search';
+            document.getElementById('terms').checked = true;
+            updateCharCount();
+            showMessage('✅ Test data loaded. Click submit to test.', 'success', adminMessageContainer);
+            addActivity('Test data loaded', 'info');
+        }
+
+        function viewSheet() {
+            window.open(SHEET_URL, '_blank');
+            addActivity('Google Sheet opened', 'info');
+        }
+
+        async function generateReport() {
+            if (!isAdmin) { showMessage('❌ Admin access required', 'error', adminMessageContainer); return; }
+            try {
+                showMessage('⏳ Generating report...', 'info', adminMessageContainer);
+                const response = await fetch(ENDPOINT + '?action=getReport&admin=true');
+                const data = await response.json();
+                if (data.ok && data.report) {
+                    const win = window.open('', '_blank');
+                    win.document.write(`
+                        <html><head>
+                            <title>Survey Report</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; padding: 20px; }
+                                h1 { color: #2c3e50; }
+                                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                                th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+                                th { background: #3498db; color: white; }
+                            </style>
+                        </head><body>
+                            <h1>📊 Survey Report</h1>
+                            <p>Generated: ${new Date().toLocaleString()}</p>
+                            <h2>Summary Statistics</h2>
+                            <table>
+                                <tr><th>Metric</th><th>Value</th></tr>
+                                <tr><td>Total Submissions</td><td>${data.report.stats?.totalSubmissions || 0}</td></tr>
+                                <tr><td>Average Rating</td><td>${data.report.stats?.averageRating?.toFixed?.(1) || 0}</td></tr>
+                                <tr><td>Today's Submissions</td><td>${data.report.stats?.todaySubmissions || 0}</td></tr>
+                            </table>
+                        </body></html>
+                    `);
+                    showMessage('✅ Report generated in new tab', 'success', adminMessageContainer);
+                    addActivity('Report generated', 'success');
+                } else {
+                    showMessage('❌ ' + (data.error || 'Report failed'), 'error', adminMessageContainer);
+                }
+            } catch (error) {
+                console.error('Report error:', error);
+                showMessage('❌ Report failed', 'error', adminMessageContainer);
+            }
+        }
+
+        // ================= HELPERS =================
         function showMessage(text, type, container) {
             if (!container) return;
-            
             container.textContent = text;
             container.className = `message ${type}`;
             container.style.display = 'block';
-            
-            // Auto-hide success messages after 5 seconds
             if (type === 'success') {
-                setTimeout(() => {
-                    container.style.display = 'none';
-                }, 5000);
+                setTimeout(() => { container.style.display = 'none'; }, 5000);
             }
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && !loginModal.classList.contains('hidden')) {
+                closeLoginModal();
+            }
+        });
+
+        // Auto-refresh admin stats every 30 seconds
+        setInterval(() => { if (isAdmin) loadAdminData(); }, 30000);
     </script>
 </body>
 </html>
