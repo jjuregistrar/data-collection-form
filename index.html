@@ -352,341 +352,320 @@
     <div id="adminMessage" class="muted"></div>
   </div>
 
-  <script>
-    // IMPORTANT: Replace with your Apps Script Web App URL
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
-    
-    // Configuration
-    const CONFIG = {
-      // Form open/closed status (persisted in localStorage)
-      formOpen: true,
-      
-      // Character limits
-      maxFeedbackChars: 500,
-      minFeedbackChars: 10,
-      maxNameChars: 100,
-      
-      // Validation rules
-      phonePattern: /^[\+]?[0-9\s\-\(\)]+$/,
-      emailPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      
-      // Required fields (add/remove as needed)
-      requiredFields: ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms']
-    };
+<script>
+  // IMPORTANT: Replace with your Apps Script Web App URL
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
+  
+  // Configuration
+  const CONFIG = {
+    formOpen: true,
+    maxFeedbackChars: 500,
+    minFeedbackChars: 10,
+    maxNameChars: 100,
+    phonePattern: /^[\+]?[0-9\s\-\(\)]+$/,
+    emailPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    requiredFields: ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms']
+  };
 
-    // DOM Elements
-    const form = document.getElementById('surveyForm');
-    const formContainer = document.getElementById('formContainer');
-    const closedMessage = document.getElementById('closedMessage');
-    const statusMessage = document.getElementById('statusMessage');
-    const msg = document.getElementById('msg');
-    const submitBtn = document.getElementById('submitBtn');
-    const adminPanel = document.getElementById('adminPanel');
-    const adminMessage = document.getElementById('adminMessage');
+  // DOM Elements
+  const form = document.getElementById('surveyForm');
+  const msg = document.getElementById('msg');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Debug logging function
+  function debugLog(message, data = null) {
+    console.log(`[DEBUG] ${message}`, data || '');
+  }
+
+  // Initialize form
+  window.addEventListener('DOMContentLoaded', () => {
+    debugLog('Form initialized');
+    setupEventListeners();
+    testEndpointConnection();
+  });
+
+  // Setup event listeners
+  function setupEventListeners() {
+    form.addEventListener('submit', handleSubmit);
+    
+    // Character counter for feedback
     const feedbackTextarea = document.getElementById('feedback');
     const feedbackCount = document.getElementById('feedbackCount');
-
-    // Initialize form state
-    function initForm() {
-      // Check URL for admin mode
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('admin') === 'true') {
-        adminPanel.style.display = 'block';
-      }
-      
-      // Load form status from localStorage
-      const savedStatus = localStorage.getItem('formStatus');
-      if (savedStatus !== null) {
-        CONFIG.formOpen = savedStatus === 'true';
-      }
-      
-      updateFormVisibility();
-      setupEventListeners();
-      
-      // Test endpoint connection
-      testEndpoint();
+    
+    if (feedbackTextarea && feedbackCount) {
+      feedbackTextarea.addEventListener('input', function() {
+        const length = this.value.length;
+        feedbackCount.textContent = `${length}/500 characters`;
+      });
     }
+  }
 
-    // Set form open/closed status
-    function setFormStatus(isOpen) {
-      CONFIG.formOpen = isOpen;
-      localStorage.setItem('formStatus', isOpen.toString());
-      updateFormVisibility();
+  // Test endpoint connection
+  async function testEndpointConnection() {
+    debugLog('Testing endpoint connection...');
+    
+    try {
+      // First try with GET to see if endpoint is reachable
+      const response = await fetch(ENDPOINT, {
+        method: 'GET',
+        mode: 'no-cors' // Use no-cors for initial test
+      });
       
-      adminMessage.textContent = `Form submissions are now ${isOpen ? 'OPEN' : 'CLOSED'}`;
-      adminMessage.className = isOpen ? 'success' : 'error';
+      debugLog('GET request sent to endpoint');
       
-      // Clear message after 3 seconds
+      // Also try a direct browser test
       setTimeout(() => {
-        adminMessage.textContent = '';
-      }, 3000);
-    }
-
-    // Update form visibility based on status
-    function updateFormVisibility() {
-      if (CONFIG.formOpen) {
-        formContainer.style.display = 'block';
-        closedMessage.style.display = 'none';
-        statusMessage.textContent = '✅ Submissions are OPEN';
-        statusMessage.className = 'success';
-      } else {
-        formContainer.style.display = 'none';
-        closedMessage.style.display = 'block';
-        statusMessage.textContent = '⛔ Submissions are CLOSED';
-        statusMessage.className = 'error';
-      }
-    }
-
-    // Setup event listeners
-    function setupEventListeners() {
-      // Real-time feedback character counter
-      feedbackTextarea.addEventListener('input', updateCharacterCount);
-      
-      // Real-time validation on blur
-      CONFIG.requiredFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-          field.addEventListener('blur', () => validateField(fieldId));
-        }
-      });
-      
-      // Form submission
-      form.addEventListener('submit', handleSubmit);
-      
-      // Prevent form submission if closed
-      form.addEventListener('submit', (e) => {
-        if (!CONFIG.formOpen) {
-          e.preventDefault();
-          alert('Submissions are currently closed.');
-        }
-      });
-    }
-
-    // Update character count for feedback
-    function updateCharacterCount() {
-      const length = feedbackTextarea.value.length;
-      feedbackCount.textContent = `${length}/${CONFIG.maxFeedbackChars} characters`;
-      
-      // Update styling based on length
-      feedbackCount.className = 'character-count';
-      if (length > CONFIG.maxFeedbackChars * 0.9) {
-        feedbackCount.classList.add('warning');
-      }
-      if (length > CONFIG.maxFeedbackChars) {
-        feedbackCount.classList.add('error');
-      }
-    }
-
-    // Validate individual field
-    function validateField(fieldId) {
-      const field = document.getElementById(fieldId);
-      const errorElement = document.getElementById(`${fieldId}Error`);
-      let isValid = true;
-      let message = '';
-      
-      if (!field) return true;
-      
-      const value = field.type === 'checkbox' ? field.checked : field.value.trim();
-      const isRequired = CONFIG.requiredFields.includes(fieldId);
-      
-      // Check required fields
-      if (isRequired && !value) {
-        isValid = false;
-        message = 'This field is required';
-      } else if (value) {
-        // Field-specific validation
-        switch (fieldId) {
-          case 'name':
-            if (value.length < 2 || value.length > CONFIG.maxNameChars) {
-              isValid = false;
-              message = `Name must be 2-${CONFIG.maxNameChars} characters`;
-            }
-            break;
-            
-          case 'email':
-            if (!CONFIG.emailPattern.test(value)) {
-              isValid = false;
-              message = 'Please enter a valid email address';
-            }
-            break;
-            
-          case 'phone':
-            if (value && !CONFIG.phonePattern.test(value)) {
-              isValid = false;
-              message = 'Please enter a valid phone number';
-            }
-            break;
-            
-          case 'feedback':
-            if (value.length < CONFIG.minFeedbackChars) {
-              isValid = false;
-              message = `Feedback must be at least ${CONFIG.minFeedbackChars} characters`;
-            } else if (value.length > CONFIG.maxFeedbackChars) {
-              isValid = false;
-              message = `Feedback cannot exceed ${CONFIG.maxFeedbackChars} characters`;
-            }
-            break;
-            
-          case 'age':
-          case 'country':
-          case 'rating':
-          case 'subscription':
-          case 'source':
-            if (isRequired && !value) {
-              isValid = false;
-              message = 'Please select an option';
-            }
-            break;
-            
-          case 'terms':
-            if (!value) {
-              isValid = false;
-              message = 'You must agree to the terms';
-            }
-            break;
-        }
-      }
-      
-      // Update UI
-      if (isValid) {
-        field.classList.remove('error');
-        errorElement.style.display = 'none';
-      } else {
-        field.classList.add('error');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-      }
-      
-      return isValid;
-    }
-
-    // Validate entire form
-    function validateForm() {
-      let isValid = true;
-      
-      CONFIG.requiredFields.forEach(fieldId => {
-        if (!validateField(fieldId)) {
-          isValid = false;
-        }
-      });
-      
-      return isValid;
-    }
-
-    // Handle form submission
-    async function handleSubmit(e) {
-      e.preventDefault();
-      
-      setStatus('Submitting...', 'muted');
-      submitBtn.disabled = true;
-      
-      // Check if form is open
-      if (!CONFIG.formOpen) {
-        setStatus('Submissions are currently closed.', 'error');
-        submitBtn.disabled = false;
-        return;
-      }
-      
-      // Validate form
-      if (!validateForm()) {
-        setStatus('Please fix the errors above.', 'error');
-        submitBtn.disabled = false;
-        return;
-      }
-      
-      try {
-        // Prepare form data
-        const formData = {
-          timestamp: new Date().toISOString(),
-          name: document.getElementById('name').value.trim(),
-          email: document.getElementById('email').value.trim(),
-          phone: document.getElementById('phone').value.trim() || 'Not provided',
-          age: document.getElementById('age').value,
-          country: document.getElementById('country').value,
-          rating: document.getElementById('rating').value,
-          subscription: document.getElementById('subscription').value,
-          feedback: document.getElementById('feedback').value.trim(),
-          source: document.getElementById('source').value,
-          terms: document.getElementById('terms').checked ? 'Agreed' : 'Not agreed'
-        };
+        const testLink = document.createElement('a');
+        testLink.href = ENDPOINT;
+        testLink.target = '_blank';
+        testLink.textContent = 'Test endpoint in new tab';
+        testLink.style.display = 'block';
+        testLink.style.margin = '10px 0';
+        testLink.style.padding = '10px';
+        testLink.style.backgroundColor = '#f0f0f0';
+        testLink.style.textDecoration = 'none';
         
-        // Send to Apps Script
-        const response = await fetch(ENDPOINT, {
+        const container = document.querySelector('.form-container');
+        if (container) {
+          container.appendChild(testLink);
+        }
+      }, 1000);
+      
+    } catch (error) {
+      debugLog('Endpoint test failed:', error);
+    }
+  }
+
+  // Set status message
+  function setStatus(text, cls = '') {
+    msg.textContent = text;
+    msg.className = cls;
+    debugLog(`Status: ${text}`);
+  }
+
+  // Validate form
+  function validateForm() {
+    let isValid = true;
+    
+    CONFIG.requiredFields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        const value = field.type === 'checkbox' ? field.checked : field.value.trim();
+        const isRequired = CONFIG.requiredFields.includes(fieldId);
+        
+        if (isRequired && !value) {
+          isValid = false;
+          const errorElement = document.getElementById(`${fieldId}Error`);
+          if (errorElement) {
+            errorElement.style.display = 'block';
+          }
+          field.classList.add('error');
+        } else {
+          field.classList.remove('error');
+          const errorElement = document.getElementById(`${fieldId}Error`);
+          if (errorElement) {
+            errorElement.style.display = 'none';
+          }
+        }
+      }
+    });
+    
+    return isValid;
+  }
+
+  // Handle form submission with detailed debugging
+  async function handleSubmit(e) {
+    e.preventDefault();
+    
+    debugLog('Form submission started');
+    setStatus('Submitting...', 'muted');
+    submitBtn.disabled = true;
+    
+    // Validate form
+    if (!validateForm()) {
+      setStatus('Please fix the errors above.', 'error');
+      submitBtn.disabled = false;
+      return;
+    }
+    
+    try {
+      // Prepare form data
+      const formData = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        age: document.getElementById('age').value,
+        country: document.getElementById('country').value,
+        rating: document.getElementById('rating').value,
+        subscription: document.getElementById('subscription').value,
+        feedback: document.getElementById('feedback').value.trim(),
+        source: document.getElementById('source').value,
+        terms: document.getElementById('terms').checked ? 'Agreed' : 'Not agreed'
+      };
+      
+      debugLog('Form data prepared:', formData);
+      
+      // Try different methods to see what works
+      let response;
+      let result;
+      
+      // METHOD 1: Try with JSON (most common)
+      debugLog('Trying METHOD 1: JSON POST');
+      try {
+        response = await fetch(ENDPOINT, {
           method: 'POST',
-          mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(formData)
         });
         
-        const result = await response.json();
+        debugLog('Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
         
-        if (result.ok) {
-          setStatus('✅ Thank you! Your response has been successfully recorded.', 'success');
-          form.reset();
-          updateCharacterCount(); // Reset character count
-        } else {
-          setStatus(`❌ Error: ${result.error || 'Submission failed'}`, 'error');
+        result = await response.json();
+        debugLog('Response JSON:', result);
+        
+      } catch (jsonError) {
+        debugLog('JSON method failed:', jsonError);
+        
+        // METHOD 2: Try with FormData (URL encoded)
+        debugLog('Trying METHOD 2: FormData POST');
+        const formDataEncoded = new URLSearchParams();
+        Object.keys(formData).forEach(key => {
+          formDataEncoded.append(key, formData[key]);
+        });
+        
+        response = await fetch(ENDPOINT, {
+          method: 'POST',
+          body: formDataEncoded
+        });
+        
+        result = await response.json();
+        debugLog('FormData response:', result);
+      }
+      
+      if (result && result.ok) {
+        setStatus('✅ Thank you! Your response has been saved.', 'success');
+        form.reset();
+        
+        // Show submission ID if available
+        if (result.submissionId) {
+          setTimeout(() => {
+            setStatus(`✅ Thank you! Your response has been saved. Reference ID: ${result.submissionId}`, 'success');
+          }, 1000);
         }
         
-      } catch (err) {
-        console.error('Submission error:', err);
-        setStatus('❌ Network error. Please check your connection and try again.', 'error');
-      } finally {
-        submitBtn.disabled = false;
+      } else {
+        setStatus(`❌ Error: ${result ? result.error : 'Unknown error'}`, 'error');
+        debugLog('Server returned error:', result);
       }
-    }
-
-    // Set status message
-    function setStatus(text, cls = '') {
-      msg.textContent = text;
-      msg.className = cls;
-    }
-
-    // Test endpoint connection
-    async function testEndpoint() {
-      try {
-        const response = await fetch(ENDPOINT);
-        const result = await response.json();
-        console.log('Endpoint connection test:', result);
-      } catch (err) {
-        console.warn('Could not test endpoint:', err.message);
-      }
-    }
-
-    // Admin functions
-    function clearForm() {
-      form.reset();
-      updateCharacterCount();
-      adminMessage.textContent = 'Form cleared';
-      setTimeout(() => adminMessage.textContent = '', 2000);
-    }
-
-    function testSubmission() {
-      // Auto-fill form with test data
-      document.getElementById('name').value = 'Test User';
-      document.getElementById('email').value = 'test@example.com';
-      document.getElementById('age').value = '26-35';
-      document.getElementById('country').value = 'US';
-      document.getElementById('rating').value = '4';
-      document.getElementById('subscription').value = 'premium';
-      document.getElementById('feedback').value = 'This is a test submission. The form is working correctly.';
-      document.getElementById('source').value = 'search';
-      document.getElementById('terms').checked = true;
       
-      updateCharacterCount();
-      adminMessage.textContent = 'Test data loaded. Click submit to test.';
+    } catch (err) {
+      debugLog('Submission error details:', {
+        name: err.name,
+        message: err.message,
+        stack: err.stack
+      });
+      
+      // Show more specific error messages
+      if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
+        setStatus('❌ Cannot connect to server. Please check:', 'error');
+        
+        // Create troubleshooting tips
+        setTimeout(() => {
+          const tips = document.createElement('div');
+          tips.style.marginTop = '10px';
+          tips.style.padding = '10px';
+          tips.style.backgroundColor = '#fff3cd';
+          tips.style.border = '1px solid #ffeaa7';
+          tips.style.borderRadius = '4px';
+          tips.innerHTML = `
+            <strong>Troubleshooting Tips:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px;">
+              <li>1. Check your internet connection</li>
+              <li>2. Make sure the endpoint URL is correct</li>
+              <li>3. Try opening the endpoint in a new tab: <a href="${ENDPOINT}" target="_blank">Test Link</a></li>
+              <li>4. Check if your Apps Script is deployed</li>
+              <li>5. Verify "Who has access" is set to "Anyone"</li>
+            </ul>
+          `;
+          msg.parentNode.appendChild(tips);
+        }, 500);
+        
+      } else if (err.name === 'SyntaxError') {
+        setStatus('❌ Server returned invalid response. Check Apps Script logs.', 'error');
+      } else {
+        setStatus(`❌ Error: ${err.message}`, 'error');
+      }
+      
+    } finally {
+      submitBtn.disabled = false;
     }
+  }
 
-    function viewAllSubmissions() {
-      // Open Google Sheet in new tab
-      const sheetUrl = 'https://docs.google.com/spreadsheets/d/1JyfrhYh2g-zelVNkNuZhBod-YNV8ihnawsxFa1Z0BWw/edit';
-      window.open(sheetUrl, '_blank');
+  // Add a direct test button for debugging
+  setTimeout(() => {
+    const debugDiv = document.createElement('div');
+    debugDiv.style.margin = '20px 0';
+    debugDiv.style.padding = '15px';
+    debugDiv.style.backgroundColor = '#e8f4f8';
+    debugDiv.style.border = '1px solid #b6e0f7';
+    debugDiv.style.borderRadius = '4px';
+    
+    debugDiv.innerHTML = `
+      <h4 style="margin-top: 0;">Debug Tools</h4>
+      <button onclick="runDebugTest()" style="padding: 8px 12px; margin-right: 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Test Endpoint
+      </button>
+      <button onclick="showFormData()" style="padding: 8px 12px; margin-right: 10px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Show Form Data
+      </button>
+      <button onclick="clearForm()" style="padding: 8px 12px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Clear Form
+      </button>
+      <div id="debugOutput" style="margin-top: 10px; font-family: monospace; font-size: 12px;"></div>
+    `;
+    
+    form.parentNode.insertBefore(debugDiv, form.nextSibling);
+  }, 2000);
+
+  // Debug functions
+  async function runDebugTest() {
+    const debugOutput = document.getElementById('debugOutput');
+    debugOutput.innerHTML = 'Testing endpoint...';
+    
+    try {
+      const response = await fetch(ENDPOINT + '?test=1');
+      const text = await response.text();
+      debugOutput.innerHTML = `<pre>${JSON.stringify({status: response.status, body: text}, null, 2)}</pre>`;
+    } catch (error) {
+      debugOutput.innerHTML = `<pre style="color: red;">Error: ${error.message}</pre>`;
     }
-
-    // Initialize on page load
-    window.addEventListener('DOMContentLoaded', initForm);
-  </script>
+  }
+  
+  function showFormData() {
+    const debugOutput = document.getElementById('debugOutput');
+    const formData = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      age: document.getElementById('age').value,
+      country: document.getElementById('country').value,
+      rating: document.getElementById('rating').value,
+      subscription: document.getElementById('subscription').value,
+      feedback: document.getElementById('feedback').value,
+      source: document.getElementById('source').value,
+      terms: document.getElementById('terms').checked
+    };
+    debugOutput.innerHTML = `<pre>${JSON.stringify(formData, null, 2)}</pre>`;
+  }
+  
+  function clearForm() {
+    form.reset();
+    setStatus('Form cleared', 'muted');
+  }
+</script>
 </body>
 </html>
