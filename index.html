@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Form</title>
+    <title>Survey Form with Admin Panel</title>
     <style>
         * {
             box-sizing: border-box;
@@ -15,18 +15,32 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
             background-color: #f5f5f5;
         }
         
-        .container {
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1600px;
+            margin: 0 auto;
             background: white;
-            padding: 30px;
-            border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        }
+        
+        .main-content {
+            flex: 3;
+            padding: 30px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+        
+        .sidebar {
+            flex: 1;
+            padding: 30px;
+            background: #f8f9fa;
+            min-width: 350px;
+            max-width: 400px;
+            overflow-y: auto;
         }
         
         h1 {
@@ -39,9 +53,16 @@
         
         h2 {
             color: #2c3e50;
-            margin: 25px 0 15px 0;
+            margin: 20px 0 15px 0;
             padding-bottom: 8px;
             border-bottom: 1px solid #eee;
+            font-size: 1.3em;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin: 15px 0 10px 0;
+            font-size: 1.1em;
         }
         
         .form-group {
@@ -166,11 +187,15 @@
             font-size: 14px;
         }
         
+        .btn-full {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
         .message {
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
-            text-align: center;
             font-weight: 600;
         }
         
@@ -210,29 +235,36 @@
         }
         
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             padding: 20px;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             background: #fafafa;
         }
         
-        .admin-panel {
+        .admin-section {
             background: #f8f9fa;
             border-left: 4px solid #3498db;
             padding: 20px;
-            margin-top: 30px;
             border-radius: 5px;
+            margin-bottom: 20px;
         }
         
-        .admin-panel h3 {
+        .admin-section h3 {
             color: #2c3e50;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-section h3 i {
+            font-size: 1.2em;
         }
         
         .admin-controls {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -255,79 +287,59 @@
             color: #721c24;
         }
         
-        .report-container {
-            display: none;
-            margin-top: 20px;
-        }
-        
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
         }
         
         .stat-card {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .stat-number {
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #3498db;
-            margin: 10px 0;
+            margin: 5px 0;
         }
         
         .stat-label {
             color: #666;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
         
-        .chart-container {
-            width: 100%;
-            height: 300px;
-            margin: 20px 0;
-        }
-        
-        .submissions-list {
-            max-height: 400px;
-            overflow-y: auto;
-            margin: 20px 0;
-        }
-        
-        .submission-item {
+        .quick-stats {
             background: white;
             padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border-left: 4px solid #3498db;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .submission-header {
+        .quick-stats-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
         
-        .submission-name {
+        .quick-stats-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quick-stats-label {
+            color: #666;
+        }
+        
+        .quick-stats-value {
             font-weight: bold;
             color: #2c3e50;
-        }
-        
-        .submission-time {
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .submission-details {
-            color: #555;
-            font-size: 0.95em;
-            line-height: 1.5;
         }
         
         .admin-login {
@@ -336,6 +348,10 @@
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
+        }
+        
+        .admin-login h3 {
+            margin-top: 0;
         }
         
         .hidden {
@@ -391,12 +407,77 @@
             display: block;
         }
         
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
+        .recent-activity {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-time {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .activity-text {
+            margin-top: 5px;
+            font-size: 0.95em;
+        }
+        
+        .admin-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .toggle-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toggle-btn.admin-active {
+            background: #e74c3c;
+        }
+        
+        @media (max-width: 1024px) {
+            .app-container {
+                flex-direction: column;
             }
             
-            .container {
+            .sidebar {
+                max-width: 100%;
+                border-top: 1px solid #e0e0e0;
+                border-right: none;
+            }
+            
+            .main-content {
+                border-right: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content, .sidebar {
                 padding: 15px;
             }
             
@@ -405,249 +486,290 @@
             }
             
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Admin Login Screen (shown by default) -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-form">
-            <h2 class="login-title">🔐 Admin Login</h2>
+    <!-- Admin Toggle Button -->
+    <div class="admin-toggle">
+        <button id="adminToggleBtn" class="toggle-btn" onclick="toggleAdminPanel()">
+            <i class="fas fa-user-shield"></i>
+            <span id="adminToggleText">Admin Mode: OFF</span>
+        </button>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center;">
+        <div class="login-form" style="max-width: 400px; width: 90%;">
+            <h2 class="login-title"><i class="fas fa-lock"></i> Admin Login</h2>
             <div class="form-group">
                 <label for="adminPassword">Password</label>
                 <input type="password" id="adminPassword" placeholder="Enter admin password">
             </div>
-            <button onclick="login()" style="width: 100%;">Login</button>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="login()" style="flex: 1;"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button onclick="closeLoginModal()" style="flex: 1; background: #95a5a6;"><i class="fas fa-times"></i> Cancel</button>
+            </div>
             <p style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9em;">
-                Or <a href="#" onclick="showPublicForm()" style="color: #3498db; text-decoration: none;">continue as public user</a>
+                Public users can use the form without login
             </p>
         </div>
     </div>
 
-    <!-- Main Application (hidden by default) -->
-    <div id="mainApp" class="hidden">
-        <!-- Tabs Navigation -->
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('form')">📝 Survey Form</div>
-            <div class="tab" onclick="switchTab('admin')">⚙️ Admin Panel</div>
-            <div class="tab" onclick="switchTab('reports')">📊 Reports</div>
-        </div>
-
-        <!-- Survey Form Tab -->
-        <div id="formTab" class="tab-content active">
-            <div class="container">
-                <h1>📝 Survey Form</h1>
-                
-                <div id="formStatusMessage" class="message info">
-                    <span id="formStatusText">Checking form status...</span>
-                    <span id="formStatusBadge" class="form-status status-open">OPEN</span>
+    <!-- Main Application -->
+    <div class="app-container">
+        <!-- Left Column: Survey Form -->
+        <div class="main-content">
+            <h1><i class="fas fa-edit"></i> Survey Form</h1>
+            
+            <div id="formStatusMessage" class="message info">
+                <span id="formStatusText">Checking form status...</span>
+                <span id="formStatusBadge" class="form-status status-open">OPEN</span>
+            </div>
+            
+            <form id="surveyForm" class="form-section">
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="name" class="required"><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    <div class="error-text" id="nameError">Please enter your name (2-100 characters)</div>
                 </div>
                 
-                <form id="surveyForm" class="form-section">
-                    <!-- Name -->
-                    <div class="form-group">
-                        <label for="name" class="required">Full Name</label>
-                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-                        <div class="error-text" id="nameError">Please enter your name (2-100 characters)</div>
-                    </div>
-                    
-                    <!-- Email -->
-                    <div class="form-group">
-                        <label for="email" class="required">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
-                        <div class="error-text" id="emailError">Please enter a valid email address</div>
-                    </div>
-                    
-                    <!-- Phone (Optional) -->
-                    <div class="form-group">
-                        <label for="phone">Phone Number (Optional)</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+1 (123) 456-7890">
-                    </div>
-                    
-                    <!-- Age Group -->
-                    <div class="form-group">
-                        <label for="age" class="required">Age Group</label>
-                        <select id="age" name="age" required>
-                            <option value="">Select your age group</option>
-                            <option value="under18">Under 18</option>
-                            <option value="18-25">18-25</option>
-                            <option value="26-35">26-35</option>
-                            <option value="36-50">36-50</option>
-                            <option value="51-65">51-65</option>
-                            <option value="over65">Over 65</option>
-                        </select>
-                        <div class="error-text" id="ageError">Please select your age group</div>
-                    </div>
-                    
-                    <!-- Country -->
-                    <div class="form-group">
-                        <label for="country" class="required">Country</label>
-                        <select id="country" name="country" required>
-                            <option value="">Select your country</option>
-                            <option value="US">United States</option>
-                            <option value="UK">United Kingdom</option>
-                            <option value="CA">Canada</option>
-                            <option value="AU">Australia</option>
-                            <option value="IN">India</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <div class="error-text" id="countryError">Please select your country</div>
-                    </div>
-                    
-                    <!-- Rating -->
-                    <div class="form-group">
-                        <label for="rating" class="required">Service Rating</label>
-                        <select id="rating" name="rating" required>
-                            <option value="">Select a rating</option>
-                            <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-                            <option value="4">⭐⭐⭐⭐ - Very Good</option>
-                            <option value="3">⭐⭐⭐ - Good</option>
-                            <option value="2">⭐⭐ - Fair</option>
-                            <option value="1">⭐ - Poor</option>
-                        </select>
-                        <div class="error-text" id="ratingError">Please select a rating</div>
-                    </div>
-                    
-                    <!-- Subscription -->
-                    <div class="form-group">
-                        <label for="subscription" class="required">Subscription Type</label>
-                        <select id="subscription" name="subscription" required>
-                            <option value="">Select subscription type</option>
-                            <option value="free">Free</option>
-                            <option value="basic">Basic ($9.99/month)</option>
-                            <option value="premium">Premium ($19.99/month)</option>
-                            <option value="enterprise">Enterprise (Custom)</option>
-                        </select>
-                        <div class="error-text" id="subscriptionError">Please select subscription type</div>
-                    </div>
-                    
-                    <!-- Feedback -->
-                    <div class="form-group">
-                        <label for="feedback" class="required">Your Feedback</label>
-                        <textarea id="feedback" name="feedback" placeholder="Please share your detailed feedback here..." maxlength="500" required></textarea>
-                        <div class="char-count" id="charCount">0/500 characters</div>
-                        <div class="error-text" id="feedbackError">Please enter feedback (10-500 characters)</div>
-                    </div>
-                    
-                    <!-- Source -->
-                    <div class="form-group">
-                        <label for="source" class="required">How did you hear about us?</label>
-                        <select id="source" name="source" required>
-                            <option value="">Select an option</option>
-                            <option value="search">Search Engine</option>
-                            <option value="social">Social Media</option>
-                            <option value="friend">Friend/Word of Mouth</option>
-                            <option value="ad">Advertisement</option>
-                            <option value="email">Email Newsletter</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <div class="error-text" id="sourceError">Please tell us how you heard about us</div>
-                    </div>
-                    
-                    <!-- Terms -->
-                    <div class="form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms" class="required">I agree to the Terms and Conditions</label>
-                        </div>
-                        <div class="error-text" id="termsError">You must agree to the terms</div>
-                    </div>
-                    
-                    <button type="submit" id="submitBtn" style="width: 100%; margin: 0;">Submit Survey</button>
-                </form>
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email" class="required"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    <div class="error-text" id="emailError">Please enter a valid email address</div>
+                </div>
                 
-                <div id="responseMessage" class="message"></div>
-            </div>
+                <!-- Phone (Optional) -->
+                <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone Number (Optional)</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+1 (123) 456-7890">
+                </div>
+                
+                <!-- Age Group -->
+                <div class="form-group">
+                    <label for="age" class="required"><i class="fas fa-user-friends"></i> Age Group</label>
+                    <select id="age" name="age" required>
+                        <option value="">Select your age group</option>
+                        <option value="under18">Under 18</option>
+                        <option value="18-25">18-25</option>
+                        <option value="26-35">26-35</option>
+                        <option value="36-50">36-50</option>
+                        <option value="51-65">51-65</option>
+                        <option value="over65">Over 65</option>
+                    </select>
+                    <div class="error-text" id="ageError">Please select your age group</div>
+                </div>
+                
+                <!-- Country -->
+                <div class="form-group">
+                    <label for="country" class="required"><i class="fas fa-globe"></i> Country</label>
+                    <select id="country" name="country" required>
+                        <option value="">Select your country</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                        <option value="IN">India</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="error-text" id="countryError">Please select your country</div>
+                </div>
+                
+                <!-- Rating -->
+                <div class="form-group">
+                    <label for="rating" class="required"><i class="fas fa-star"></i> Service Rating</label>
+                    <select id="rating" name="rating" required>
+                        <option value="">Select a rating</option>
+                        <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ - Very Good</option>
+                        <option value="3">⭐⭐⭐ - Good</option>
+                        <option value="2">⭐⭐ - Fair</option>
+                        <option value="1">⭐ - Poor</option>
+                    </select>
+                    <div class="error-text" id="ratingError">Please select a rating</div>
+                </div>
+                
+                <!-- Subscription -->
+                <div class="form-group">
+                    <label for="subscription" class="required"><i class="fas fa-crown"></i> Subscription Type</label>
+                    <select id="subscription" name="subscription" required>
+                        <option value="">Select subscription type</option>
+                        <option value="free">Free</option>
+                        <option value="basic">Basic ($9.99/month)</option>
+                        <option value="premium">Premium ($19.99/month)</option>
+                        <option value="enterprise">Enterprise (Custom)</option>
+                    </select>
+                    <div class="error-text" id="subscriptionError">Please select subscription type</div>
+                </div>
+                
+                <!-- Feedback -->
+                <div class="form-group">
+                    <label for="feedback" class="required"><i class="fas fa-comment"></i> Your Feedback</label>
+                    <textarea id="feedback" name="feedback" placeholder="Please share your detailed feedback here..." maxlength="500" required></textarea>
+                    <div class="char-count" id="charCount">0/500 characters</div>
+                    <div class="error-text" id="feedbackError">Please enter feedback (10-500 characters)</div>
+                </div>
+                
+                <!-- Source -->
+                <div class="form-group">
+                    <label for="source" class="required"><i class="fas fa-bullhorn"></i> How did you hear about us?</label>
+                    <select id="source" name="source" required>
+                        <option value="">Select an option</option>
+                        <option value="search">Search Engine</option>
+                        <option value="social">Social Media</option>
+                        <option value="friend">Friend/Word of Mouth</option>
+                        <option value="ad">Advertisement</option>
+                        <option value="email">Email Newsletter</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="error-text" id="sourceError">Please tell us how you heard about us</div>
+                </div>
+                
+                <!-- Terms -->
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms" class="required"><i class="fas fa-file-contract"></i> I agree to the Terms and Conditions</label>
+                    </div>
+                    <div class="error-text" id="termsError">You must agree to the terms</div>
+                </div>
+                
+                <button type="submit" id="submitBtn" class="btn-full">
+                    <i class="fas fa-paper-plane"></i> Submit Survey
+                </button>
+            </form>
+            
+            <div id="responseMessage" class="message"></div>
         </div>
-
-        <!-- Admin Panel Tab -->
-        <div id="adminTab" class="tab-content">
-            <div class="container">
-                <h1>⚙️ Admin Panel</h1>
-                
-                <div class="admin-panel">
-                    <h3>Form Status Control</h3>
-                    <div class="admin-controls">
-                        <button class="btn-success" onclick="setFormStatus(true)">
-                            ✅ Open Submissions
-                        </button>
-                        <button class="btn-danger" onclick="setFormStatus(false)">
-                            ❌ Close Submissions
-                        </button>
-                        <button class="btn-warning" onclick="clearAllData()">
-                            🗑️ Clear All Data
-                        </button>
-                        <button onclick="exportToCSV()">
-                            📥 Export Data
-                        </button>
-                    </div>
-                    
-                    <div class="form-section">
-                        <h3>Form Status</h3>
-                        <p>Current Status: <strong id="currentFormStatus">Checking...</strong></p>
-                        <p>Submissions Received: <strong id="totalSubmissions">0</strong></p>
-                        <p>Last Submission: <strong id="lastSubmissionTime">Never</strong></p>
-                    </div>
-                    
-                    <div class="form-section">
-                        <h3>Admin Settings</h3>
-                        <div class="form-group">
-                            <label for="newPassword">Change Admin Password</label>
-                            <input type="password" id="newPassword" placeholder="Enter new password">
-                            <button class="btn-small" onclick="changePassword()">Change Password</button>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminMessage">Custom Closed Message</label>
-                            <textarea id="adminMessage" placeholder="Custom message when form is closed..."></textarea>
-                            <button class="btn-small" onclick="saveCustomMessage()">Save Message</button>
-                        </div>
-                    </div>
-                    
-                    <div id="adminMessageContainer" class="message"></div>
+        
+        <!-- Right Column: Admin Panel -->
+        <div class="sidebar" id="adminSidebar">
+            <h1><i class="fas fa-user-shield"></i> Admin Panel</h1>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <h3><i class="fas fa-chart-line"></i> Quick Stats</h3>
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">Form Status:</span>
+                    <span class="quick-stats-value" id="currentFormStatus">Checking...</span>
+                </div>
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">Total Submissions:</span>
+                    <span class="quick-stats-value" id="totalSubmissions">0</span>
+                </div>
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">Today's Submissions:</span>
+                    <span class="quick-stats-value" id="todaySubmissions">0</span>
+                </div>
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">Average Rating:</span>
+                    <span class="quick-stats-value" id="averageRating">0</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Reports Tab -->
-        <div id="reportsTab" class="tab-content">
-            <div class="container">
-                <h1>📊 Data Reports</h1>
-                
+            
+            <!-- Form Control -->
+            <div class="admin-section">
+                <h3><i class="fas fa-toggle-on"></i> Form Control</h3>
                 <div class="admin-controls">
-                    <button onclick="loadReport()">🔄 Refresh Report</button>
-                    <button onclick="generateSummary()">📋 Generate Summary</button>
-                    <button onclick="exportReport()">📈 Export Report</button>
-                    <button class="btn-danger btn-small" onclick="clearReportCache()">🗑️ Clear Cache</button>
-                </div>
-                
-                <div id="reportContainer" class="report-container">
-                    <!-- Reports will be loaded here -->
-                </div>
-                
-                <div id="loadingReport" class="message info">
-                    Loading report data...
+                    <button class="btn-success btn-full" onclick="setFormStatus(true)">
+                        <i class="fas fa-lock-open"></i> Open Submissions
+                    </button>
+                    <button class="btn-danger btn-full" onclick="setFormStatus(false)">
+                        <i class="fas fa-lock"></i> Close Submissions
+                    </button>
+                    <button onclick="exportToCSV()" class="btn-full">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                    <button class="btn-warning btn-full" onclick="clearAllData()">
+                        <i class="fas fa-trash"></i> Clear All Data
+                    </button>
                 </div>
             </div>
+            
+            <!-- Real-time Updates -->
+            <div class="admin-section">
+                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                <div class="recent-activity" id="recentActivity">
+                    <div class="activity-item">
+                        <div class="activity-time">Just now</div>
+                        <div class="activity-text">Admin panel loaded</div>
+                    </div>
+                </div>
+                <button onclick="loadRecentActivity()" class="btn-small" style="width: 100%; margin-top: 10px;">
+                    <i class="fas fa-sync-alt"></i> Refresh Activity
+                </button>
+            </div>
+            
+            <!-- Admin Settings -->
+            <div class="admin-section">
+                <h3><i class="fas fa-cog"></i> Settings</h3>
+                <div class="form-group">
+                    <label for="adminMessage"><i class="fas fa-comment-alt"></i> Custom Closed Message</label>
+                    <textarea id="adminMessage" placeholder="Message shown when form is closed..." rows="2"></textarea>
+                </div>
+                <button onclick="saveCustomMessage()" class="btn-small" style="width: 100%;">
+                    <i class="fas fa-save"></i> Save Message
+                </button>
+                
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="newPassword"><i class="fas fa-key"></i> Change Password</label>
+                    <input type="password" id="newPassword" placeholder="New password">
+                </div>
+                <button onclick="changePassword()" class="btn-small" style="width: 100%;">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+            </div>
+            
+            <!-- Admin Actions -->
+            <div class="admin-section">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button onclick="testForm()" class="btn-small">
+                        <i class="fas fa-vial"></i> Test Form
+                    </button>
+                    <button onclick="viewSheet()" class="btn-small">
+                        <i class="fas fa-table"></i> View Sheet
+                    </button>
+                    <button onclick="loadReport()" class="btn-small">
+                        <i class="fas fa-chart-bar"></i> View Report
+                    </button>
+                    <button onclick="logout()" class="btn-small btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Admin Messages -->
+            <div id="adminMessageContainer" class="message info" style="margin-top: 20px;"></div>
         </div>
     </div>
 
     <script>
         // ================= CONFIGURATION =================
-        // ⚠️ IMPORTANT: Replace with your Apps Script Web App URL
         const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
-        
-        // Admin password (change this to your preferred password)
-        const ADMIN_PASSWORD = "admin123"; // You can change this
-        
+        const ADMIN_PASSWORD = "admin123";
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/1JyfrhYh2g-zelVNkNuZhBod-YNV8ihnawsxFa1Z0BWw/edit";
+
         // ================= APPLICATION STATE =================
         let isAdmin = false;
-        let formStatus = true; // true = open, false = closed
-        
+        let formStatus = true;
+        let recentActivities = [];
+
         // ================= DOM ELEMENTS =================
-        const loginScreen = document.getElementById('loginScreen');
-        const mainApp = document.getElementById('mainApp');
+        const loginModal = document.getElementById('loginModal');
+        const adminToggleBtn = document.getElementById('adminToggleBtn');
+        const adminToggleText = document.getElementById('adminToggleText');
         const form = document.getElementById('surveyForm');
         const submitBtn = document.getElementById('submitBtn');
         const formStatusMessage = document.getElementById('formStatusMessage');
@@ -656,28 +778,17 @@
         const responseMessage = document.getElementById('responseMessage');
         const charCount = document.getElementById('charCount');
         const feedback = document.getElementById('feedback');
+        const adminSidebar = document.getElementById('adminSidebar');
         const currentFormStatus = document.getElementById('currentFormStatus');
         const totalSubmissions = document.getElementById('totalSubmissions');
-        const lastSubmissionTime = document.getElementById('lastSubmissionTime');
-        const reportContainer = document.getElementById('reportContainer');
-        const loadingReport = document.getElementById('loadingReport');
+        const todaySubmissions = document.getElementById('todaySubmissions');
+        const averageRating = document.getElementById('averageRating');
+        const recentActivity = document.getElementById('recentActivity');
+        const adminMessageContainer = document.getElementById('adminMessageContainer');
 
         // ================= INITIALIZATION =================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Survey Form Application Initialized');
-            
-            // Check URL parameters for admin mode
-            const urlParams = new URLSearchParams(window.location.search);
-            const adminParam = urlParams.get('admin');
-            
-            if (adminParam === 'true') {
-                // Show admin login
-                loginScreen.classList.remove('hidden');
-                mainApp.classList.add('hidden');
-            } else {
-                // Show public form directly
-                showPublicForm();
-            }
+            console.log('Survey Application Initialized');
             
             // Setup character counter
             feedback.addEventListener('input', updateCharCount);
@@ -691,74 +802,85 @@
             
             // Load initial form status
             loadFormStatus();
+            loadQuickStats();
+            
+            // Add initial activity
+            addActivity('Application loaded successfully', 'info');
         });
 
-        // ================= AUTHENTICATION =================
+        // ================= ADMIN PANEL CONTROLS =================
+        function toggleAdminPanel() {
+            if (isAdmin) {
+                // If already admin, just toggle sidebar visibility
+                adminSidebar.classList.toggle('hidden');
+                adminToggleBtn.classList.toggle('admin-active');
+                adminToggleText.textContent = adminSidebar.classList.contains('hidden') 
+                    ? 'Admin Mode: ON (Hidden)' 
+                    : 'Admin Mode: ON';
+            } else {
+                // If not admin, show login modal
+                showLoginModal();
+            }
+        }
+        
+        function showLoginModal() {
+            loginModal.classList.remove('hidden');
+            document.getElementById('adminPassword').focus();
+        }
+        
+        function closeLoginModal() {
+            loginModal.classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+        
         function login() {
             const password = document.getElementById('adminPassword').value;
             
             if (password === ADMIN_PASSWORD) {
                 isAdmin = true;
-                loginScreen.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                showMessage('✅ Admin login successful', 'success', responseMessage);
+                adminSidebar.classList.remove('hidden');
+                adminToggleBtn.classList.add('admin-active');
+                adminToggleText.textContent = 'Admin Mode: ON';
+                closeLoginModal();
+                showMessage('✅ Admin login successful', 'success', adminMessageContainer);
+                addActivity('Admin logged in successfully', 'success');
+                
+                // Load admin data
                 loadFormStatus();
-                loadReport();
+                loadQuickStats();
+                loadRecentActivity();
             } else {
-                showMessage('❌ Incorrect password', 'error', responseMessage);
+                showMessage('❌ Incorrect password', 'error', adminMessageContainer);
+                addActivity('Failed admin login attempt', 'error');
             }
         }
         
-        function showPublicForm() {
+        function logout() {
             isAdmin = false;
-            loginScreen.classList.add('hidden');
-            mainApp.classList.remove('hidden');
-            switchTab('form');
-            loadFormStatus();
+            adminSidebar.classList.add('hidden');
+            adminToggleBtn.classList.remove('admin-active');
+            adminToggleText.textContent = 'Admin Mode: OFF';
+            showMessage('✅ Logged out successfully', 'success', responseMessage);
+            addActivity('Admin logged out', 'info');
         }
         
         function changePassword() {
             const newPassword = document.getElementById('newPassword').value;
             if (newPassword && newPassword.length >= 4) {
-                // In a real app, you'd send this to the server
-                // For now, we'll just show a message
-                showMessage('⚠️ In a real application, this would change the server password', 'warning', document.getElementById('adminMessageContainer'));
+                // In real app, send to server
+                showMessage('⚠️ Password change simulated (would update server in production)', 'warning', adminMessageContainer);
                 document.getElementById('newPassword').value = '';
+                addActivity('Admin password change requested', 'warning');
             } else {
-                showMessage('❌ Password must be at least 4 characters', 'error', document.getElementById('adminMessageContainer'));
+                showMessage('❌ Password must be at least 4 characters', 'error', adminMessageContainer);
             }
         }
         
         function saveCustomMessage() {
             const message = document.getElementById('adminMessage').value;
             localStorage.setItem('customClosedMessage', message);
-            showMessage('✅ Custom message saved', 'success', document.getElementById('adminMessageContainer'));
-        }
-
-        // ================= TAB MANAGEMENT =================
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Deactivate all tab buttons
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            
-            // Activate selected tab button
-            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
-            
-            // Load data if needed
-            if (tabName === 'reports') {
-                loadReport();
-            } else if (tabName === 'admin') {
-                loadFormStatus();
-            }
+            showMessage('✅ Custom message saved', 'success', adminMessageContainer);
+            addActivity('Custom closed message saved', 'success');
         }
 
         // ================= FORM STATUS MANAGEMENT =================
@@ -774,13 +896,10 @@
                     if (isAdmin) {
                         currentFormStatus.textContent = formStatus ? 'OPEN' : 'CLOSED';
                         currentFormStatus.style.color = formStatus ? '#27ae60' : '#e74c3c';
-                        totalSubmissions.textContent = data.totalSubmissions || 0;
-                        lastSubmissionTime.textContent = data.lastSubmission || 'Never';
                     }
                 }
             } catch (error) {
                 console.error('Error loading form status:', error);
-                // Use default status
                 updateFormStatusUI();
             }
         }
@@ -791,7 +910,6 @@
                 formStatusBadge.textContent = 'OPEN';
                 formStatusBadge.className = 'form-status status-open';
                 formStatusMessage.className = 'message success';
-                form.style.opacity = '1';
                 submitBtn.disabled = false;
             } else {
                 const customMessage = localStorage.getItem('customClosedMessage') || 'Form submissions are currently closed.';
@@ -799,14 +917,13 @@
                 formStatusBadge.textContent = 'CLOSED';
                 formStatusBadge.className = 'form-status status-closed';
                 formStatusMessage.className = 'message error';
-                form.style.opacity = '0.7';
                 submitBtn.disabled = true;
             }
         }
         
         async function setFormStatus(isOpen) {
             if (!isAdmin) {
-                showMessage('❌ Admin access required', 'error', document.getElementById('adminMessageContainer'));
+                showMessage('❌ Admin access required', 'error', adminMessageContainer);
                 return;
             }
             
@@ -817,13 +934,98 @@
                 if (data.ok) {
                     formStatus = isOpen;
                     updateFormStatusUI();
-                    showMessage('✅ Form status updated successfully', 'success', document.getElementById('adminMessageContainer'));
+                    showMessage('✅ Form status updated successfully', 'success', adminMessageContainer);
+                    addActivity(`Form ${isOpen ? 'opened' : 'closed'} for submissions`, 'success');
+                    
+                    // Refresh stats
+                    loadQuickStats();
                 } else {
-                    showMessage('❌ ' + (data.error || 'Failed to update status'), 'error', document.getElementById('adminMessageContainer'));
+                    showMessage('❌ ' + (data.error || 'Failed to update status'), 'error', adminMessageContainer);
                 }
             } catch (error) {
                 console.error('Error setting form status:', error);
-                showMessage('❌ Network error', 'error', document.getElementById('adminMessageContainer'));
+                showMessage('❌ Network error', 'error', adminMessageContainer);
+            }
+        }
+
+        // ================= STATISTICS & REPORTS =================
+        async function loadQuickStats() {
+            if (!isAdmin) return;
+            
+            try {
+                const response = await fetch(ENDPOINT + '?action=getStats&admin=true');
+                const data = await response.json();
+                
+                if (data.ok && data.stats) {
+                    const stats = data.stats;
+                    totalSubmissions.textContent = stats.totalSubmissions || 0;
+                    todaySubmissions.textContent = stats.todaySubmissions || 0;
+                    averageRating.textContent = stats.averageRating ? stats.averageRating.toFixed(1) : '0';
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+        
+        async function loadRecentActivity() {
+            if (!isAdmin) return;
+            
+            try {
+                const response = await fetch(ENDPOINT + '?action=getRecent&admin=true&limit=5');
+                const data = await response.json();
+                
+                if (data.ok && data.recent) {
+                    updateRecentActivityUI(data.recent);
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                // Use local activities as fallback
+                updateRecentActivityUI(recentActivities.slice(-5).reverse());
+            }
+        }
+        
+        function updateRecentActivityUI(activities) {
+            recentActivity.innerHTML = '';
+            
+            if (!activities || activities.length === 0) {
+                recentActivity.innerHTML = '<div class="activity-item"><em>No recent activity</em></div>';
+                return;
+            }
+            
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-time">${activity.time || 'Just now'}</div>
+                    <div class="activity-text">${activity.text || 'Activity'}</div>
+                `;
+                recentActivity.appendChild(item);
+            });
+        }
+        
+        function addActivity(text, type = 'info') {
+            const activity = {
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                text: text,
+                type: type
+            };
+            
+            recentActivities.push(activity);
+            
+            if (isAdmin && !adminSidebar.classList.contains('hidden')) {
+                // Update UI if admin panel is visible
+                const items = recentActivity.getElementsByClassName('activity-item');
+                if (items.length >= 5) {
+                    recentActivity.removeChild(items[0]);
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-time">${activity.time}</div>
+                    <div class="activity-text">${activity.text}</div>
+                `;
+                recentActivity.appendChild(item);
             }
         }
 
@@ -942,7 +1144,7 @@
             
             // Disable submit button
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             
             // Collect form data
             const formData = {
@@ -976,6 +1178,7 @@
                 
                 if (result.ok) {
                     showMessage('✅ Thank you! Your response has been successfully submitted.', 'success', responseMessage);
+                    addActivity(`New submission: ${formData.name} (${formData.email})`, 'success');
                     
                     // Reset form
                     form.reset();
@@ -989,23 +1192,25 @@
                         el.style.display = 'none';
                     });
                     
-                    // Refresh admin data
+                    // Refresh admin stats
                     if (isAdmin) {
-                        loadFormStatus();
-                        loadReport();
+                        loadQuickStats();
+                        loadRecentActivity();
                     }
                     
                 } else {
                     showMessage(`❌ Error: ${result.error || 'Submission failed'}`, 'error', responseMessage);
+                    addActivity(`Failed submission: ${formData.error || 'Unknown error'}`, 'error');
                 }
                 
             } catch (error) {
                 console.error('Submission error:', error);
                 showMessage('❌ Network error. Please check your connection and try again.', 'error', responseMessage);
+                addActivity('Network error during submission', 'error');
             } finally {
                 // Re-enable submit button
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Survey';
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Survey';
             }
         }
         
@@ -1022,77 +1227,169 @@
             }
         }
 
-        // ================= REPORTS & ANALYTICS =================
-        async function loadReport() {
+        // ================= ADMIN UTILITY FUNCTIONS =================
+        async function exportToCSV() {
             if (!isAdmin) {
-                reportContainer.innerHTML = '<div class="message warning">Admin access required to view reports</div>';
-                reportContainer.style.display = 'block';
-                loadingReport.style.display = 'none';
+                showMessage('❌ Admin access required', 'error', adminMessageContainer);
                 return;
             }
             
             try {
-                loadingReport.style.display = 'block';
-                reportContainer.style.display = 'none';
-                
-                const response = await fetch(ENDPOINT + '?action=getReport&admin=true');
+                showMessage('⏳ Generating CSV export...', 'info', adminMessageContainer);
+                const response = await fetch(ENDPOINT + '?action=export&admin=true&format=csv');
                 const data = await response.json();
                 
-                if (data.ok) {
-                    renderReport(data.report);
+                if (data.ok && data.downloadUrl) {
+                    window.open(data.downloadUrl, '_blank');
+                    showMessage('✅ CSV export ready', 'success', adminMessageContainer);
+                    addActivity('CSV export generated', 'success');
                 } else {
-                    reportContainer.innerHTML = `<div class="message error">Error loading report: ${data.error || 'Unknown error'}</div>`;
-                    reportContainer.style.display = 'block';
+                    showMessage('❌ ' + (data.error || 'Export failed'), 'error', adminMessageContainer);
                 }
             } catch (error) {
-                console.error('Error loading report:', error);
-                reportContainer.innerHTML = '<div class="message error">Failed to load report data</div>';
-                reportContainer.style.display = 'block';
-            } finally {
-                loadingReport.style.display = 'none';
+                console.error('Export error:', error);
+                showMessage('❌ Export failed', 'error', adminMessageContainer);
             }
         }
         
-        function renderReport(reportData) {
-            if (!reportData || !reportData.stats) {
-                reportContainer.innerHTML = '<div class="message info">No data available yet</div>';
-                reportContainer.style.display = 'block';
+        async function clearAllData() {
+            if (!isAdmin) {
+                showMessage('❌ Admin access required', 'error', adminMessageContainer);
                 return;
             }
             
-            const stats = reportData.stats;
-            const recentSubmissions = reportData.recentSubmissions || [];
+            if (!confirm('⚠️ WARNING: This will delete ALL submission data. This action cannot be undone. Continue?')) {
+                return;
+            }
             
-            let html = `
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.totalSubmissions || 0}</div>
-                        <div class="stat-label">Total Submissions</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.averageRating || 0}</div>
-                        <div class="stat-label">Avg. Rating</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.todaySubmissions || 0}</div>
-                        <div class="stat-label">Today's Submissions</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.uniqueCountries || 0}</div>
-                        <div class="stat-label">Countries</div>
-                    </div>
-                </div>
+            try {
+                showMessage('⏳ Clearing all data...', 'warning', adminMessageContainer);
+                const response = await fetch(ENDPOINT + '?action=clearAll&admin=true');
+                const data = await response.json();
                 
-                <h2>📈 Rating Distribution</h2>
-                <div class="form-section">
-            `;
+                if (data.ok) {
+                    showMessage('✅ All data cleared successfully', 'success', adminMessageContainer);
+                    addActivity('All submission data cleared', 'warning');
+                    loadQuickStats();
+                } else {
+                    showMessage('❌ ' + (data.error || 'Clear failed'), 'error', adminMessageContainer);
+                }
+            } catch (error) {
+                console.error('Clear error:', error);
+                showMessage('❌ Clear failed', 'error', adminMessageContainer);
+            }
+        }
+        
+        function testForm() {
+            // Auto-fill form with test data
+            document.getElementById('name').value = 'Test User ' + new Date().getTime();
+            document.getElementById('email').value = 'test' + new Date().getTime() + '@example.com';
+            document.getElementById('phone').value = '+1 (555) 123-4567';
+            document.getElementById('age').value = '26-35';
+            document.getElementById('country').value = 'US';
+            document.getElementById('rating').value = '4';
+            document.getElementById('subscription').value = 'premium';
+            document.getElementById('feedback').value = 'This is a test submission to verify the form is working correctly. The system appears to be functioning properly.';
+            document.getElementById('source').value = 'search';
+            document.getElementById('terms').checked = true;
             
-            // Rating distribution
-            if (stats.ratingDistribution) {
-                html += '<div style="margin: 20px 0;">';
-                for (let i = 5; i >= 1; i--) {
-                    const count = stats.ratingDistribution[i] || 0;
-                    const percentage = stats.totalSubmissions ? Math.round((count / stats.totalSubmissions) * 100) : 0;
-                    html += `
-                        <div style="margin: 10px 0;">
-                           
+            updateCharCount();
+            showMessage('✅ Test data loaded. Click submit to test.', 'success', adminMessageContainer);
+            addActivity('Test data loaded into form', 'info');
+        }
+        
+        function viewSheet() {
+            window.open(SHEET_URL, '_blank');
+            addActivity('Google Sheet opened in new tab', 'info');
+        }
+        
+        async function loadReport() {
+            if (!isAdmin) {
+                showMessage('❌ Admin access required', 'error', adminMessageContainer);
+                return;
+            }
+            
+            try {
+                showMessage('⏳ Loading detailed report...', 'info', adminMessageContainer);
+                const response = await fetch(ENDPOINT + '?action=getReport&admin=true');
+                const data = await response.json();
+                
+                if (data.ok && data.report) {
+                    // Open report in new window
+                    const reportWindow = window.open('', '_blank');
+                    reportWindow.document.write(`
+                        <html>
+                        <head>
+                            <title>Survey Report</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; padding: 20px; }
+                                h1 { color: #2c3e50; }
+                                .stat { margin: 10px 0; padding: 10px; background: #f5f5f5; }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>📊 Survey Report</h1>
+                            <p>Generated: ${new Date().toLocaleString()}</p>
+                            <div id="report"></div>
+                            <script>
+                                const report = ${JSON.stringify(data.report)};
+                                document.getElementById('report').innerHTML = JSON.stringify(report, null, 2);
+                            <\/script>
+                        </body>
+                        </html>
+                    `);
+                    showMessage('✅ Report loaded in new tab', 'success', adminMessageContainer);
+                    addActivity('Detailed report generated', 'success');
+                } else {
+                    showMessage('❌ ' + (data.error || 'Report failed'), 'error', adminMessageContainer);
+                }
+            } catch (error) {
+                console.error('Report error:', error);
+                showMessage('❌ Report failed', 'error', adminMessageContainer);
+            }
+        }
+
+        // ================= HELPER FUNCTIONS =================
+        function showMessage(text, type, container) {
+            if (!container) return;
+            
+            container.textContent = text;
+            container.className = `message ${type}`;
+            container.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    container.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // ================= EVENT LISTENERS =================
+        document.addEventListener('keydown', function(event) {
+            // Close login modal with Escape key
+            if (event.key === 'Escape' && !loginModal.classList.contains('hidden')) {
+                closeLoginModal();
+            }
+            
+            // Admin shortcuts (Ctrl+Shift+A)
+            if (event.ctrlKey && event.shiftKey && event.key === 'A') {
+                event.preventDefault();
+                toggleAdminPanel();
+            }
+        });
+        
+        // Load recent activity every 30 seconds if admin is logged in
+        setInterval(() => {
+            if (isAdmin && !adminSidebar.classList.contains('hidden')) {
+                loadRecentActivity();
+            }
+        }, 30000);
+
+        // Initial activity load
+        setTimeout(() => {
+            loadRecentActivity();
+        }, 1000);
+    </script>
+</body>
+</html>
