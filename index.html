@@ -1,217 +1,692 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Form Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 { color: #333; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-        button:hover { background: #45a049; }
-        .message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            display: none;
-        }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enhanced Survey Form</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    body { 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+      margin: 2rem; 
+      line-height: 1.5;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .form-container {
+      border: 2px solid #4CAF50;
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      background-color: #f9f9f9;
+    }
+    
+    .closed-message {
+      border: 2px solid #f44336;
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      background-color: #ffebee;
+      display: none;
+    }
+    
+    form { 
+      display: grid; 
+      gap: 1.2rem;
+    }
+    
+    .form-group { 
+      display: grid; 
+      gap: 0.5rem;
+    }
+    
+    label { 
+      font-weight: 600; 
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .required::after {
+      content: " *";
+      color: #f44336;
+    }
+    
+    input, select, textarea, button { 
+      font-size: 1rem; 
+      padding: 0.75rem; 
+      width: 100%; 
+      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid #4CAF50;
+      border-color: #4CAF50;
+    }
+    
+    input.error, select.error, textarea.error {
+      border-color: #f44336;
+      background-color: #ffebee;
+    }
+    
+    .error-message {
+      color: #f44336;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    
+    .character-count {
+      font-size: 0.875rem;
+      color: #666;
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+    
+    .character-count.warning {
+      color: #ff9800;
+    }
+    
+    .character-count.error {
+      color: #f44336;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: auto;
+      margin: 1rem 0;
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: #45a049;
+    }
+    
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .success { 
+      color: #4CAF50; 
+      font-weight: bold;
+    }
+    
+    .error { 
+      color: #f44336; 
+      font-weight: bold;
+    }
+    
+    .muted { 
+      opacity: 0.85; 
+      font-size: 0.9rem;
+    }
+    
+    .admin-panel {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #e8f5e9;
+      border-radius: 8px;
+      border: 1px solid #4CAF50;
+    }
+    
+    .admin-panel h3 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+    
+    .admin-controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .admin-btn {
+      padding: 0.5rem 1rem;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .admin-btn.close-btn {
+      background-color: #f44336;
+    }
+    
+    .admin-btn.open-btn {
+      background-color: #4CAF50;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1e1e1e;
+        color: #ffffff;
+      }
+      
+      .form-container {
+        background-color: #2d2d2d;
+        border-color: #4CAF50;
+      }
+      
+      .closed-message {
+        background-color: #3c1f1f;
+        border-color: #f44336;
+      }
+      
+      input, select, textarea {
+        background-color: #3c3c3c;
+        color: white;
+        border-color: #555;
+      }
+      
+      .admin-panel {
+        background-color: #1c331d;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Simple Survey Form</h1>
-        <form id="surveyForm">
-            <div class="form-group">
-                <label>Name *</label>
-                <input type="text" name="name" required value="John Doe">
-            </div>
-            <div class="form-group">
-                <label>Email *</label>
-                <input type="email" name="email" required value="test@example.com">
-            </div>
-            <div class="form-group">
-                <label>Phone</label>
-                <input type="tel" name="phone" value="1234567890">
-            </div>
-            <div class="form-group">
-                <label>Age Group *</label>
-                <select name="age" required>
-                    <option value="18-25">18-25</option>
-                    <option value="26-35" selected>26-35</option>
-                    <option value="36-45">36-45</option>
-                    <option value="46+">46+</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Country *</label>
-                <input type="text" name="country" required value="USA">
-            </div>
-            <div class="form-group">
-                <label>Rating *</label>
-                <select name="rating" required>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5" selected>5</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Subscription *</label>
-                <select name="subscription" required>
-                    <option value="free">Free</option>
-                    <option value="basic">Basic</option>
-                    <option value="premium" selected>Premium</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Source *</label>
-                <select name="source" required>
-                    <option value="search" selected>Search</option>
-                    <option value="social">Social Media</option>
-                    <option value="friend">Friend</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Feedback *</label>
-                <textarea name="feedback" required>This is a test feedback</textarea>
-            </div>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" name="terms" value="Agreed" required checked>
-                    I agree to terms *
-                </label>
-            </div>
-            <button type="submit">Submit Survey</button>
-        </form>
-        <div class="message" id="message"></div>
+  <h1>Enhanced Survey Form</h1>
+  
+  <!-- Form Status Message (Open/Closed) -->
+  <div id="statusMessage" class="muted"></div>
+  
+  <!-- Closed Submission Message -->
+  <div id="closedMessage" class="closed-message">
+    <h2>⚠️ Submissions Closed</h2>
+    <p>We are not currently accepting new submissions. Please check back later.</p>
+  </div>
+  
+  <!-- Main Form Container -->
+  <div id="formContainer" class="form-container">
+    <form id="surveyForm" novalidate>
+      <!-- Personal Information -->
+      <div class="form-group">
+        <label for="name" class="required">Full Name</label>
+        <input type="text" id="name" name="name" 
+               placeholder="Enter your full name"
+               maxlength="100"
+               required>
+        <div class="error-message" id="nameError">Name is required (2-100 characters)</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email" class="required">Email Address</label>
+        <input type="email" id="email" name="email" 
+               placeholder="your.email@example.com"
+               required>
+        <div class="error-message" id="emailError">Valid email address is required</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="phone">Phone Number (Optional)</label>
+        <input type="tel" id="phone" name="phone" 
+               placeholder="+1 (123) 456-7890"
+               pattern="^[\+]?[0-9\s\-\(\)]+$"
+               maxlength="20">
+        <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+      </div>
+      
+      <!-- Age Group Dropdown -->
+      <div class="form-group">
+        <label for="age" class="required">Age Group</label>
+        <select id="age" name="age" required>
+          <option value="">Select your age group</option>
+          <option value="under18">Under 18</option>
+          <option value="18-25">18-25</option>
+          <option value="26-35">26-35</option>
+          <option value="36-50">36-50</option>
+          <option value="51-65">51-65</option>
+          <option value="over65">Over 65</option>
+        </select>
+        <div class="error-message" id="ageError">Please select your age group</div>
+      </div>
+      
+      <!-- Country Selection -->
+      <div class="form-group">
+        <label for="country" class="required">Country</label>
+        <select id="country" name="country" required>
+          <option value="">Select your country</option>
+          <option value="US">United States</option>
+          <option value="UK">United Kingdom</option>
+          <option value="CA">Canada</option>
+          <option value="AU">Australia</option>
+          <option value="IN">India</option>
+          <option value="other">Other</option>
+        </select>
+        <div class="error-message" id="countryError">Please select your country</div>
+      </div>
+      
+      <!-- Product Rating -->
+      <div class="form-group">
+        <label for="rating" class="required">How would you rate our service?</label>
+        <select id="rating" name="rating" required>
+          <option value="">Select a rating</option>
+          <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+          <option value="4">⭐⭐⭐⭐ - Very Good</option>
+          <option value="3">⭐⭐⭐ - Good</option>
+          <option value="2">⭐⭐ - Fair</option>
+          <option value="1">⭐ - Poor</option>
+        </select>
+        <div class="error-message" id="ratingError">Please select a rating</div>
+      </div>
+      
+      <!-- Subscription Type -->
+      <div class="form-group">
+        <label for="subscription" class="required">Subscription Type</label>
+        <select id="subscription" name="subscription" required>
+          <option value="">Select subscription type</option>
+          <option value="free">Free</option>
+          <option value="basic">Basic ($9.99/month)</option>
+          <option value="premium">Premium ($19.99/month)</option>
+          <option value="enterprise">Enterprise (Custom)</option>
+        </select>
+        <div class="error-message" id="subscriptionError">Please select subscription type</div>
+      </div>
+      
+      <!-- Feedback with Character Limit -->
+      <div class="form-group">
+        <label for="feedback" class="required">Your Feedback</label>
+        <textarea id="feedback" name="feedback" 
+                  rows="5" 
+                  placeholder="Please share your detailed feedback here..."
+                  maxlength="500"
+                  required></textarea>
+        <div class="character-count" id="feedbackCount">0/500 characters</div>
+        <div class="error-message" id="feedbackError">Feedback is required (10-500 characters)</div>
+      </div>
+      
+      <!-- How Did You Hear About Us? -->
+      <div class="form-group">
+        <label for="source" class="required">How did you hear about us?</label>
+        <select id="source" name="source" required>
+          <option value="">Select an option</option>
+          <option value="search">Search Engine (Google, Bing, etc.)</option>
+          <option value="social">Social Media (Facebook, Twitter, etc.)</option>
+          <option value="friend">Friend/Word of Mouth</option>
+          <option value="ad">Advertisement</option>
+          <option value="email">Email Newsletter</option>
+          <option value="other">Other</option>
+        </select>
+        <div class="error-message" id="sourceError">Please tell us how you heard about us</div>
+      </div>
+      
+      <!-- Terms and Conditions -->
+      <div class="form-group">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem;">
+          <input type="checkbox" id="terms" name="terms" required>
+          <span>I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a> *</span>
+        </label>
+        <div class="error-message" id="termsError">You must agree to the terms to continue</div>
+      </div>
+      
+      <!-- Submit Button -->
+      <button type="submit" id="submitBtn">Submit Survey</button>
+      <p id="msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+  
+  <!-- Admin Control Panel (Hidden by default, show with ?admin=true) -->
+  <div id="adminPanel" class="admin-panel" style="display: none;">
+    <h3>📋 Admin Controls</h3>
+    <div class="admin-controls">
+      <button class="admin-btn open-btn" onclick="setFormStatus(true)">Open Submissions</button>
+      <button class="admin-btn close-btn" onclick="setFormStatus(false)">Close Submissions</button>
+      <button class="admin-btn" onclick="clearForm()">Clear Form</button>
+      <button class="admin-btn" onclick="testSubmission()">Test Submission</button>
+      <button class="admin-btn" onclick="viewAllSubmissions()">View All Submissions</button>
     </div>
+    <div id="adminMessage" class="muted"></div>
+  </div>
 
-    <script>
-        // PASTE YOUR NEW DEPLOYMENT URL HERE
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
+  <script>
+    // IMPORTANT: Replace with your Apps Script Web App URL
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
+    
+    // Configuration
+    const CONFIG = {
+      // Form open/closed status (persisted in localStorage)
+      formOpen: true,
+      
+      // Character limits
+      maxFeedbackChars: 500,
+      minFeedbackChars: 10,
+      maxNameChars: 100,
+      
+      // Validation rules
+      phonePattern: /^[\+]?[0-9\s\-\(\)]+$/,
+      emailPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      
+      // Required fields (add/remove as needed)
+      requiredFields: ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms']
+    };
+
+    // DOM Elements
+    const form = document.getElementById('surveyForm');
+    const formContainer = document.getElementById('formContainer');
+    const closedMessage = document.getElementById('closedMessage');
+    const statusMessage = document.getElementById('statusMessage');
+    const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submitBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminMessage = document.getElementById('adminMessage');
+    const feedbackTextarea = document.getElementById('feedback');
+    const feedbackCount = document.getElementById('feedbackCount');
+
+    // Initialize form state
+    function initForm() {
+      // Check URL for admin mode
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('admin') === 'true') {
+        adminPanel.style.display = 'block';
+      }
+      
+      // Load form status from localStorage
+      const savedStatus = localStorage.getItem('formStatus');
+      if (savedStatus !== null) {
+        CONFIG.formOpen = savedStatus === 'true';
+      }
+      
+      updateFormVisibility();
+      setupEventListeners();
+      
+      // Test endpoint connection
+      testEndpoint();
+    }
+
+    // Set form open/closed status
+    function setFormStatus(isOpen) {
+      CONFIG.formOpen = isOpen;
+      localStorage.setItem('formStatus', isOpen.toString());
+      updateFormVisibility();
+      
+      adminMessage.textContent = `Form submissions are now ${isOpen ? 'OPEN' : 'CLOSED'}`;
+      adminMessage.className = isOpen ? 'success' : 'error';
+      
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        adminMessage.textContent = '';
+      }, 3000);
+    }
+
+    // Update form visibility based on status
+    function updateFormVisibility() {
+      if (CONFIG.formOpen) {
+        formContainer.style.display = 'block';
+        closedMessage.style.display = 'none';
+        statusMessage.textContent = '✅ Submissions are OPEN';
+        statusMessage.className = 'success';
+      } else {
+        formContainer.style.display = 'none';
+        closedMessage.style.display = 'block';
+        statusMessage.textContent = '⛔ Submissions are CLOSED';
+        statusMessage.className = 'error';
+      }
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Real-time feedback character counter
+      feedbackTextarea.addEventListener('input', updateCharacterCount);
+      
+      // Real-time validation on blur
+      CONFIG.requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.addEventListener('blur', () => validateField(fieldId));
+        }
+      });
+      
+      // Form submission
+      form.addEventListener('submit', handleSubmit);
+      
+      // Prevent form submission if closed
+      form.addEventListener('submit', (e) => {
+        if (!CONFIG.formOpen) {
+          e.preventDefault();
+          alert('Submissions are currently closed.');
+        }
+      });
+    }
+
+    // Update character count for feedback
+    function updateCharacterCount() {
+      const length = feedbackTextarea.value.length;
+      feedbackCount.textContent = `${length}/${CONFIG.maxFeedbackChars} characters`;
+      
+      // Update styling based on length
+      feedbackCount.className = 'character-count';
+      if (length > CONFIG.maxFeedbackChars * 0.9) {
+        feedbackCount.classList.add('warning');
+      }
+      if (length > CONFIG.maxFeedbackChars) {
+        feedbackCount.classList.add('error');
+      }
+    }
+
+    // Validate individual field
+    function validateField(fieldId) {
+      const field = document.getElementById(fieldId);
+      const errorElement = document.getElementById(`${fieldId}Error`);
+      let isValid = true;
+      let message = '';
+      
+      if (!field) return true;
+      
+      const value = field.type === 'checkbox' ? field.checked : field.value.trim();
+      const isRequired = CONFIG.requiredFields.includes(fieldId);
+      
+      // Check required fields
+      if (isRequired && !value) {
+        isValid = false;
+        message = 'This field is required';
+      } else if (value) {
+        // Field-specific validation
+        switch (fieldId) {
+          case 'name':
+            if (value.length < 2 || value.length > CONFIG.maxNameChars) {
+              isValid = false;
+              message = `Name must be 2-${CONFIG.maxNameChars} characters`;
+            }
+            break;
+            
+          case 'email':
+            if (!CONFIG.emailPattern.test(value)) {
+              isValid = false;
+              message = 'Please enter a valid email address';
+            }
+            break;
+            
+          case 'phone':
+            if (value && !CONFIG.phonePattern.test(value)) {
+              isValid = false;
+              message = 'Please enter a valid phone number';
+            }
+            break;
+            
+          case 'feedback':
+            if (value.length < CONFIG.minFeedbackChars) {
+              isValid = false;
+              message = `Feedback must be at least ${CONFIG.minFeedbackChars} characters`;
+            } else if (value.length > CONFIG.maxFeedbackChars) {
+              isValid = false;
+              message = `Feedback cannot exceed ${CONFIG.maxFeedbackChars} characters`;
+            }
+            break;
+            
+          case 'age':
+          case 'country':
+          case 'rating':
+          case 'subscription':
+          case 'source':
+            if (isRequired && !value) {
+              isValid = false;
+              message = 'Please select an option';
+            }
+            break;
+            
+          case 'terms':
+            if (!value) {
+              isValid = false;
+              message = 'You must agree to the terms';
+            }
+            break;
+        }
+      }
+      
+      // Update UI
+      if (isValid) {
+        field.classList.remove('error');
+        errorElement.style.display = 'none';
+      } else {
+        field.classList.add('error');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+      
+      return isValid;
+    }
+
+    // Validate entire form
+    function validateForm() {
+      let isValid = true;
+      
+      CONFIG.requiredFields.forEach(fieldId => {
+        if (!validateField(fieldId)) {
+          isValid = false;
+        }
+      });
+      
+      return isValid;
+    }
+
+    // Handle form submission
+    async function handleSubmit(e) {
+      e.preventDefault();
+      
+      setStatus('Submitting...', 'muted');
+      submitBtn.disabled = true;
+      
+      // Check if form is open
+      if (!CONFIG.formOpen) {
+        setStatus('Submissions are currently closed.', 'error');
+        submitBtn.disabled = false;
+        return;
+      }
+      
+      // Validate form
+      if (!validateForm()) {
+        setStatus('Please fix the errors above.', 'error');
+        submitBtn.disabled = false;
+        return;
+      }
+      
+      try {
+        // Prepare form data
+        const formData = {
+          timestamp: new Date().toISOString(),
+          name: document.getElementById('name').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phone').value.trim() || 'Not provided',
+          age: document.getElementById('age').value,
+          country: document.getElementById('country').value,
+          rating: document.getElementById('rating').value,
+          subscription: document.getElementById('subscription').value,
+          feedback: document.getElementById('feedback').value.trim(),
+          source: document.getElementById('source').value,
+          terms: document.getElementById('terms').checked ? 'Agreed' : 'Not agreed'
+        };
         
-        document.getElementById('surveyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const form = e.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            
-            console.log('Submitting:', data);
-            
-            const btn = form.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Submitting...';
-            
-            const message = document.getElementById('message');
-            message.textContent = 'Sending...';
-            message.className = 'message';
-            message.style.display = 'block';
-            
-            // METHOD 1: Direct fetch with JSON
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })
-            .then(result => {
-                console.log('Result:', result);
-                if (result.ok) {
-                    message.textContent = '✅ ' + result.message;
-                    message.className = 'message success';
-                    form.reset();
-                } else {
-                    message.textContent = '❌ ' + result.error;
-                    message.className = 'message error';
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                message.textContent = '❌ Network error. Trying alternative method...';
-                message.className = 'message error';
-                
-                // METHOD 2: If fetch fails, try form submission
-                setTimeout(() => {
-                    submitViaForm(data);
-                }, 1000);
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.textContent = 'Submit Survey';
-            });
+        // Send to Apps Script
+        const response = await fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
         });
         
-        function submitViaForm(data) {
-            // Create a hidden form and submit it
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = SCRIPT_URL;
-            form.style.display = 'none';
-            
-            for (const key in data) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = data[key];
-                form.appendChild(input);
-            }
-            
-            document.body.appendChild(form);
-            form.submit();
+        const result = await response.json();
+        
+        if (result.ok) {
+          setStatus('✅ Thank you! Your response has been successfully recorded.', 'success');
+          form.reset();
+          updateCharacterCount(); // Reset character count
+        } else {
+          setStatus(`❌ Error: ${result.error || 'Submission failed'}`, 'error');
         }
         
-        // Test the connection on page load
-        window.addEventListener('load', function() {
-            fetch(SCRIPT_URL)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Connection test successful:', data);
-                })
-                .catch(error => {
-                    console.log('Connection test failed:', error);
-                    document.getElementById('message').textContent = '⚠️ Note: Testing mode';
-                    document.getElementById('message').className = 'message';
-                    document.getElementById('message').style.display = 'block';
-                });
-        });
-    </script>
+      } catch (err) {
+        console.error('Submission error:', err);
+        setStatus('❌ Network error. Please check your connection and try again.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Set status message
+    function setStatus(text, cls = '') {
+      msg.textContent = text;
+      msg.className = cls;
+    }
+
+    // Test endpoint connection
+    async function testEndpoint() {
+      try {
+        const response = await fetch(ENDPOINT);
+        const result = await response.json();
+        console.log('Endpoint connection test:', result);
+      } catch (err) {
+        console.warn('Could not test endpoint:', err.message);
+      }
+    }
+
+    // Admin functions
+    function clearForm() {
+      form.reset();
+      updateCharacterCount();
+      adminMessage.textContent = 'Form cleared';
+      setTimeout(() => adminMessage.textContent = '', 2000);
+    }
+
+    function testSubmission() {
+      // Auto-fill form with test data
+      document.getElementById('name').value = 'Test User';
+      document.getElementById('email').value = 'test@example.com';
+      document.getElementById('age').value = '26-35';
+      document.getElementById('country').value = 'US';
+      document.getElementById('rating').value = '4';
+      document.getElementById('subscription').value = 'premium';
+      document.getElementById('feedback').value = 'This is a test submission. The form is working correctly.';
+      document.getElementById('source').value = 'search';
+      document.getElementById('terms').checked = true;
+      
+      updateCharacterCount();
+      adminMessage.textContent = 'Test data loaded. Click submit to test.';
+    }
+
+    function viewAllSubmissions() {
+      // Open Google Sheet in new tab
+      const sheetUrl = 'https://docs.google.com/spreadsheets/d/1JyfrhYh2g-zelVNkNuZhBod-YNV8ihnawsxFa1Z0BWw/edit';
+      window.open(sheetUrl, '_blank');
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', initForm);
+  </script>
 </body>
 </html>
