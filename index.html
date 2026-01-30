@@ -317,27 +317,6 @@
       color: var(--dark);
     }
 
-    .terms-links {
-      margin-top: 8px;
-      display: flex;
-      gap: 16px;
-    }
-
-    .terms-links a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .terms-links a:hover {
-      color: var(--primary-dark);
-      text-decoration: underline;
-    }
-
     /* Character Counter */
     .character-counter {
       text-align: right;
@@ -798,26 +777,18 @@
         <div class="terms-group">
           <div class="terms-content">
             <div class="checkbox-container">
-              <input type="checkbox" id="terms" name="terms" required>
+              <input type="checkbox" id="terms" name="terms" checked required>
               <span class="checkmark"></span>
             </div>
             <div class="terms-text">
               <label for="terms" class="form-label required">
-                Terms & Conditions
+                Consent Agreement
               </label>
-              <p>By checking this box, you consent to our terms and privacy policy. Your information will be kept confidential and used only for improving our services.</p>
-              <div class="terms-links">
-                <a href="#" target="_blank">
-                  <i class="fas fa-file-contract"></i> Terms and Conditions
-                </a>
-                <a href="#" target="_blank">
-                  <i class="fas fa-shield-alt"></i> Privacy Policy
-                </a>
-              </div>
+              <p>By submitting this form, you agree that your feedback and personal information may be used for service improvement purposes. Your information will be kept confidential and used only to enhance our services.</p>
             </div>
           </div>
           <div class="error-message" id="termsError">
-            <i class="fas fa-exclamation-circle"></i> You must agree to the terms to continue
+            <i class="fas fa-exclamation-circle"></i> You must agree to continue
           </div>
         </div>
 
@@ -868,6 +839,7 @@
     const feedbackTextarea = document.getElementById('feedback');
     const feedbackCount = document.getElementById('feedbackCount');
     const feedbackProgress = document.getElementById('feedbackProgress');
+    const termsCheckbox = document.getElementById('terms');
     
     let debugMode = false;
     
@@ -883,13 +855,16 @@
         debugContent.textContent = '🔧 Debug Mode Enabled\nEndpoint: ' + APPS_SCRIPT_URL;
       }
       
+      // Set the checkbox as checked by default
+      termsCheckbox.checked = true;
+      
       // Set up event listeners
       setupEventListeners();
       
       // Test endpoint connection
       await testEndpointConnection();
       
-      console.log('✅ Survey Form Ready - Always accepting submissions');
+      console.log('✅ Survey Form Ready - Terms checkbox activated by default');
     });
     
     // Set up event listeners
@@ -912,7 +887,7 @@
       });
       
       // Terms checkbox validation
-      document.getElementById('terms').addEventListener('change', () => validateField('terms'));
+      termsCheckbox.addEventListener('change', () => validateField('terms'));
       
       // Form submission
       form.addEventListener('submit', handleSubmit);
@@ -1008,7 +983,7 @@
           case 'terms':
             if (!value) {
               isValid = false;
-              message = 'You must agree to the terms to continue';
+              message = 'You must agree to continue';
             }
             break;
         }
@@ -1089,6 +1064,9 @@
           showResponse('✅ Thank you! Your feedback has been successfully submitted.', 'success');
           form.reset();
           updateCharacterCount();
+          
+          // Reset terms checkbox to checked
+          termsCheckbox.checked = true;
           
           // Add success animation
           document.querySelector('.form-container').classList.add('success-animation');
