@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Survey Form Control Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        h1 { color: #2c3e50; }
+        .control-panel { background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        button { padding: 15px 30px; margin: 10px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
+        .open-btn { background: #27ae60; color: white; }
+        .close-btn { background: #e74c3c; color: white; }
+        .status-btn { background: #3498db; color: white; }
+        .status { padding: 15px; border-radius: 5px; margin: 15px 0; font-weight: bold; }
+        .open { background: #d4edda; color: #155724; }
+        .closed { background: #f8d7da; color: #721c24; }
+        .link { background: #e8f4fc; padding: 10px; border-radius: 5px; margin: 10px 0; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h1>📋 Survey Form Control Panel</h1>
+    
+    <div class="control-panel">
+        <h2>Current Status: <span id="currentStatus">Checking...</span></h2>
+        
+        <button class="open-btn" onclick="setStatus('open')">✅ OPEN Form for Submissions</button>
+        <button class="close-btn" onclick="setStatus('closed')">❌ CLOSE Form for Submissions</button>
+        <button class="status-btn" onclick="checkStatus()">🔄 Refresh Status</button>
+        
+        <div id="message" class="status"></div>
+    </div>
+    
+    <div class="control-panel">
+        <h2>🔗 Form Links</h2>
+        <div class="link">
+            <strong>Public Form Link:</strong><br>
+            <a href="https://your-username.github.io/your-repository/" target="_blank">
+                https://your-username.github.io/your-repository/
+            </a>
+        </div>
+        
+        <div class="link">
+            <strong>Direct Control URLs (Bookmark these):</strong><br>
+            • Open: <code id="openUrl"></code><br>
+            • Close: <code id="closeUrl"></code><br>
+            • Check: <code id="checkUrl"></code>
+        </div>
+    </div>
+
+    <script>
+        const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
+        
+        // Display URLs
+        document.getElementById('openUrl').textContent = ENDPOINT + '?action=setStatus&status=open&admin=true';
+        document.getElementById('closeUrl').textContent = ENDPOINT + '?action=setStatus&status=closed&admin=true';
+        document.getElementById('checkUrl').textContent = ENDPOINT + '?action=getStatus';
+        
+        // Check initial status
+        checkStatus();
+        
+        async function checkStatus() {
+            try {
+                const response = await fetch(ENDPOINT + '?action=getStatus');
+                const data = await response.json();
+                
+                if (data.ok) {
+                    const isOpen = data.status === 'open';
+                    document.getElementById('currentStatus').textContent = isOpen ? '✅ OPEN' : '❌ CLOSED';
+                    document.getElementById('currentStatus').className = isOpen ? 'open' : 'closed';
+                }
+            } catch (error) {
+                document.getElementById('currentStatus').textContent = 'Error checking status';
+            }
+        }
+        
+        async function setStatus(status) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = 'Processing...';
+            messageEl.className = 'status';
+            
+            try {
+                const response = await fetch(`${ENDPOINT}?action=setStatus&status=${status}&admin=true`);
+                const data = await response.json();
+                
+                if (data.ok) {
+                    messageEl.textContent = '✅ ' + data.message;
+                    messageEl.className = 'status open';
+                    checkStatus(); // Refresh status display
+                } else {
+                    messageEl.textContent = '❌ Error: ' + data.error;
+                    messageEl.className = 'status closed';
+                }
+            } catch (error) {
+                messageEl.textContent = '❌ Network error: ' + error.message;
+                messageEl.className = 'status closed';
+            }
+        }
+    </script>
+</body>
+</html>
