@@ -23,8 +23,8 @@
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
       --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --radius: 12px;
-      --radius-sm: 8px;
+      --radius: 16px;
+      --radius-sm: 10px;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -36,7 +36,7 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: var(--dark);
       line-height: 1.6;
       min-height: 100vh;
@@ -44,54 +44,55 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 600px;
       margin: 0 auto;
     }
 
     /* Header */
     .header {
       text-align: center;
-      margin-bottom: 40px;
-      padding-top: 20px;
+      margin-bottom: 30px;
+      padding-top: 10px;
     }
 
     .header-icon {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      width: 70px;
-      height: 70px;
+      background: white;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 20px;
       box-shadow: var(--shadow-lg);
+      border: 4px solid rgba(255, 255, 255, 0.2);
     }
 
     .header-icon i {
-      font-size: 32px;
-      color: white;
-    }
-
-    .header h1 {
-      font-size: 2.5rem;
-      font-weight: 800;
+      font-size: 36px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
-      letter-spacing: -0.5px;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .header p {
-      font-size: 1.1rem;
-      color: var(--gray-600);
-      max-width: 600px;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 500px;
       margin: 0 auto;
     }
 
     .required-note {
-      font-size: 0.9rem;
-      color: var(--danger);
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.8);
       margin-top: 8px;
       display: inline-block;
     }
@@ -100,9 +101,9 @@
     .form-container {
       background: white;
       border-radius: var(--radius);
-      padding: 40px;
+      padding: 40px 30px;
       box-shadow: var(--shadow-lg);
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       position: relative;
       overflow: hidden;
     }
@@ -117,35 +118,61 @@
       background: linear-gradient(to right, var(--primary), var(--secondary));
     }
 
-    .form-section {
-      margin-bottom: 40px;
-    }
-
-    .section-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--gray-200);
+    /* Progress Indicator */
+    .progress-container {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .section-title i {
-      color: var(--primary);
-    }
-
-    /* Form Grid */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
+      justify-content: space-between;
       margin-bottom: 30px;
+      position: relative;
     }
 
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-bottom: 8px;
+      transition: var(--transition);
+    }
+
+    .step-circle.active {
+      background: var(--primary);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .step-label {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+
+    .progress-line {
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: var(--gray-200);
+      z-index: 1;
+    }
+
+    /* Single Column Form */
     .form-group {
+      margin-bottom: 24px;
       position: relative;
     }
 
@@ -153,17 +180,18 @@
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
-      color: var(--gray-700);
+      color: var(--gray-800);
       font-size: 0.95rem;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .form-label.required::after {
       content: '*';
       color: var(--danger);
       font-size: 1.2rem;
+      margin-left: 4px;
     }
 
     .form-input,
@@ -178,6 +206,17 @@
       background-color: white;
       color: var(--dark);
       transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+    }
+
+    .form-textarea {
+      background-image: none;
+      resize: vertical;
+      min-height: 120px;
     }
 
     .form-input:focus,
@@ -185,7 +224,7 @@
     .form-textarea:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
     }
 
     .form-input.error,
@@ -199,66 +238,25 @@
       border-color: var(--secondary);
     }
 
-    /* Rating Stars */
-    .rating-container {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .rating-option {
-      flex: 1;
-      min-width: 120px;
-    }
-
-    .rating-option input {
-      display: none;
-    }
-
-    .rating-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border: 2px solid var(--gray-200);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 0.95rem;
-    }
-
-    .rating-label:hover {
-      border-color: var(--primary);
-      background-color: rgba(99, 102, 241, 0.05);
-    }
-
-    .rating-option input:checked + .rating-label {
-      border-color: var(--primary);
-      background-color: rgba(99, 102, 241, 0.1);
-      font-weight: 600;
-    }
-
-    .stars {
-      color: #fbbf24;
-      font-size: 1.1rem;
-    }
-
-    /* Terms Checkbox */
-    .terms-group {
+    /* Custom Checkbox */
+    .checkbox-group {
       background-color: var(--gray-100);
-      padding: 24px;
+      padding: 20px;
       border-radius: var(--radius-sm);
-      margin-top: 30px;
+      margin: 30px 0;
+      border: 2px solid var(--gray-200);
+      transition: var(--transition);
     }
 
-    .terms-content {
-      display: flex;
-      gap: 16px;
+    .checkbox-group:hover {
+      border-color: var(--gray-300);
     }
 
     .checkbox-container {
-      position: relative;
-      margin-top: 4px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
     }
 
     .checkbox-container input {
@@ -278,6 +276,7 @@
       border-radius: 6px;
       transition: var(--transition);
       flex-shrink: 0;
+      margin-top: 2px;
     }
 
     .checkbox-container:hover input ~ .checkmark {
@@ -293,10 +292,10 @@
       content: "";
       position: absolute;
       display: none;
-      left: 8px;
-      top: 4px;
+      left: 7px;
+      top: 3px;
       width: 6px;
-      height: 10px;
+      height: 12px;
       border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
@@ -306,15 +305,22 @@
       display: block;
     }
 
-    .terms-text {
+    .checkbox-text {
       flex: 1;
     }
 
-    .terms-text label {
+    .checkbox-text label {
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       display: block;
       color: var(--dark);
+      cursor: pointer;
+    }
+
+    .checkbox-description {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.5;
     }
 
     /* Character Counter */
@@ -357,7 +363,7 @@
       margin-top: 6px;
       display: none;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .error-message i {
@@ -368,8 +374,6 @@
     .submit-section {
       text-align: center;
       margin-top: 40px;
-      padding-top: 30px;
-      border-top: 1px solid var(--gray-200);
     }
 
     .submit-btn {
@@ -445,7 +449,7 @@
     .response-message {
       padding: 20px;
       border-radius: var(--radius-sm);
-      margin-top: 24px;
+      margin: 24px 0;
       text-align: center;
       font-weight: 600;
       display: none;
@@ -478,81 +482,46 @@
       color: var(--danger);
     }
 
-    /* Debug Info */
-    .debug-info {
-      background-color: var(--gray-800);
-      color: white;
-      padding: 20px;
-      border-radius: var(--radius-sm);
-      margin-top: 30px;
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 0.85rem;
-      max-height: 300px;
-      overflow-y: auto;
-      display: none;
-    }
-
-    .debug-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .debug-toggle {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     /* Footer */
     .footer {
       text-align: center;
-      color: var(--gray-600);
-      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.85rem;
       padding: 20px;
-      margin-top: 40px;
+      margin-top: 30px;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
     }
 
     /* Responsive */
-    @media (max-width: 768px) {
+    @media (max-width: 640px) {
       body {
         padding: 15px;
       }
       
       .form-container {
-        padding: 25px;
+        padding: 25px 20px;
       }
       
       .header h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
       }
       
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      
-      .section-title {
-        font-size: 1.2rem;
+      .step-label {
+        font-size: 0.75rem;
       }
       
       .submit-btn {
         width: 100%;
         justify-content: center;
-      }
-      
-      .rating-container {
-        flex-direction: column;
-      }
-      
-      .rating-option {
-        min-width: 100%;
       }
     }
 
@@ -562,7 +531,7 @@
         transform: scale(1);
       }
       50% {
-        transform: scale(1.05);
+        transform: scale(1.02);
       }
     }
 
@@ -579,7 +548,7 @@
         <i class="fas fa-comment-alt"></i>
       </div>
       <h1>Customer Feedback Survey</h1>
-      <p>Share your experience and help us improve our services. Your feedback is valuable to us.</p>
+      <p>Your opinion helps us improve our services. Please take a moment to share your experience.</p>
       <p class="required-note"><i class="fas fa-asterisk"></i> Required fields</p>
     </div>
 
@@ -588,203 +557,179 @@
 
     <!-- Main Form -->
     <div class="form-container">
+      <!-- Progress Indicator -->
+      <div class="progress-container">
+        <div class="progress-line"></div>
+        <div class="progress-step">
+          <div class="step-circle active">1</div>
+          <div class="step-label">Personal</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-circle">2</div>
+          <div class="step-label">Feedback</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-circle">3</div>
+          <div class="step-label">Submit</div>
+        </div>
+      </div>
+
       <form id="surveyForm" novalidate>
-        <!-- Personal Information Section -->
-        <div class="form-section">
-          <h2 class="section-title"><i class="fas fa-user-circle"></i> Personal Information</h2>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="name" class="form-label required">
-                <i class="fas fa-user"></i> Full Name
-              </label>
-              <input type="text" id="name" name="name" class="form-input" 
-                     placeholder="Enter your full name" maxlength="100" required>
-              <div class="error-message" id="nameError">
-                <i class="fas fa-exclamation-circle"></i> Please enter your name (2-100 characters)
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="email" class="form-label required">
-                <i class="fas fa-envelope"></i> Email Address
-              </label>
-              <input type="email" id="email" name="email" class="form-input" 
-                     placeholder="your.email@example.com" required>
-              <div class="error-message" id="emailError">
-                <i class="fas fa-exclamation-circle"></i> Please enter a valid email address
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="phone" class="form-label">
-                <i class="fas fa-phone"></i> Phone Number (Optional)
-              </label>
-              <input type="tel" id="phone" name="phone" class="form-input" 
-                     placeholder="+1 (123) 456-7890">
-              <div class="error-message" id="phoneError">
-                <i class="fas fa-exclamation-circle"></i> Please enter a valid phone number
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="age" class="form-label required">
-                <i class="fas fa-users"></i> Age Group
-              </label>
-              <select id="age" name="age" class="form-select" required>
-                <option value="">Select your age group</option>
-                <option value="under18">Under 18</option>
-                <option value="18-25">18-25</option>
-                <option value="26-35">26-35</option>
-                <option value="36-50">36-50</option>
-                <option value="51-65">51-65</option>
-                <option value="over65">Over 65</option>
-              </select>
-              <div class="error-message" id="ageError">
-                <i class="fas fa-exclamation-circle"></i> Please select your age group
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="country" class="form-label required">
-                <i class="fas fa-globe"></i> Country
-              </label>
-              <select id="country" name="country" class="form-select" required>
-                <option value="">Select your country</option>
-                <option value="US">United States</option>
-                <option value="UK">United Kingdom</option>
-                <option value="CA">Canada</option>
-                <option value="AU">Australia</option>
-                <option value="IN">India</option>
-                <option value="other">Other</option>
-              </select>
-              <div class="error-message" id="countryError">
-                <i class="fas fa-exclamation-circle"></i> Please select your country
-              </div>
-            </div>
+        <!-- Personal Information -->
+        <div class="form-group">
+          <label for="name" class="form-label required">
+            <i class="fas fa-user"></i> Full Name
+          </label>
+          <input type="text" id="name" name="name" class="form-input" 
+                 placeholder="Enter your full name" maxlength="100" required>
+          <div class="error-message" id="nameError">
+            <i class="fas fa-exclamation-circle"></i> Please enter your name (2-100 characters)
           </div>
         </div>
 
-        <!-- Service Feedback Section -->
-        <div class="form-section">
-          <h2 class="section-title"><i class="fas fa-star"></i> Service Feedback</h2>
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label required">
-                <i class="fas fa-star-half-alt"></i> Service Rating
-              </label>
-              <div class="rating-container">
-                <div class="rating-option">
-                  <input type="radio" id="rating5" name="rating" value="5">
-                  <label for="rating5" class="rating-label">
-                    <span class="stars">★★★★★</span>
-                    <span>Excellent</span>
-                  </label>
-                </div>
-                <div class="rating-option">
-                  <input type="radio" id="rating4" name="rating" value="4">
-                  <label for="rating4" class="rating-label">
-                    <span class="stars">★★★★☆</span>
-                    <span>Very Good</span>
-                  </label>
-                </div>
-                <div class="rating-option">
-                  <input type="radio" id="rating3" name="rating" value="3">
-                  <label for="rating3" class="rating-label">
-                    <span class="stars">★★★☆☆</span>
-                    <span>Good</span>
-                  </label>
-                </div>
-                <div class="rating-option">
-                  <input type="radio" id="rating2" name="rating" value="2">
-                  <label for="rating2" class="rating-label">
-                    <span class="stars">★★☆☆☆</span>
-                    <span>Fair</span>
-                  </label>
-                </div>
-                <div class="rating-option">
-                  <input type="radio" id="rating1" name="rating" value="1">
-                  <label for="rating1" class="rating-label">
-                    <span class="stars">★☆☆☆☆</span>
-                    <span>Poor</span>
-                  </label>
-                </div>
-              </div>
-              <div class="error-message" id="ratingError">
-                <i class="fas fa-exclamation-circle"></i> Please select a rating
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="subscription" class="form-label required">
-                <i class="fas fa-crown"></i> Subscription Type
-              </label>
-              <select id="subscription" name="subscription" class="form-select" required>
-                <option value="">Select subscription type</option>
-                <option value="free">Free</option>
-                <option value="basic">Basic ($9.99/month)</option>
-                <option value="premium">Premium ($19.99/month)</option>
-                <option value="enterprise">Enterprise (Custom)</option>
-              </select>
-              <div class="error-message" id="subscriptionError">
-                <i class="fas fa-exclamation-circle"></i> Please select subscription type
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="source" class="form-label required">
-                <i class="fas fa-bullhorn"></i> How did you hear about us?
-              </label>
-              <select id="source" name="source" class="form-select" required>
-                <option value="">Select an option</option>
-                <option value="search">Search Engine (Google, Bing, etc.)</option>
-                <option value="social">Social Media (Facebook, Twitter, etc.)</option>
-                <option value="friend">Friend/Word of Mouth</option>
-                <option value="ad">Advertisement</option>
-                <option value="email">Email Newsletter</option>
-                <option value="other">Other</option>
-              </select>
-              <div class="error-message" id="sourceError">
-                <i class="fas fa-exclamation-circle"></i> Please tell us how you heard about us
-              </div>
-            </div>
+        <div class="form-group">
+          <label for="email" class="form-label required">
+            <i class="fas fa-envelope"></i> Email Address
+          </label>
+          <input type="email" id="email" name="email" class="form-input" 
+                 placeholder="your.email@example.com" required>
+          <div class="error-message" id="emailError">
+            <i class="fas fa-exclamation-circle"></i> Please enter a valid email address
           </div>
         </div>
 
-        <!-- Feedback Section -->
-        <div class="form-section">
-          <h2 class="section-title"><i class="fas fa-comment-dots"></i> Your Feedback</h2>
-          <div class="form-group">
-            <label for="feedback" class="form-label required">
-              <i class="fas fa-edit"></i> Share your thoughts
-            </label>
-            <textarea id="feedback" name="feedback" class="form-textarea" 
-                      rows="6" placeholder="Please share your detailed feedback here..." 
-                      maxlength="1000" required></textarea>
-            <div class="character-counter" id="feedbackCount">
-              <span>0/1000 characters</span>
-              <span>Minimum 10 characters</span>
-            </div>
-            <div class="counter-progress">
-              <div class="counter-fill" id="feedbackProgress" style="width: 0%"></div>
-            </div>
-            <div class="error-message" id="feedbackError">
-              <i class="fas fa-exclamation-circle"></i> Feedback must be at least 10 characters
-            </div>
+        <div class="form-group">
+          <label for="phone" class="form-label">
+            <i class="fas fa-phone"></i> Phone Number (Optional)
+          </label>
+          <input type="tel" id="phone" name="phone" class="form-input" 
+                 placeholder="+1 (123) 456-7890">
+          <div class="error-message" id="phoneError">
+            <i class="fas fa-exclamation-circle"></i> Please enter a valid phone number
           </div>
         </div>
 
-        <!-- Terms & Conditions -->
-        <div class="terms-group">
-          <div class="terms-content">
-            <div class="checkbox-container">
-              <input type="checkbox" id="terms" name="terms" checked required>
-              <span class="checkmark"></span>
-            </div>
-            <div class="terms-text">
+        <div class="form-group">
+          <label for="age" class="form-label required">
+            <i class="fas fa-users"></i> Age Group
+          </label>
+          <select id="age" name="age" class="form-select" required>
+            <option value="">Select your age group</option>
+            <option value="under18">Under 18</option>
+            <option value="18-25">18-25</option>
+            <option value="26-35">26-35</option>
+            <option value="36-50">36-50</option>
+            <option value="51-65">51-65</option>
+            <option value="over65">Over 65</option>
+          </select>
+          <div class="error-message" id="ageError">
+            <i class="fas fa-exclamation-circle"></i> Please select your age group
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="country" class="form-label required">
+            <i class="fas fa-globe"></i> Country
+          </label>
+          <select id="country" name="country" class="form-select" required>
+            <option value="">Select your country</option>
+            <option value="US">United States</option>
+            <option value="UK">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="IN">India</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="error-message" id="countryError">
+            <i class="fas fa-exclamation-circle"></i> Please select your country
+          </div>
+        </div>
+
+        <!-- Service Feedback -->
+        <div class="form-group">
+          <label for="rating" class="form-label required">
+            <i class="fas fa-star"></i> Service Rating
+          </label>
+          <select id="rating" name="rating" class="form-select" required>
+            <option value="">Select a rating</option>
+            <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+            <option value="4">⭐⭐⭐⭐ - Very Good</option>
+            <option value="3">⭐⭐⭐ - Good</option>
+            <option value="2">⭐⭐ - Fair</option>
+            <option value="1">⭐ - Poor</option>
+          </select>
+          <div class="error-message" id="ratingError">
+            <i class="fas fa-exclamation-circle"></i> Please select a rating
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subscription" class="form-label required">
+            <i class="fas fa-crown"></i> Subscription Type
+          </label>
+          <select id="subscription" name="subscription" class="form-select" required>
+            <option value="">Select subscription type</option>
+            <option value="free">Free</option>
+            <option value="basic">Basic ($9.99/month)</option>
+            <option value="premium">Premium ($19.99/month)</option>
+            <option value="enterprise">Enterprise (Custom)</option>
+          </select>
+          <div class="error-message" id="subscriptionError">
+            <i class="fas fa-exclamation-circle"></i> Please select subscription type
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="source" class="form-label required">
+            <i class="fas fa-bullhorn"></i> How did you hear about us?
+          </label>
+          <select id="source" name="source" class="form-select" required>
+            <option value="">Select an option</option>
+            <option value="search">Search Engine (Google, Bing, etc.)</option>
+            <option value="social">Social Media (Facebook, Twitter, etc.)</option>
+            <option value="friend">Friend/Word of Mouth</option>
+            <option value="ad">Advertisement</option>
+            <option value="email">Email Newsletter</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="error-message" id="sourceError">
+            <i class="fas fa-exclamation-circle"></i> Please tell us how you heard about us
+          </div>
+        </div>
+
+        <!-- Feedback Text -->
+        <div class="form-group">
+          <label for="feedback" class="form-label required">
+            <i class="fas fa-edit"></i> Your Feedback
+          </label>
+          <textarea id="feedback" name="feedback" class="form-textarea" 
+                    placeholder="Please share your detailed feedback here..." 
+                    maxlength="1000" required></textarea>
+          <div class="character-counter" id="feedbackCount">
+            <span>0/1000 characters</span>
+            <span>Minimum 10 characters</span>
+          </div>
+          <div class="counter-progress">
+            <div class="counter-fill" id="feedbackProgress" style="width: 0%"></div>
+          </div>
+          <div class="error-message" id="feedbackError">
+            <i class="fas fa-exclamation-circle"></i> Feedback must be at least 10 characters
+          </div>
+        </div>
+
+        <!-- Consent Checkbox -->
+        <div class="checkbox-group">
+          <div class="checkbox-container">
+            <input type="checkbox" id="terms" name="terms" required>
+            <span class="checkmark"></span>
+            <div class="checkbox-text">
               <label for="terms" class="form-label required">
-                Consent Agreement
+                <i class="fas fa-check-circle"></i> Consent & Agreement
               </label>
-              <p>By submitting this form, you agree that your feedback and personal information may be used for service improvement purposes. Your information will be kept confidential and used only to enhance our services.</p>
+              <p class="checkbox-description">
+                I agree that my feedback and personal information may be used for service improvement purposes. 
+                I understand that my information will be kept confidential and used responsibly.
+              </p>
             </div>
           </div>
           <div class="error-message" id="termsError">
@@ -792,10 +737,10 @@
           </div>
         </div>
 
-        <!-- Submit Section -->
+        <!-- Submit Button -->
         <div class="submit-section">
           <button type="submit" id="submitBtn" class="submit-btn">
-            <i class="fas fa-paper-plane"></i> Submit Survey
+            <i class="fas fa-paper-plane"></i> Submit Feedback
           </button>
           <div class="loading-spinner" id="loadingSpinner">
             <div class="spinner"></div>
@@ -805,21 +750,10 @@
       </form>
     </div>
 
-    <!-- Debug Info -->
-    <div class="debug-info" id="debugInfo">
-      <div class="debug-header">
-        <span><i class="fas fa-code"></i> Debug Information</span>
-        <button class="debug-toggle" onclick="toggleDebug()">
-          <i class="fas fa-times"></i> Close
-        </button>
-      </div>
-      <pre id="debugContent"></pre>
-    </div>
-
     <!-- Footer -->
     <div class="footer">
       <p><i class="far fa-copyright"></i> 2024 Customer Feedback System. All responses are anonymous and confidential.</p>
-      <p style="margin-top: 8px; font-size: 0.85rem; color: var(--gray-500);">
+      <p style="margin-top: 8px; font-size: 0.8rem;">
         <i class="fas fa-lock"></i> Secure submission | <i class="fas fa-user-shield"></i> Privacy protected
       </p>
     </div>
@@ -834,29 +768,15 @@
     const submitBtn = document.getElementById('submitBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const responseMessage = document.getElementById('responseMessage');
-    const debugInfo = document.getElementById('debugInfo');
-    const debugContent = document.getElementById('debugContent');
     const feedbackTextarea = document.getElementById('feedback');
     const feedbackCount = document.getElementById('feedbackCount');
     const feedbackProgress = document.getElementById('feedbackProgress');
     const termsCheckbox = document.getElementById('terms');
-    
-    let debugMode = false;
+    const stepCircles = document.querySelectorAll('.step-circle');
     
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('📋 Survey Form Initializing...');
-      
-      // Check URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('debug') === 'true') {
-        debugMode = true;
-        debugInfo.style.display = 'block';
-        debugContent.textContent = '🔧 Debug Mode Enabled\nEndpoint: ' + APPS_SCRIPT_URL;
-      }
-      
-      // Set the checkbox as checked by default
-      termsCheckbox.checked = true;
       
       // Set up event listeners
       setupEventListeners();
@@ -864,7 +784,7 @@
       // Test endpoint connection
       await testEndpointConnection();
       
-      console.log('✅ Survey Form Ready - Terms checkbox activated by default');
+      console.log('✅ Survey Form Ready - Single column layout');
     });
     
     // Set up event listeners
@@ -877,17 +797,24 @@
       fields.forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
-          field.addEventListener('blur', () => validateField(fieldId));
+          field.addEventListener('blur', () => {
+            validateField(fieldId);
+            updateProgress();
+          });
           field.addEventListener('input', () => {
             if (field.classList.contains('error')) {
               validateField(fieldId);
             }
+            updateProgress();
           });
         }
       });
       
       // Terms checkbox validation
-      termsCheckbox.addEventListener('change', () => validateField('terms'));
+      termsCheckbox.addEventListener('change', () => {
+        validateField('terms');
+        updateProgress();
+      });
       
       // Form submission
       form.addEventListener('submit', handleSubmit);
@@ -902,6 +829,39 @@
           this.parentElement.classList.remove('focused');
         });
       });
+    }
+    
+    // Update progress indicator
+    function updateProgress() {
+      let completedFields = 0;
+      const totalFields = 9; // name, email, age, country, rating, subscription, source, feedback, terms
+      
+      // Check each required field
+      if (document.getElementById('name').value.trim().length >= 2) completedFields++;
+      if (document.getElementById('email').value.trim().length > 0 && validateEmail(document.getElementById('email').value)) completedFields++;
+      if (document.getElementById('age').value) completedFields++;
+      if (document.getElementById('country').value) completedFields++;
+      if (document.getElementById('rating').value) completedFields++;
+      if (document.getElementById('subscription').value) completedFields++;
+      if (document.getElementById('source').value) completedFields++;
+      if (document.getElementById('feedback').value.trim().length >= 10) completedFields++;
+      if (document.getElementById('terms').checked) completedFields++;
+      
+      // Update progress circles
+      const progress = Math.min(Math.floor((completedFields / totalFields) * 3), 3);
+      stepCircles.forEach((circle, index) => {
+        if (index < progress) {
+          circle.classList.add('active');
+        } else {
+          circle.classList.remove('active');
+        }
+      });
+    }
+    
+    // Email validation helper
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     }
     
     // Update character count
@@ -928,6 +888,8 @@
       if (length >= 10) {
         validateField('feedback');
       }
+      
+      updateProgress();
     }
     
     // Validate a single field
@@ -958,8 +920,7 @@
             break;
             
           case 'email':
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
+            if (!validateEmail(value)) {
               isValid = false;
               message = 'Please enter a valid email address';
             }
@@ -1035,7 +996,7 @@
         phone: document.getElementById('phone').value.trim(),
         age: document.getElementById('age').value,
         country: document.getElementById('country').value,
-        rating: document.querySelector('input[name="rating"]:checked')?.value || '',
+        rating: document.getElementById('rating').value,
         subscription: document.getElementById('subscription').value,
         feedback: document.getElementById('feedback').value.trim(),
         source: document.getElementById('source').value,
@@ -1047,26 +1008,23 @@
       loadingSpinner.style.display = 'block';
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
       
-      // Debug info
-      if (debugMode) {
-        debugContent.textContent = `📤 Submitting Data:\n${JSON.stringify(formData, null, 2)}\n\n🌐 To Endpoint:\n${APPS_SCRIPT_URL}`;
-      }
-      
       try {
         // Submit to Google Apps Script
         const response = await submitToGoogleAppsScript(formData);
-        
-        if (debugMode) {
-          debugContent.textContent += `\n\n✅ Response:\n${JSON.stringify(response, null, 2)}`;
-        }
         
         if (response.ok) {
           showResponse('✅ Thank you! Your feedback has been successfully submitted.', 'success');
           form.reset();
           updateCharacterCount();
           
-          // Reset terms checkbox to checked
-          termsCheckbox.checked = true;
+          // Reset progress indicator
+          stepCircles.forEach((circle, index) => {
+            if (index === 0) {
+              circle.classList.add('active');
+            } else {
+              circle.classList.remove('active');
+            }
+          });
           
           // Add success animation
           document.querySelector('.form-container').classList.add('success-animation');
@@ -1084,15 +1042,11 @@
       } catch (error) {
         console.error('Submission error:', error);
         showResponse('❌ Network error. Please check your connection and try again.', 'error');
-        
-        if (debugMode) {
-          debugContent.textContent += `\n\n❌ Error:\n${error.message}`;
-        }
       } finally {
         // Reset loading state
         submitBtn.disabled = false;
         loadingSpinner.style.display = 'none';
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Survey';
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
       }
     }
     
@@ -1148,45 +1102,11 @@
       try {
         const response = await fetch(`${APPS_SCRIPT_URL}?test=true`);
         const result = await response.json();
-        
-        if (debugMode) {
-          debugContent.textContent += `\n\n🔗 Connection Test:\n${JSON.stringify(result, null, 2)}`;
-        }
-        
         console.log('✅ Endpoint connection:', result.ok ? 'OK' : 'Failed');
       } catch (error) {
         console.warn('⚠️ Endpoint test failed:', error);
-        
-        if (debugMode) {
-          debugContent.textContent += `\n\n❌ Connection Test Failed:\n${error.message}`;
-        }
       }
     }
-    
-    // Toggle debug panel
-    function toggleDebug() {
-      debugMode = !debugMode;
-      debugInfo.style.display = debugMode ? 'block' : 'none';
-      
-      if (debugMode) {
-        debugContent.textContent = '🔧 Debug Mode Enabled\nEndpoint: ' + APPS_SCRIPT_URL;
-      }
-    }
-    
-    // Add CSS for focused state
-    const style = document.createElement('style');
-    style.textContent = `
-      .form-group.focused .form-label {
-        color: var(--primary);
-      }
-      
-      .form-group.focused .form-input,
-      .form-group.focused .form-select,
-      .form-group.focused .form-textarea {
-        border-color: var(--primary);
-      }
-    `;
-    document.head.appendChild(style);
   </script>
 </body>
 </html>
