@@ -480,406 +480,453 @@
     </div>
   </div>
 
-  <script>
-    // CONFIGURATION - Update this with your deployed Apps Script URL
-    // Get this from: Deploy → Web App → Copy URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjlUN9Z20QiSok6KJKicb2a3kU_XQjdBKXHstJ6KnOz9DcwBk9yEnQR6FOEt8tn-KB5w/exec';
+<script>
+  // CONFIGURATION - Update this with your deployed Apps Script URL
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjlUN9Z20QiSok6KJKicb2a3kU_XQjdBKXHstJ6KnOz9DcwBk9yEnQR6FOEt8tn-KB5w/exec';
+  
+  // Google Sheet URL
+  const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1JyfrhYh2g-zelVNkNuZhBod-YNV8ihnawsxFa1Z0BWw/edit';
+  
+  // DOM Elements
+  const form = document.getElementById('surveyForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+  const responseMessage = document.getElementById('responseMessage');
+  const statusBanner = document.getElementById('statusBanner');
+  const debugInfo = document.getElementById('debugInfo');
+  const adminPanel = document.getElementById('adminPanel');
+  const adminMessage = document.getElementById('adminMessage');
+  const feedbackTextarea = document.getElementById('feedback');
+  const feedbackCount = document.getElementById('feedbackCount');
+  
+  // State - Manage opening/closing purely in GitHub HTML
+  let formStatus = 'open'; // Default to open
+  let debugMode = false;
+  
+  // Initialize
+  document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Survey Form Initializing...');
     
-    // Google Sheet URL
-    const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1JyfrhYh2g-zelVNkNuZhBod-YNV8ihnawsxFa1Z0BWw/edit';
+    // Check URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'true') {
+      adminPanel.style.display = 'block';
+    }
+    if (urlParams.get('debug') === 'true') {
+      debugMode = true;
+      debugInfo.style.display = 'block';
+      debugInfo.innerHTML = '<strong>Debug Mode Enabled</strong><br>Endpoint: ' + APPS_SCRIPT_URL;
+    }
     
-    // DOM Elements
-    const form = document.getElementById('surveyForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const responseMessage = document.getElementById('responseMessage');
-    const statusBanner = document.getElementById('statusBanner');
-    const debugInfo = document.getElementById('debugInfo');
-    const adminPanel = document.getElementById('adminPanel');
-    const adminMessage = document.getElementById('adminMessage');
-    const feedbackTextarea = document.getElementById('feedback');
-    const feedbackCount = document.getElementById('feedbackCount');
-    
-    // State
-    let formStatus = 'open';
-    let debugMode = false;
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('Survey Form Initializing...');
-      
-      // Check URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('admin') === 'true') {
-        adminPanel.style.display = 'block';
-      }
-      if (urlParams.get('debug') === 'true') {
-        debugMode = true;
-        debugInfo.style.display = 'block';
-        debugInfo.innerHTML = '<strong>Debug Mode Enabled</strong><br>Endpoint: ' + APPS_SCRIPT_URL;
-      }
-      
-      // Set up event listeners
-      setupEventListeners();
-      
-      // Check form status
-      await checkFormStatus();
-      
-      // Test endpoint connection
-      await testEndpointConnection();
-      
-      console.log('Survey Form Ready');
-    });
+    // Load form status from localStorage (GitHub-managed)
+    const savedStatus = localStorage.getItem('surveyFormStatus');
+    if (savedStatus) {
+      formStatus = savedStatus;
+    } else {
+      // Default: always open (Apps Script always accepts)
+      formStatus = 'open';
+      localStorage.setItem('surveyFormStatus', 'open');
+    }
     
     // Set up event listeners
-    function setupEventListeners() {
-      // Character counter for feedback
-      feedbackTextarea.addEventListener('input', updateCharacterCount);
-      
-      // Real-time validation
-      const fields = ['name', 'email', 'phone', 'age', 'country', 'rating', 'subscription', 'source', 'feedback'];
-      fields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-          field.addEventListener('blur', () => validateField(fieldId));
-        }
-      });
-      
-      // Terms checkbox validation
-      document.getElementById('terms').addEventListener('change', () => validateField('terms'));
-      
-      // Form submission
-      form.addEventListener('submit', handleSubmit);
-    }
+    setupEventListeners();
     
-    // Update character count
-    function updateCharacterCount() {
-      const length = feedbackTextarea.value.length;
-      feedbackCount.textContent = `${length}/1000 characters`;
-      
-      if (length > 900) {
-        feedbackCount.className = 'character-count warning';
-      } else if (length > 1000) {
-        feedbackCount.className = 'character-count error';
-      } else {
-        feedbackCount.className = 'character-count';
-      }
-    }
-    
-    // Validate a single field
-    function validateField(fieldId) {
-      const field = document.getElementById(fieldId);
-      const errorElement = document.getElementById(fieldId + 'Error');
-      
-      if (!field) return true;
-      
-      let isValid = true;
-      let message = '';
-      
-      const value = field.type === 'checkbox' ? field.checked : field.value.trim();
-      const isRequired = field.hasAttribute('required');
-      
-      // Check required fields
-      if (isRequired && !value) {
-        isValid = false;
-        message = 'This field is required';
-      } else if (value) {
-        // Field-specific validation
-        switch (fieldId) {
-          case 'name':
-            if (value.length < 2 || value.length > 100) {
-              isValid = false;
-              message = 'Name must be 2-100 characters';
-            }
-            break;
-            
-          case 'email':
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
-              isValid = false;
-              message = 'Please enter a valid email address';
-            }
-            break;
-            
-          case 'phone':
-            const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/;
-            if (value && !phoneRegex.test(value)) {
-              isValid = false;
-              message = 'Please enter a valid phone number';
-            }
-            break;
-            
-          case 'feedback':
-            if (value.length < 10) {
-              isValid = false;
-              message = 'Feedback must be at least 10 characters';
-            }
-            break;
-            
-          case 'terms':
-            if (!value) {
-              isValid = false;
-              message = 'You must agree to the terms';
-            }
-            break;
-        }
-      }
-      
-      // Update UI
-      if (isValid) {
-        field.classList.remove('error');
-        errorElement.style.display = 'none';
-      } else {
-        field.classList.add('error');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-      }
-      
-      return isValid;
-    }
-    
-    // Validate entire form
-    function validateForm() {
-      let isValid = true;
-      
-      ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'].forEach(fieldId => {
-        if (!validateField(fieldId)) {
-          isValid = false;
-        }
-      });
-      
-      return isValid;
-    }
-    
-    // Handle form submission
-    async function handleSubmit(event) {
-      event.preventDefault();
-      
-      // Check if form is open
-      if (formStatus !== 'open') {
-        showResponse('Form submissions are currently closed.', 'error');
-        return;
-      }
-      
-      // Validate form
-      if (!validateForm()) {
-        showResponse('Please fix the errors above.', 'error');
-        return;
-      }
-      
-      // Prepare form data
-      const formData = {
-        timestamp: new Date().toISOString(),
-        name: document.getElementById('name').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        age: document.getElementById('age').value,
-        country: document.getElementById('country').value,
-        rating: document.getElementById('rating').value,
-        subscription: document.getElementById('subscription').value,
-        feedback: document.getElementById('feedback').value.trim(),
-        source: document.getElementById('source').value,
-        terms: document.getElementById('terms').checked ? 'Accepted' : 'Not Accepted'
-      };
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      loadingSpinner.style.display = 'block';
-      
-      // Debug info
-      if (debugMode) {
-        debugInfo.innerHTML = `
-          <strong>Submitting Data:</strong><br>
-          <pre>${JSON.stringify(formData, null, 2)}</pre>
-          <br><strong>To Endpoint:</strong><br>
-          ${APPS_SCRIPT_URL}
-        `;
-      }
-      
-      try {
-        // Submit to Google Apps Script
-        const response = await submitToGoogleAppsScript(formData);
-        
-        if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Response:</strong><br><pre>${JSON.stringify(response, null, 2)}</pre>`;
-        }
-        
-        if (response.ok) {
-          showResponse('✅ Thank you! Your response has been successfully recorded.', 'success');
-          form.reset();
-          updateCharacterCount();
-          
-          // Clear form after success
-          setTimeout(() => {
-            showResponse('', 'success');
-          }, 5000);
-        } else {
-          showResponse(`❌ Error: ${response.error || 'Submission failed'}`, 'error');
-        }
-      } catch (error) {
-        console.error('Submission error:', error);
-        showResponse('❌ Network error. Please check your connection and try again.', 'error');
-        
-        if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Error:</strong><br>${error.message}`;
-        }
-      } finally {
-        // Reset loading state
-        submitBtn.disabled = false;
-        loadingSpinner.style.display = 'none';
-      }
-    }
-    
-    // Submit data to Google Apps Script
-    async function submitToGoogleAppsScript(data) {
-      // Method 1: Try JSON POST
-      try {
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        return result;
-      } catch (jsonError) {
-        console.log('JSON POST failed, trying FormData...', jsonError);
-        
-        // Method 2: Try FormData POST
-        const formData = new FormData();
-        Object.keys(data).forEach(key => {
-          formData.append(key, data[key]);
-        });
-        
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          body: formData
-        });
-        
-        return await response.json();
-      }
-    }
-    
-    // Check form status from server
-    async function checkFormStatus() {
-      try {
-        const response = await fetch(`${APPS_SCRIPT_URL}?action=status`);
-        const result = await response.json();
-        
-        if (result.ok) {
-          formStatus = result.status;
-          updateStatusBanner();
-        }
-      } catch (error) {
-        console.warn('Could not check form status:', error);
-      }
-    }
-    
-    // Update status banner
-    function updateStatusBanner() {
-      if (formStatus === 'open') {
-        statusBanner.textContent = '✅ Form submissions are OPEN';
-        statusBanner.className = 'status-banner status-open';
-        statusBanner.style.display = 'block';
-      } else {
-        statusBanner.textContent = '⛔ Form submissions are CLOSED';
-        statusBanner.className = 'status-banner status-closed';
-        statusBanner.style.display = 'block';
-      }
-    }
-    
-    // Show response message
-    function showResponse(message, type) {
-      responseMessage.textContent = message;
-      responseMessage.className = `response-message response-${type}`;
-      responseMessage.style.display = message ? 'block' : 'none';
-    }
+    // Update status display
+    updateStatusBanner();
     
     // Test endpoint connection
-    async function testEndpointConnection() {
-      try {
-        const response = await fetch(`${APPS_SCRIPT_URL}?test=true`);
-        const result = await response.json();
-        
-        if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Connection Test:</strong><br><pre>${JSON.stringify(result, null, 2)}</pre>`;
-        }
-        
-        console.log('Endpoint connection:', result.ok ? '✓ OK' : '✗ Failed');
-      } catch (error) {
-        console.warn('Endpoint test failed:', error);
-        
-        if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Connection Test Failed:</strong><br>${error.message}`;
-        }
+    await testEndpointConnection();
+    
+    console.log('Survey Form Ready - Status:', formStatus);
+  });
+  
+  // Set up event listeners
+  function setupEventListeners() {
+    // Character counter for feedback
+    feedbackTextarea.addEventListener('input', updateCharacterCount);
+    
+    // Real-time validation
+    const fields = ['name', 'email', 'phone', 'age', 'country', 'rating', 'subscription', 'source', 'feedback'];
+    fields.forEach(fieldId => {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        field.addEventListener('blur', () => validateField(fieldId));
+      }
+    });
+    
+    // Terms checkbox validation
+    document.getElementById('terms').addEventListener('change', () => validateField('terms'));
+    
+    // Form submission
+    form.addEventListener('submit', handleSubmit);
+  }
+  
+  // Update character count
+  function updateCharacterCount() {
+    const length = feedbackTextarea.value.length;
+    feedbackCount.textContent = `${length}/1000 characters`;
+    
+    if (length > 900) {
+      feedbackCount.className = 'character-count warning';
+    } else if (length > 1000) {
+      feedbackCount.className = 'character-count error';
+    } else {
+      feedbackCount.className = 'character-count';
+    }
+  }
+  
+  // Validate a single field
+  function validateField(fieldId) {
+    const field = document.getElementById(fieldId);
+    const errorElement = document.getElementById(fieldId + 'Error');
+    
+    if (!field) return true;
+    
+    let isValid = true;
+    let message = '';
+    
+    const value = field.type === 'checkbox' ? field.checked : field.value.trim();
+    const isRequired = field.hasAttribute('required');
+    
+    // Check required fields
+    if (isRequired && !value) {
+      isValid = false;
+      message = 'This field is required';
+    } else if (value) {
+      // Field-specific validation
+      switch (fieldId) {
+        case 'name':
+          if (value.length < 2 || value.length > 100) {
+            isValid = false;
+            message = 'Name must be 2-100 characters';
+          }
+          break;
+          
+        case 'email':
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) {
+            isValid = false;
+            message = 'Please enter a valid email address';
+          }
+          break;
+          
+        case 'phone':
+          const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/;
+          if (value && !phoneRegex.test(value)) {
+            isValid = false;
+            message = 'Please enter a valid phone number';
+          }
+          break;
+          
+        case 'feedback':
+          if (value.length < 10) {
+            isValid = false;
+            message = 'Feedback must be at least 10 characters';
+          }
+          break;
+          
+        case 'terms':
+          if (!value) {
+            isValid = false;
+            message = 'You must agree to the terms';
+          }
+          break;
       }
     }
     
-    // Admin functions
-    async function setFormStatus(isOpen) {
-      try {
-        const status = isOpen ? 'open' : 'closed';
-        const response = await fetch(`${APPS_SCRIPT_URL}?admin=true&action=toggle&status=${status}`);
-        const result = await response.json();
-        
-        if (result.ok) {
-          adminMessage.textContent = result.message;
-          adminMessage.style.color = isOpen ? 'var(--success-color)' : 'var(--error-color)';
-          
-          // Update local status
-          formStatus = status;
-          updateStatusBanner();
-          
-          // Clear message after 3 seconds
-          setTimeout(() => {
-            adminMessage.textContent = '';
-          }, 3000);
-        }
-      } catch (error) {
-        adminMessage.textContent = 'Error: ' + error.message;
-        adminMessage.style.color = 'var(--error-color)';
-      }
+    // Update UI
+    if (isValid) {
+      field.classList.remove('error');
+      errorElement.style.display = 'none';
+    } else {
+      field.classList.add('error');
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
     }
     
-    function testSubmission() {
-      // Auto-fill with test data
-      document.getElementById('name').value = 'Test User';
-      document.getElementById('email').value = 'test@example.com';
-      document.getElementById('phone').value = '+1 (555) 123-4567';
-      document.getElementById('age').value = '26-35';
-      document.getElementById('country').value = 'US';
-      document.getElementById('rating').value = '4';
-      document.getElementById('subscription').value = 'premium';
-      document.getElementById('source').value = 'search';
-      document.getElementById('feedback').value = 'This is a test submission to verify the form is working correctly. Thank you for providing this service!';
-      document.getElementById('terms').checked = true;
+    return isValid;
+  }
+  
+  // Validate entire form
+  function validateForm() {
+    let isValid = true;
+    
+    ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'].forEach(fieldId => {
+      if (!validateField(fieldId)) {
+        isValid = false;
+      }
+    });
+    
+    return isValid;
+  }
+  
+  // Handle form submission
+  async function handleSubmit(event) {
+    event.preventDefault();
+    
+    // Check if form is open (GitHub-managed check)
+    if (formStatus !== 'open') {
+      showResponse('Form submissions are currently closed.', 'error');
+      return;
+    }
+    
+    // Validate form
+    if (!validateForm()) {
+      showResponse('Please fix the errors above.', 'error');
+      return;
+    }
+    
+    // Prepare form data
+    const formData = {
+      timestamp: new Date().toISOString(),
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      age: document.getElementById('age').value,
+      country: document.getElementById('country').value,
+      rating: document.getElementById('rating').value,
+      subscription: document.getElementById('subscription').value,
+      feedback: document.getElementById('feedback').value.trim(),
+      source: document.getElementById('source').value,
+      terms: document.getElementById('terms').checked ? 'Accepted' : 'Not Accepted'
+    };
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    loadingSpinner.style.display = 'block';
+    
+    // Debug info
+    if (debugMode) {
+      debugInfo.innerHTML = `
+        <strong>Submitting Data:</strong><br>
+        <pre>${JSON.stringify(formData, null, 2)}</pre>
+        <br><strong>To Endpoint:</strong><br>
+        ${APPS_SCRIPT_URL}
+      `;
+    }
+    
+    try {
+      // Submit to Google Apps Script
+      const response = await submitToGoogleAppsScript(formData);
       
-      updateCharacterCount();
-      adminMessage.textContent = 'Test data loaded. Click Submit Survey to test.';
-    }
-    
-    function toggleDebug() {
-      debugMode = !debugMode;
-      debugInfo.style.display = debugMode ? 'block' : 'none';
-      adminMessage.textContent = `Debug mode ${debugMode ? 'enabled' : 'disabled'}`;
-    }
-    
-    function viewSheet() {
-      window.open(GOOGLE_SHEET_URL, '_blank');
-    }
-    
-    // Add CSS for spinner animation
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+      if (debugMode) {
+        debugInfo.innerHTML += `<br><strong>Response:</strong><br><pre>${JSON.stringify(response, null, 2)}</pre>`;
       }
-    `;
-    document.head.appendChild(style);
-  </script>
+      
+      if (response.ok) {
+        showResponse('✅ Thank you! Your response has been successfully recorded.', 'success');
+        form.reset();
+        updateCharacterCount();
+        
+        // Clear form after success
+        setTimeout(() => {
+          showResponse('', 'success');
+        }, 5000);
+      } else {
+        showResponse(`❌ Error: ${response.error || 'Submission failed'}`, 'error');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      showResponse('❌ Network error. Please check your connection and try again.', 'error');
+      
+      if (debugMode) {
+        debugInfo.innerHTML += `<br><strong>Error:</strong><br>${error.message}`;
+      }
+    } finally {
+      // Reset loading state
+      submitBtn.disabled = false;
+      loadingSpinner.style.display = 'none';
+    }
+  }
+  
+  // Submit data to Google Apps Script
+  async function submitToGoogleAppsScript(data) {
+    // Method 1: Try JSON POST
+    try {
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      const result = await response.json();
+      return result;
+    } catch (jsonError) {
+      console.log('JSON POST failed, trying FormData...', jsonError);
+      
+      // Method 2: Try FormData POST
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        formData.append(key, data[key]);
+      });
+      
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      });
+      
+      return await response.json();
+    }
+  }
+  
+  // Update status banner
+  function updateStatusBanner() {
+    if (formStatus === 'open') {
+      statusBanner.textContent = '✅ Form submissions are OPEN';
+      statusBanner.className = 'status-banner status-open';
+      statusBanner.style.display = 'block';
+    } else {
+      statusBanner.textContent = '⛔ Form submissions are CLOSED';
+      statusBanner.className = 'status-banner status-closed';
+      statusBanner.style.display = 'block';
+    }
+  }
+  
+  // Show response message
+  function showResponse(message, type) {
+    responseMessage.textContent = message;
+    responseMessage.className = `response-message response-${type}`;
+    responseMessage.style.display = message ? 'block' : 'none';
+  }
+  
+  // Test endpoint connection
+  async function testEndpointConnection() {
+    try {
+      const response = await fetch(`${APPS_SCRIPT_URL}?test=true`);
+      const result = await response.json();
+      
+      if (debugMode) {
+        debugInfo.innerHTML += `<br><strong>Connection Test:</strong><br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+      }
+      
+      console.log('Endpoint connection:', result.ok ? '✓ OK' : '✗ Failed');
+    } catch (error) {
+      console.warn('Endpoint test failed:', error);
+      
+      if (debugMode) {
+        debugInfo.innerHTML += `<br><strong>Connection Test Failed:</strong><br>${error.message}`;
+      }
+    }
+  }
+  
+  // ==================== GITHUB-MANAGED ADMIN FUNCTIONS ====================
+  
+  // Set form status (managed in GitHub via localStorage)
+  function setFormStatus(isOpen) {
+    formStatus = isOpen ? 'open' : 'closed';
+    
+    // Save to localStorage (GitHub-managed persistence)
+    localStorage.setItem('surveyFormStatus', formStatus);
+    
+    // Update UI
+    updateStatusBanner();
+    
+    // Show message
+    adminMessage.textContent = `Form submissions are now ${formStatus.toUpperCase()}`;
+    adminMessage.style.color = isOpen ? 'var(--success-color)' : 'var(--error-color)';
+    
+    // Clear message after 3 seconds
+    setTimeout(() => {
+      adminMessage.textContent = '';
+    }, 3000);
+    
+    // Log to console
+    console.log(`Form status changed to: ${formStatus}`);
+  }
+  
+  // Set 24/7 for 10 days (GitHub-managed)
+  function set24_7For10Days() {
+    // Open immediately
+    setFormStatus(true);
+    
+    // Calculate 10 days from now
+    const tenDaysFromNow = new Date();
+    tenDaysFromNow.setDate(tenDaysFromNow.getDate() + 10);
+    
+    // Save the schedule in localStorage
+    const schedule = {
+      type: '24_7_10_days',
+      endDate: tenDaysFromNow.toISOString(),
+      setAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('formSchedule', JSON.stringify(schedule));
+    
+    // Show message
+    adminMessage.textContent = `✅ Form is now OPEN 24/7 until ${tenDaysFromNow.toDateString()}`;
+    adminMessage.style.color = 'var(--success-color)';
+    
+    // Check schedule daily
+    checkSchedule();
+    
+    console.log(`24/7 schedule set until: ${tenDaysFromNow.toDateString()}`);
+  }
+  
+  // Check schedule daily
+  function checkSchedule() {
+    const scheduleJson = localStorage.getItem('formSchedule');
+    
+    if (!scheduleJson) return;
+    
+    const schedule = JSON.parse(scheduleJson);
+    const endDate = new Date(schedule.endDate);
+    const now = new Date();
+    
+    // If we've passed the end date, close the form
+    if (now > endDate) {
+      setFormStatus(false);
+      localStorage.removeItem('formSchedule');
+      console.log('24/7 schedule has ended.');
+    }
+  }
+  
+  // Test submission
+  function testSubmission() {
+    // Auto-fill with test data
+    document.getElementById('name').value = 'Test User';
+    document.getElementById('email').value = 'test@example.com';
+    document.getElementById('phone').value = '+1 (555) 123-4567';
+    document.getElementById('age').value = '26-35';
+    document.getElementById('country').value = 'US';
+    document.getElementById('rating').value = '4';
+    document.getElementById('subscription').value = 'premium';
+    document.getElementById('source').value = 'search';
+    document.getElementById('feedback').value = 'This is a test submission to verify the form is working correctly. Thank you for providing this service!';
+    document.getElementById('terms').checked = true;
+    
+    updateCharacterCount();
+    adminMessage.textContent = 'Test data loaded. Click Submit Survey to test.';
+  }
+  
+  function toggleDebug() {
+    debugMode = !debugMode;
+    debugInfo.style.display = debugMode ? 'block' : 'none';
+    adminMessage.textContent = `Debug mode ${debugMode ? 'enabled' : 'disabled'}`;
+  }
+  
+  function viewSheet() {
+    window.open(GOOGLE_SHEET_URL, '_blank');
+  }
+  
+  // Check schedule on page load and every hour
+  setInterval(checkSchedule, 60 * 60 * 1000); // Check every hour
+  checkSchedule(); // Check immediately
+  
+  // Add CSS for spinner animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+
+
+  
 </body>
 </html>
