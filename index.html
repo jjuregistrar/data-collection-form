@@ -260,338 +260,350 @@
         <div id="responseMessage" class="message" style="display:none;"></div>
     </div>
 
-    <script>
-        // ================= CONFIGURATION =================
-        const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
-        const ADMIN_PASSWORD = "admin123"; // Change this to your preferred password
-        
-        // ================= APPLICATION STATE =================
-        let formStatus = true;
-        let actionToPerform = null; // 'open' or 'close'
 
-        // ================= DOM ELEMENTS =================
-        const form = document.getElementById('surveyForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const formStatusMessage = document.getElementById('formStatusMessage');
-        const formStatusText = document.getElementById('formStatusText');
-        const formStatusBadge = document.getElementById('formStatusBadge');
-        const responseMessage = document.getElementById('responseMessage');
-        const charCount = document.getElementById('charCount');
-        const feedback = document.getElementById('feedback');
-        const adminLogin = document.getElementById('adminLogin');
-        const adminPasswordInput = document.getElementById('adminPassword');
+<script>
+    // ================= CONFIGURATION =================
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
+    const ADMIN_PASSWORD = "admin123"; // Change this to your preferred password
+    
+    // ================= APPLICATION STATE =================
+    let formStatus = true;
+    let actionToPerform = null; // 'open' or 'close'
 
-        // ================= INITIALIZATION =================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Survey Form Initialized');
-            
-            // Setup character counter
-            feedback.addEventListener('input', updateCharCount);
-            updateCharCount();
-            
-            // Setup form submission
-            form.addEventListener('submit', handleSubmit);
-            
-            // Setup real-time validation
-            setupValidation();
-            
-            // Load initial form status
-            loadFormStatus();
-        });
+    // ================= DOM ELEMENTS =================
+    const form = document.getElementById('surveyForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formStatusMessage = document.getElementById('formStatusMessage');
+    const formStatusText = document.getElementById('formStatusText');
+    const formStatusBadge = document.getElementById('formStatusBadge');
+    const responseMessage = document.getElementById('responseMessage');
+    const charCount = document.getElementById('charCount');
+    const feedback = document.getElementById('feedback');
+    const adminLogin = document.getElementById('adminLogin');
+    const adminPasswordInput = document.getElementById('adminPassword');
 
-        // ================= FORM CONTROL FUNCTIONS =================
-        function showLoginForOpen() {
-            actionToPerform = 'open';
-            adminLogin.classList.add('active');
-            adminPasswordInput.focus();
-        }
+    // ================= INITIALIZATION =================
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Survey Form Initialized');
         
-        function showLoginForClose() {
-            actionToPerform = 'close';
-            adminLogin.classList.add('active');
-            adminPasswordInput.focus();
-        }
+        // Setup character counter
+        feedback.addEventListener('input', updateCharCount);
+        updateCharCount();
         
-        function hideLogin() {
-            adminLogin.classList.remove('active');
-            adminPasswordInput.value = '';
-            actionToPerform = null;
-        }
+        // Setup form submission
+        form.addEventListener('submit', handleSubmit);
         
-        function login() {
-            const password = adminPasswordInput.value;
-            
-            if (password === ADMIN_PASSWORD) {
-                if (actionToPerform === 'open') {
-                    setFormStatus(true);
-                } else if (actionToPerform === 'close') {
-                    setFormStatus(false);
-                }
-                hideLogin();
-            } else {
-                showMessage('❌ Incorrect password', 'error', responseMessage);
+        // Setup real-time validation
+        setupValidation();
+        
+        // Load initial form status
+        loadFormStatus();
+    });
+
+    // ================= FORM CONTROL FUNCTIONS =================
+    function showLoginForOpen() {
+        actionToPerform = 'open';
+        adminLogin.classList.add('active');
+        adminPasswordInput.focus();
+    }
+    
+    function showLoginForClose() {
+        actionToPerform = 'close';
+        adminLogin.classList.add('active');
+        adminPasswordInput.focus();
+    }
+    
+    function hideLogin() {
+        adminLogin.classList.remove('active');
+        adminPasswordInput.value = '';
+        actionToPerform = null;
+    }
+    
+    function login() {
+        const password = adminPasswordInput.value;
+        
+        if (password === ADMIN_PASSWORD) {
+            if (actionToPerform === 'open') {
+                setFormStatus(true);
+            } else if (actionToPerform === 'close') {
+                setFormStatus(false);
             }
+            hideLogin();
+        } else {
+            showMessage('❌ Incorrect password', 'error', responseMessage);
         }
-        
-        async function checkStatus() {
-            await loadFormStatus();
-            showMessage('✅ Status checked', 'success', responseMessage);
-        }
+    }
+    
+    async function checkStatus() {
+        await loadFormStatus();
+        showMessage('✅ Status checked', 'success', responseMessage);
+    }
 
-        // ================= FORM STATUS MANAGEMENT =================
-        async function loadFormStatus() {
-            try {
-                const response = await fetch(ENDPOINT + '?action=getStatus');
-                const data = await response.json();
-                
-                if (data.ok) {
-                    formStatus = data.status === 'open';
-                    updateFormStatusUI();
-                }
-            } catch (error) {
-                console.error('Error loading form status:', error);
+    // ================= FORM STATUS MANAGEMENT =================
+    async function loadFormStatus() {
+        try {
+            const response = await fetch(ENDPOINT + '?action=getStatus');
+            const data = await response.json();
+            
+            if (data.ok) {
+                formStatus = data.status === 'open';
                 updateFormStatusUI();
-            }
-        }
-        
-        function updateFormStatusUI() {
-            if (formStatus) {
-                formStatusText.textContent = '✅ Form is OPEN for submissions';
-                formStatusBadge.textContent = 'OPEN';
-                formStatusBadge.className = 'form-status status-open';
-                formStatusMessage.className = 'message success';
-                submitBtn.disabled = false;
             } else {
-                formStatusText.textContent = '❌ Form is CLOSED for submissions';
-                formStatusBadge.textContent = 'CLOSED';
-                formStatusBadge.className = 'form-status status-closed';
-                formStatusMessage.className = 'message error';
-                submitBtn.disabled = true;
+                console.error('Error loading form status:', data.error);
+                updateFormStatusUI(); // Use default
             }
+        } catch (error) {
+            console.error('Error loading form status:', error);
+            updateFormStatusUI(); // Use default
         }
-        
-        async function setFormStatus(isOpen) {
-            try {
-                const response = await fetch(ENDPOINT + '?action=setStatus&status=' + (isOpen ? 'open' : 'closed') + '&admin=true');
-                const data = await response.json();
-                
-                if (data.ok) {
-                    formStatus = isOpen;
-                    updateFormStatusUI();
-                    showMessage('✅ ' + data.message, 'success', responseMessage);
-                } else {
-                    showMessage('❌ ' + (data.error || 'Failed to update status'), 'error', responseMessage);
-                }
-            } catch (error) {
-                console.error('Error setting form status:', error);
-                showMessage('❌ Network error', 'error', responseMessage);
-            }
-        }
-
-        // ================= FORM VALIDATION & SUBMISSION =================
-        function setupValidation() {
-            const fields = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source'];
-            
-            fields.forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.addEventListener('blur', () => validateField(fieldId));
-                }
-            });
-            
-            const terms = document.getElementById('terms');
-            if (terms) {
-                terms.addEventListener('change', () => validateField('terms'));
-            }
-        }
-        
-        function validateField(fieldId) {
-            const field = document.getElementById(fieldId);
-            const errorElement = document.getElementById(fieldId + 'Error');
-            
-            if (!field || !errorElement) return true;
-            
-            let isValid = true;
-            let errorMessage = '';
-            
-            const value = field.type === 'checkbox' ? field.checked : field.value.trim();
-            
-            switch(fieldId) {
-                case 'name':
-                    if (!value || value.length < 2) {
-                        isValid = false;
-                        errorMessage = 'Name must be at least 2 characters';
-                    }
-                    break;
-                    
-                case 'email':
-                    if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                        isValid = false;
-                        errorMessage = 'Please enter a valid email address';
-                    }
-                    break;
-                    
-                case 'age':
-                case 'country':
-                case 'rating':
-                case 'subscription':
-                case 'source':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'Please select an option';
-                    }
-                    break;
-                    
-                case 'feedback':
-                    if (!value || value.length < 10) {
-                        isValid = false;
-                        errorMessage = 'Feedback must be at least 10 characters';
-                    } else if (value.length > 500) {
-                        isValid = false;
-                        errorMessage = 'Feedback cannot exceed 500 characters';
-                    }
-                    break;
-                    
-                case 'terms':
-                    if (!value) {
-                        isValid = false;
-                        errorMessage = 'You must agree to the terms';
-                    }
-                    break;
-            }
-            
-            if (isValid) {
-                field.classList.remove('error-field');
-                errorElement.style.display = 'none';
-            } else {
-                field.classList.add('error-field');
-                errorElement.textContent = errorMessage;
-                errorElement.style.display = 'block';
-            }
-            
-            return isValid;
-        }
-        
-        function validateForm() {
-            let isValid = true;
-            
-            const fieldsToValidate = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'];
-            
-            fieldsToValidate.forEach(fieldId => {
-                if (!validateField(fieldId)) {
-                    isValid = false;
-                }
-            });
-            
-            return isValid;
-        }
-        
-        async function handleSubmit(event) {
-            event.preventDefault();
-            
-            // Check if form is open
-            if (!formStatus) {
-                showMessage('❌ Form submissions are currently closed', 'error', responseMessage);
-                return;
-            }
-            
-            // Validate form
-            if (!validateForm()) {
-                showMessage('❌ Please fix the errors above', 'error', responseMessage);
-                return;
-            }
-            
-            // Disable submit button
+    }
+    
+    function updateFormStatusUI() {
+        if (formStatus) {
+            formStatusText.textContent = '✅ Form is OPEN for submissions';
+            formStatusBadge.textContent = 'OPEN';
+            formStatusBadge.className = 'form-status status-open';
+            formStatusMessage.className = 'message success';
+            submitBtn.disabled = false;
+        } else {
+            formStatusText.textContent = '❌ Form is CLOSED for submissions';
+            formStatusBadge.textContent = 'CLOSED';
+            formStatusBadge.className = 'form-status status-closed';
+            formStatusMessage.className = 'message error';
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        }
+    }
+    
+    async function setFormStatus(isOpen) {
+        try {
+            const status = isOpen ? 'open' : 'closed';
+            const response = await fetch(`${ENDPOINT}?action=setStatus&status=${status}&admin=true`);
+            const data = await response.json();
             
-            // Collect form data
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                phone: document.getElementById('phone').value.trim() || '',
-                age: document.getElementById('age').value,
-                country: document.getElementById('country').value,
-                rating: document.getElementById('rating').value,
-                subscription: document.getElementById('subscription').value,
-                feedback: document.getElementById('feedback').value.trim(),
-                source: document.getElementById('source').value,
-                terms: document.getElementById('terms').checked ? 'Agreed' : 'Not agreed'
-            };
-            
-            try {
-                // Send data to Apps Script
-                const formDataEncoded = new URLSearchParams();
-                Object.keys(formData).forEach(key => {
-                    if (formData[key]) {
-                        formDataEncoded.append(key, formData[key]);
-                    }
-                });
-                
-                const response = await fetch(ENDPOINT, {
-                    method: 'POST',
-                    body: formDataEncoded
-                });
-                
-                const result = await response.json();
-                
-                if (result.ok) {
-                    showMessage('✅ Thank you! Your response has been successfully submitted.', 'success', responseMessage);
-                    
-                    // Reset form
-                    form.reset();
-                    updateCharCount();
-                    
-                    // Clear error styles
-                    document.querySelectorAll('.error-field').forEach(el => {
-                        el.classList.remove('error-field');
-                    });
-                    document.querySelectorAll('.error-text').forEach(el => {
-                        el.style.display = 'none';
-                    });
-                    
-                } else {
-                    showMessage(`❌ Error: ${result.error || 'Submission failed'}`, 'error', responseMessage);
-                }
-                
-            } catch (error) {
-                console.error('Submission error:', error);
-                showMessage('❌ Network error. Please check your connection and try again.', 'error', responseMessage);
-            } finally {
-                // Re-enable submit button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Survey';
+            if (data.ok) {
+                formStatus = isOpen;
+                updateFormStatusUI();
+                showMessage('✅ ' + data.message, 'success', responseMessage);
+            } else {
+                showMessage('❌ ' + (data.error || 'Failed to update status'), 'error', responseMessage);
             }
+        } catch (error) {
+            console.error('Error setting form status:', error);
+            showMessage('❌ Network error. Please check connection and try direct URL method.', 'error', responseMessage);
+        }
+    }
+
+    // ================= FORM VALIDATION & SUBMISSION =================
+    function setupValidation() {
+        const fields = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source'];
+        
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('blur', () => validateField(fieldId));
+            }
+        });
+        
+        const terms = document.getElementById('terms');
+        if (terms) {
+            terms.addEventListener('change', () => validateField('terms'));
+        }
+    }
+    
+    function validateField(fieldId) {
+        const field = document.getElementById(fieldId);
+        const errorElement = document.getElementById(fieldId + 'Error');
+        
+        if (!field || !errorElement) return true;
+        
+        let isValid = true;
+        let errorMessage = '';
+        
+        const value = field.type === 'checkbox' ? field.checked : field.value.trim();
+        
+        switch(fieldId) {
+            case 'name':
+                if (!value || value.length < 2) {
+                    isValid = false;
+                    errorMessage = 'Name must be at least 2 characters';
+                }
+                break;
+                
+            case 'email':
+                if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                }
+                break;
+                
+            case 'age':
+            case 'country':
+            case 'rating':
+            case 'subscription':
+            case 'source':
+                if (!value) {
+                    isValid = false;
+                    errorMessage = 'Please select an option';
+                }
+                break;
+                
+            case 'feedback':
+                if (!value || value.length < 10) {
+                    isValid = false;
+                    errorMessage = 'Feedback must be at least 10 characters';
+                } else if (value.length > 500) {
+                    isValid = false;
+                    errorMessage = 'Feedback cannot exceed 500 characters';
+                }
+                break;
+                
+            case 'terms':
+                if (!value) {
+                    isValid = false;
+                    errorMessage = 'You must agree to the terms';
+                }
+                break;
         }
         
-        function updateCharCount() {
-            const length = feedback.value.length;
-            charCount.textContent = `${length}/500 characters`;
-            
-            charCount.className = 'char-count';
-            if (length > 450) {
-                charCount.classList.add('warning');
-            }
-            if (length > 500) {
-                charCount.classList.add('error');
-            }
+        if (isValid) {
+            field.classList.remove('error-field');
+            errorElement.style.display = 'none';
+        } else {
+            field.classList.add('error-field');
+            errorElement.textContent = errorMessage;
+            errorElement.style.display = 'block';
         }
+        
+        return isValid;
+    }
+    
+    function validateForm() {
+        let isValid = true;
+        
+        const fieldsToValidate = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'];
+        
+        fieldsToValidate.forEach(fieldId => {
+            if (!validateField(fieldId)) {
+                isValid = false;
+            }
+        });
+        
+        return isValid;
+    }
+    
+    async function handleSubmit(event) {
+        event.preventDefault();
+        
+        // Check if form is open
+        if (!formStatus) {
+            showMessage('❌ Form submissions are currently closed', 'error', responseMessage);
+            return;
+        }
+        
+        // Validate form
+        if (!validateForm()) {
+            showMessage('❌ Please fix the errors above', 'error', responseMessage);
+            return;
+        }
+        
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        
+        // Collect form data
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim() || '',
+            age: document.getElementById('age').value,
+            country: document.getElementById('country').value,
+            rating: document.getElementById('rating').value,
+            subscription: document.getElementById('subscription').value,
+            feedback: document.getElementById('feedback').value.trim(),
+            source: document.getElementById('source').value,
+            terms: document.getElementById('terms').checked ? 'Agreed' : 'Not agreed'
+        };
+        
+        try {
+            // Send data to Apps Script
+            const formDataEncoded = new URLSearchParams();
+            Object.keys(formData).forEach(key => {
+                if (formData[key]) {
+                    formDataEncoded.append(key, formData[key]);
+                }
+            });
+            
+            const response = await fetch(ENDPOINT, {
+                method: 'POST',
+                body: formDataEncoded
+            });
+            
+            const result = await response.json();
+            
+            if (result.ok) {
+                showMessage('✅ Thank you! Your response has been successfully submitted.', 'success', responseMessage);
+                
+                // Reset form
+                form.reset();
+                updateCharCount();
+                
+                // Clear error styles
+                document.querySelectorAll('.error-field').forEach(el => {
+                    el.classList.remove('error-field');
+                });
+                document.querySelectorAll('.error-text').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+            } else {
+                showMessage(`❌ Error: ${result.error || 'Submission failed'}`, 'error', responseMessage);
+            }
+            
+        } catch (error) {
+            console.error('Submission error:', error);
+            showMessage('❌ Network error. Please check your connection and try again.', 'error', responseMessage);
+        } finally {
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Survey';
+        }
+    }
+    
+    function updateCharCount() {
+        const length = feedback.value.length;
+        charCount.textContent = `${length}/500 characters`;
+        
+        charCount.className = 'char-count';
+        if (length > 450) {
+            charCount.classList.add('warning');
+        }
+        if (length > 500) {
+            charCount.classList.add('error');
+        }
+    }
 
-        // ================= HELPER FUNCTIONS =================
-        function showMessage(text, type, container) {
-            if (!container) return;
-            
-            container.textContent = text;
-            container.className = `message ${type}`;
-            container.style.display = 'block';
-            
-            // Auto-hide success messages after 5 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    container.style.display = 'none';
-                }, 5000);
-            }
+    // ================= HELPER FUNCTIONS =================
+    function showMessage(text, type, container) {
+        if (!container) return;
+        
+        container.textContent = text;
+        container.className = `message ${type}`;
+        container.style.display = 'block';
+        
+        // Auto-hide success messages after 5 seconds
+        if (type === 'success') {
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 5000);
         }
-    </script>
+    }
+</script>
+
+
+
+
+
+
+    
 </body>
 </html>
