@@ -1,532 +1,216 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback Survey</title>
+    <title>Survey Form Test</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #10b981;
-            --error: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-900: #111827;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.5;
-            color: var(--gray-900);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
             padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #f5f5f5;
         }
-        
-        .container {
-            width: 100%;
-            max-width: 500px;
-        }
-        
-        .card {
+        .form-container {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: var(--primary);
-            color: white;
             padding: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        .form-content {
-            padding: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 24px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--gray-700);
-            font-size: 14px;
-        }
-        
-        .required {
-            color: var(--error);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid var(--gray-200);
             border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: var(--gray-50);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        .form-control.error {
-            border-color: var(--error);
-        }
-        
-        select.form-control {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 20px;
-            padding-right: 50px;
-        }
-        
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-            font-family: inherit;
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--gray-100);
-            border-radius: 10px;
-            border: 2px solid var(--gray-200);
-        }
-        
-        .checkbox-group input {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary);
-        }
-        
-        .checkbox-group label {
-            flex: 1;
-            font-size: 15px;
-            line-height: 1.4;
-        }
-        
-        .terms-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .terms-link:hover {
-            text-decoration: underline;
-        }
-        
-        .submit-btn {
+        h1 { color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea {
             width: 100%;
-            padding: 18px;
-            background: var(--primary);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #4CAF50;
             color: white;
+            padding: 12px 20px;
             border: none;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: 600;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-size: 16px;
+            width: 100%;
         }
-        
-        .submit-btn:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        
+        button:hover { background: #45a049; }
         .message {
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 24px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
             display: none;
-            animation: slideIn 0.3s ease;
         }
-        
-        .message.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 2px solid var(--success);
-            color: #065f46;
-        }
-        
-        .message.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 2px solid var(--error);
-            color: #991b1b;
-        }
-        
-        .message-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .message-icon {
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: var(--gray-600);
-            font-size: 14px;
-            padding: 20px;
-        }
-        
-        @media (max-width: 640px) {
-            body {
-                padding: 10px;
-            }
-            
-            .header {
-                padding: 25px 20px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .form-content {
-                padding: 25px 20px;
-            }
-            
-            .submit-btn {
-                padding: 16px;
-                font-size: 16px;
-            }
-        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="header">
-                <h1>📋 Customer Survey</h1>
-                <p>Share your experience to help us improve</p>
+    <div class="form-container">
+        <h1>Simple Survey Form</h1>
+        <form id="surveyForm">
+            <div class="form-group">
+                <label>Name *</label>
+                <input type="text" name="name" required value="John Doe">
             </div>
-            
-            <div class="form-content">
-                <form id="surveyForm" novalidate>
-                    <div class="form-group">
-                        <label class="form-label">
-                            Full Name <span class="required">*</span>
-                        </label>
-                        <input type="text" 
-                               class="form-control" 
-                               name="name" 
-                               required 
-                               placeholder="Enter your full name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Email Address <span class="required">*</span>
-                        </label>
-                        <input type="email" 
-                               class="form-control" 
-                               name="email" 
-                               required 
-                               placeholder="you@example.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" 
-                               class="form-control" 
-                               name="phone" 
-                               placeholder="Optional phone number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Age Group <span class="required">*</span>
-                        </label>
-                        <select class="form-control" name="age" required>
-                            <option value="" disabled selected>Select age group</option>
-                            <option value="18-25">18-25 years</option>
-                            <option value="26-35">26-35 years</option>
-                            <option value="36-45">36-45 years</option>
-                            <option value="46+">46+ years</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Country <span class="required">*</span>
-                        </label>
-                        <input type="text" 
-                               class="form-control" 
-                               name="country" 
-                               required 
-                               placeholder="Enter your country">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Rating <span class="required">*</span>
-                        </label>
-                        <select class="form-control" name="rating" required>
-                            <option value="" disabled selected>Select rating</option>
-                            <option value="1">1 - Poor</option>
-                            <option value="2">2 - Fair</option>
-                            <option value="3">3 - Good</option>
-                            <option value="4">4 - Very Good</option>
-                            <option value="5">5 - Excellent</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Subscription Type <span class="required">*</span>
-                        </label>
-                        <select class="form-control" name="subscription" required>
-                            <option value="" disabled selected>Select subscription</option>
-                            <option value="free">Free</option>
-                            <option value="basic">Basic</option>
-                            <option value="premium">Premium</option>
-                            <option value="enterprise">Enterprise</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            How did you hear about us? <span class="required">*</span>
-                        </label>
-                        <select class="form-control" name="source" required>
-                            <option value="" disabled selected>Select source</option>
-                            <option value="search">Search Engine</option>
-                            <option value="social">Social Media</option>
-                            <option value="friend">Friend/Colleague</option>
-                            <option value="ad">Advertisement</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Feedback <span class="required">*</span>
-                        </label>
-                        <textarea class="form-control" 
-                                  name="feedback" 
-                                  required 
-                                  placeholder="Please share your thoughts, suggestions, or any feedback you have..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="terms" name="terms" value="Agreed" required>
-                            <label for="terms">
-                                I agree to the <a href="#" class="terms-link" onclick="event.preventDefault(); alert('Terms and conditions will be shown here.');">terms and conditions</a>
-                                <span class="required">*</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn" id="submitBtn">
-                        <span id="btnText">Submit Feedback</span>
-                    </button>
-                </form>
-                
-                <div class="message" id="message">
-                    <div class="message-content">
-                        <span class="message-icon" id="messageIcon"></span>
-                        <span id="messageText"></span>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" name="email" required value="test@example.com">
             </div>
-        </div>
-        
-        <div class="footer">
-            <p>Your feedback helps us provide better service. All responses are confidential.</p>
-        </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="phone" value="1234567890">
+            </div>
+            <div class="form-group">
+                <label>Age Group *</label>
+                <select name="age" required>
+                    <option value="18-25">18-25</option>
+                    <option value="26-35" selected>26-35</option>
+                    <option value="36-45">36-45</option>
+                    <option value="46+">46+</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Country *</label>
+                <input type="text" name="country" required value="USA">
+            </div>
+            <div class="form-group">
+                <label>Rating *</label>
+                <select name="rating" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subscription *</label>
+                <select name="subscription" required>
+                    <option value="free">Free</option>
+                    <option value="basic">Basic</option>
+                    <option value="premium" selected>Premium</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Source *</label>
+                <select name="source" required>
+                    <option value="search" selected>Search</option>
+                    <option value="social">Social Media</option>
+                    <option value="friend">Friend</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Feedback *</label>
+                <textarea name="feedback" required>This is a test feedback</textarea>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="terms" value="Agreed" required checked>
+                    I agree to terms *
+                </label>
+            </div>
+            <button type="submit">Submit Survey</button>
+        </form>
+        <div class="message" id="message"></div>
     </div>
 
     <script>
-        // Your Apps Script URL - Update this!
+        // PASTE YOUR NEW DEPLOYMENT URL HERE
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-xh1Eu3kWPVjYNz92IxX_zZb34cVQXKYap2PJ62Gf4n-rpnmPHqiXa8rNNVbKwMkQHQ/exec';
         
-        document.getElementById('surveyForm').addEventListener('submit', async function(e) {
+        document.getElementById('surveyForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get form data
-            const formData = new FormData(this);
+            const form = e.target;
+            const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             
-            // Validate required fields
-            const requiredFields = ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'];
-            const missingFields = requiredFields.filter(field => !data[field]);
+            console.log('Submitting:', data);
             
-            if (missingFields.length > 0) {
-                const fieldNames = missingFields.map(f => {
-                    return f.charAt(0).toUpperCase() + f.slice(1).replace(/([A-Z])/g, ' $1');
-                });
-                showMessage(`Please fill in: ${fieldNames.join(', ')}`, 'error');
-                return;
-            }
+            const btn = form.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
             
-            // Validate email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(data.email)) {
-                showMessage('Please enter a valid email address', 'error');
-                return;
-            }
+            const message = document.getElementById('message');
+            message.textContent = 'Sending...';
+            message.className = 'message';
+            message.style.display = 'block';
             
-            // Prepare submission
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('btnText');
-            
-            // Disable button and show loading
-            submitBtn.disabled = true;
-            btnText.textContent = 'Submitting...';
-            
-            try {
-                // Submit to Google Apps Script
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                // Parse response
-                const result = await response.json();
-                
+            // METHOD 1: Direct fetch with JSON
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(result => {
+                console.log('Result:', result);
                 if (result.ok) {
-                    showMessage('✅ Thank you! Your feedback has been submitted successfully.', 'success');
-                    // Reset form
-                    this.reset();
+                    message.textContent = '✅ ' + result.message;
+                    message.className = 'message success';
+                    form.reset();
                 } else {
-                    showMessage(`❌ ${result.error || 'Submission failed. Please try again.'}`, 'error');
+                    message.textContent = '❌ ' + result.error;
+                    message.className = 'message error';
                 }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                message.textContent = '❌ Network error. Trying alternative method...';
+                message.className = 'message error';
                 
-            } catch (error) {
-                console.error('Submission error:', error);
-                showMessage('❌ Unable to connect to server. Please try again later.', 'error');
-            } finally {
-                // Re-enable button
-                submitBtn.disabled = false;
-                btnText.textContent = 'Submit Feedback';
-            }
+                // METHOD 2: If fetch fails, try form submission
+                setTimeout(() => {
+                    submitViaForm(data);
+                }, 1000);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = 'Submit Survey';
+            });
         });
         
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('message');
-            const messageText = document.getElementById('messageText');
-            const messageIcon = document.getElementById('messageIcon');
+        function submitViaForm(data) {
+            // Create a hidden form and submit it
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = SCRIPT_URL;
+            form.style.display = 'none';
             
-            // Set message content
-            messageText.textContent = text;
-            
-            // Set icon
-            if (type === 'success') {
-                messageIcon.textContent = '✅';
-            } else if (type === 'error') {
-                messageIcon.textContent = '❌';
-            } else {
-                messageIcon.textContent = 'ℹ️';
+            for (const key in data) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = data[key];
+                form.appendChild(input);
             }
             
-            // Show message
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-            
-            // Auto-hide success messages
-            if (type === 'success') {
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 5000);
-            }
+            document.body.appendChild(form);
+            form.submit();
         }
         
-        // Add real-time validation
-        const inputs = document.querySelectorAll('.form-control[required]');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (!this.value.trim()) {
-                    this.classList.add('error');
-                } else {
-                    this.classList.remove('error');
-                }
-            });
-            
-            input.addEventListener('input', function() {
-                this.classList.remove('error');
-            });
+        // Test the connection on page load
+        window.addEventListener('load', function() {
+            fetch(SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Connection test successful:', data);
+                })
+                .catch(error => {
+                    console.log('Connection test failed:', error);
+                    document.getElementById('message').textContent = '⚠️ Note: Testing mode';
+                    document.getElementById('message').className = 'message';
+                    document.getElementById('message').style.display = 'block';
+                });
         });
     </script>
 </body>
