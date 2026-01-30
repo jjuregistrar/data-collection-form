@@ -3,374 +3,854 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Survey Form</title>
+  <title>Customer Feedback Survey</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      color-scheme: light dark;
-      --primary-color: #4CAF50;
-      --error-color: #f44336;
-      --warning-color: #ff9800;
-      --text-color: #333;
-      --bg-color: #f9f9f9;
-      --input-bg: white;
-      --border-color: #ddd;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --text-color: #fff;
-        --bg-color: #1e1e1e;
-        --input-bg: #2d2d2d;
-        --border-color: #444;
-      }
-    }
-    
-    body { 
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+
+    * {
       margin: 0;
       padding: 0;
-      line-height: 1.6;
-      color: var(--text-color);
-      background-color: var(--bg-color);
+      box-sizing: border-box;
     }
-    
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
       padding: 20px;
     }
-    
-    header {
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
       text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid var(--primary-color);
+      margin-bottom: 40px;
+      padding-top: 20px;
     }
-    
-    h1 {
-      color: var(--primary-color);
-      margin-bottom: 10px;
+
+    .header-icon {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: var(--shadow-lg);
     }
-    
+
+    .header-icon i {
+      font-size: 32px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      color: var(--gray-600);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .required-note {
+      font-size: 0.9rem;
+      color: var(--danger);
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    /* Form Container */
     .form-container {
-      background-color: var(--input-bg);
-      border: 2px solid var(--primary-color);
-      border-radius: 12px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .form-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+    }
+
+    .form-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title i {
+      color: var(--primary);
+    }
+
+    /* Form Grid */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+      gap: 24px;
+      margin-bottom: 30px;
     }
-    
+
     .form-group {
-      margin-bottom: 20px;
+      position: relative;
     }
-    
-    .form-group.full-width {
-      grid-column: 1 / -1;
-    }
-    
-    label {
+
+    .form-label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
+      color: var(--gray-700);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    
-    .required::after {
-      content: " *";
-      color: var(--error-color);
+
+    .form-label.required::after {
+      content: '*';
+      color: var(--danger);
+      font-size: 1.2rem;
     }
-    
-    input, select, textarea {
+
+    .form-input,
+    .form-select,
+    .form-textarea {
       width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 16px;
-      background-color: var(--input-bg);
-      color: var(--text-color);
-      transition: border-color 0.3s, box-shadow 0.3s;
+      padding: 14px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-family: inherit;
+      background-color: white;
+      color: var(--dark);
+      transition: var(--transition);
     }
-    
-    input:focus, select:focus, textarea:focus {
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
       outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
-    
-    input.error, select.error, textarea.error {
-      border-color: var(--error-color);
-      background-color: rgba(244, 67, 54, 0.05);
+
+    .form-input.error,
+    .form-select.error,
+    .form-textarea.error {
+      border-color: var(--danger);
+      background-color: rgba(239, 68, 68, 0.02);
     }
-    
-    .error-message {
-      color: var(--error-color);
-      font-size: 14px;
-      margin-top: 5px;
+
+    .form-input.success {
+      border-color: var(--secondary);
+    }
+
+    /* Rating Stars */
+    .rating-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rating-option {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .rating-option input {
       display: none;
     }
-    
-    .character-count {
-      font-size: 14px;
-      text-align: right;
-      margin-top: 5px;
-    }
-    
-    .character-count.warning {
-      color: var(--warning-color);
-    }
-    
-    .character-count.error {
-      color: var(--error-color);
-    }
-    
-    .checkbox-group {
+
+    .rating-label {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 20px;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.95rem;
     }
-    
-    .checkbox-group input {
-      width: auto;
-      margin-top: 3px;
+
+    .rating-label:hover {
+      border-color: var(--primary);
+      background-color: rgba(99, 102, 241, 0.05);
     }
-    
-    .terms-text {
-      font-size: 14px;
+
+    .rating-option input:checked + .rating-label {
+      border-color: var(--primary);
+      background-color: rgba(99, 102, 241, 0.1);
+      font-weight: 600;
     }
-    
-    .submit-section {
-      text-align: center;
+
+    .stars {
+      color: #fbbf24;
+      font-size: 1.1rem;
+    }
+
+    /* Terms Checkbox */
+    .terms-group {
+      background-color: var(--gray-100);
+      padding: 24px;
+      border-radius: var(--radius-sm);
       margin-top: 30px;
     }
-    
+
+    .terms-content {
+      display: flex;
+      gap: 16px;
+    }
+
+    .checkbox-container {
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkmark {
+      position: relative;
+      height: 24px;
+      width: 24px;
+      background-color: white;
+      border: 2px solid var(--gray-300);
+      border-radius: 6px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .checkbox-container:hover input ~ .checkmark {
+      border-color: var(--primary);
+    }
+
+    .checkbox-container input:checked ~ .checkmark {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 8px;
+      top: 4px;
+      width: 6px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .checkbox-container input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    .terms-text {
+      flex: 1;
+    }
+
+    .terms-text label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+      color: var(--dark);
+    }
+
+    .terms-links {
+      margin-top: 8px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .terms-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .terms-links a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    /* Character Counter */
+    .character-counter {
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .character-counter.warning {
+      color: var(--warning);
+    }
+
+    .character-counter.error {
+      color: var(--danger);
+    }
+
+    .counter-progress {
+      width: 100%;
+      height: 4px;
+      background-color: var(--gray-200);
+      border-radius: 2px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .counter-fill {
+      height: 100%;
+      background-color: var(--secondary);
+      transition: width 0.3s ease;
+    }
+
+    /* Error Messages */
+    .error-message {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 6px;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .error-message i {
+      font-size: 0.9rem;
+    }
+
+    /* Submit Button */
+    .submit-section {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid var(--gray-200);
+    }
+
     .submit-btn {
-      background-color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 15px 40px;
-      font-size: 18px;
-      font-weight: bold;
+      border-radius: var(--radius-sm);
+      padding: 18px 48px;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
-    
+
     .submit-btn:hover:not(:disabled) {
-      background-color: #45a049;
       transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
-    
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
     .submit-btn:disabled {
-      background-color: #cccccc;
+      opacity: 0.6;
       cursor: not-allowed;
       transform: none;
     }
-    
-    .response-message {
-      padding: 15px;
-      border-radius: 6px;
+
+    .submit-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .submit-btn:hover::after {
+      left: 100%;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
       margin-top: 20px;
       text-align: center;
-      font-weight: bold;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--gray-200);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Response Messages */
+    .response-message {
+      padding: 20px;
+      border-radius: var(--radius-sm);
+      margin-top: 24px;
+      text-align: center;
+      font-weight: 600;
       display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
     }
-    
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .response-success {
-      background-color: rgba(76, 175, 80, 0.1);
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
-      display: block;
+      background-color: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--secondary);
+      color: var(--secondary);
     }
-    
+
     .response-error {
-      background-color: rgba(244, 67, 54, 0.1);
-      border: 1px solid var(--error-color);
-      color: var(--error-color);
-      display: block;
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--danger);
+      color: var(--danger);
     }
-    
+
+    /* Debug Info */
     .debug-info {
-      background-color: rgba(0, 0, 0, 0.05);
-      padding: 15px;
-      border-radius: 6px;
-      margin-top: 20px;
-      font-family: monospace;
-      font-size: 12px;
-      max-height: 200px;
+      background-color: var(--gray-800);
+      color: white;
+      padding: 20px;
+      border-radius: var(--radius-sm);
+      margin-top: 30px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.85rem;
+      max-height: 300px;
       overflow-y: auto;
       display: none;
     }
-    
-    @media (max-width: 600px) {
-      .container {
-        padding: 10px;
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .debug-toggle {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      padding: 20px;
+      margin-top: 40px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
       }
       
       .form-container {
-        padding: 20px;
+        padding: 25px;
       }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .section-title {
+        font-size: 1.2rem;
+      }
+      
+      .submit-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .rating-container {
+        flex-direction: column;
+      }
+      
+      .rating-option {
+        min-width: 100%;
+      }
+    }
+
+    /* Form Success Animation */
+    @keyframes successPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .success-animation {
+      animation: successPulse 0.5s ease;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>📋 Survey Form</h1>
-      <p>Please fill out all required fields marked with *</p>
-    </header>
-    
+    <!-- Header -->
+    <div class="header">
+      <div class="header-icon">
+        <i class="fas fa-comment-alt"></i>
+      </div>
+      <h1>Customer Feedback Survey</h1>
+      <p>Share your experience and help us improve our services. Your feedback is valuable to us.</p>
+      <p class="required-note"><i class="fas fa-asterisk"></i> Required fields</p>
+    </div>
+
     <!-- Response Message -->
     <div id="responseMessage" class="response-message"></div>
-    
-    <!-- Debug Info (hidden by default) -->
-    <div id="debugInfo" class="debug-info"></div>
-    
+
     <!-- Main Form -->
     <div class="form-container">
       <form id="surveyForm" novalidate>
-        <div class="form-grid">
-          <!-- Personal Information -->
-          <div class="form-group">
-            <label for="name" class="required">Full Name</label>
-            <input type="text" id="name" name="name" 
-                   placeholder="Enter your full name"
-                   maxlength="100"
-                   required>
-            <div class="error-message" id="nameError">Please enter your name (2-100 characters)</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="email" class="required">Email Address</label>
-            <input type="email" id="email" name="email" 
-                   placeholder="your.email@example.com"
-                   required>
-            <div class="error-message" id="emailError">Please enter a valid email address</div>
-          </div>
-          
-          <div class="form-group">
-            <label for="phone">Phone Number (Optional)</label>
-            <input type="tel" id="phone" name="phone" 
-                   placeholder="+1 (123) 456-7890">
-            <div class="error-message" id="phoneError">Please enter a valid phone number</div>
-          </div>
-          
-          <!-- Age Group -->
-          <div class="form-group">
-            <label for="age" class="required">Age Group</label>
-            <select id="age" name="age" required>
-              <option value="">Select your age group</option>
-              <option value="under18">Under 18</option>
-              <option value="18-25">18-25</option>
-              <option value="26-35">26-35</option>
-              <option value="36-50">36-50</option>
-              <option value="51-65">51-65</option>
-              <option value="over65">Over 65</option>
-            </select>
-            <div class="error-message" id="ageError">Please select your age group</div>
-          </div>
-          
-          <!-- Country -->
-          <div class="form-group">
-            <label for="country" class="required">Country</label>
-            <select id="country" name="country" required>
-              <option value="">Select your country</option>
-              <option value="US">United States</option>
-              <option value="UK">United Kingdom</option>
-              <option value="CA">Canada</option>
-              <option value="AU">Australia</option>
-              <option value="IN">India</option>
-              <option value="other">Other</option>
-            </select>
-            <div class="error-message" id="countryError">Please select your country</div>
-          </div>
-          
-          <!-- Rating -->
-          <div class="form-group">
-            <label for="rating" class="required">Service Rating</label>
-            <select id="rating" name="rating" required>
-              <option value="">Select a rating</option>
-              <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-              <option value="4">⭐⭐⭐⭐ - Very Good</option>
-              <option value="3">⭐⭐⭐ - Good</option>
-              <option value="2">⭐⭐ - Fair</option>
-              <option value="1">⭐ - Poor</option>
-            </select>
-            <div class="error-message" id="ratingError">Please select a rating</div>
-          </div>
-          
-          <!-- Subscription -->
-          <div class="form-group">
-            <label for="subscription" class="required">Subscription Type</label>
-            <select id="subscription" name="subscription" required>
-              <option value="">Select subscription type</option>
-              <option value="free">Free</option>
-              <option value="basic">Basic ($9.99/month)</option>
-              <option value="premium">Premium ($19.99/month)</option>
-              <option value="enterprise">Enterprise (Custom)</option>
-            </select>
-            <div class="error-message" id="subscriptionError">Please select subscription type</div>
-          </div>
-          
-          <!-- Source -->
-          <div class="form-group">
-            <label for="source" class="required">How did you hear about us?</label>
-            <select id="source" name="source" required>
-              <option value="">Select an option</option>
-              <option value="search">Search Engine (Google, Bing, etc.)</option>
-              <option value="social">Social Media (Facebook, Twitter, etc.)</option>
-              <option value="friend">Friend/Word of Mouth</option>
-              <option value="ad">Advertisement</option>
-              <option value="email">Email Newsletter</option>
-              <option value="other">Other</option>
-            </select>
-            <div class="error-message" id="sourceError">Please tell us how you heard about us</div>
-          </div>
-          
-          <!-- Feedback -->
-          <div class="form-group full-width">
-            <label for="feedback" class="required">Your Feedback</label>
-            <textarea id="feedback" name="feedback" 
-                      rows="6" 
-                      placeholder="Please share your detailed feedback here..."
-                      maxlength="1000"
-                      required></textarea>
-            <div class="character-count" id="feedbackCount">0/1000 characters</div>
-            <div class="error-message" id="feedbackError">Feedback must be at least 10 characters</div>
-          </div>
-          
-          <!-- Terms -->
-          <div class="form-group full-width">
-            <div class="checkbox-group">
-              <input type="checkbox" id="terms" name="terms" required>
-              <div class="terms-text">
-                <label for="terms" class="required">
-                  I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
-                </label>
-                <p class="muted">By checking this box, you consent to our terms and privacy policy.</p>
+        <!-- Personal Information Section -->
+        <div class="form-section">
+          <h2 class="section-title"><i class="fas fa-user-circle"></i> Personal Information</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name" class="form-label required">
+                <i class="fas fa-user"></i> Full Name
+              </label>
+              <input type="text" id="name" name="name" class="form-input" 
+                     placeholder="Enter your full name" maxlength="100" required>
+              <div class="error-message" id="nameError">
+                <i class="fas fa-exclamation-circle"></i> Please enter your name (2-100 characters)
               </div>
             </div>
-            <div class="error-message" id="termsError">You must agree to the terms to continue</div>
+
+            <div class="form-group">
+              <label for="email" class="form-label required">
+                <i class="fas fa-envelope"></i> Email Address
+              </label>
+              <input type="email" id="email" name="email" class="form-input" 
+                     placeholder="your.email@example.com" required>
+              <div class="error-message" id="emailError">
+                <i class="fas fa-exclamation-circle"></i> Please enter a valid email address
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="phone" class="form-label">
+                <i class="fas fa-phone"></i> Phone Number (Optional)
+              </label>
+              <input type="tel" id="phone" name="phone" class="form-input" 
+                     placeholder="+1 (123) 456-7890">
+              <div class="error-message" id="phoneError">
+                <i class="fas fa-exclamation-circle"></i> Please enter a valid phone number
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="age" class="form-label required">
+                <i class="fas fa-users"></i> Age Group
+              </label>
+              <select id="age" name="age" class="form-select" required>
+                <option value="">Select your age group</option>
+                <option value="under18">Under 18</option>
+                <option value="18-25">18-25</option>
+                <option value="26-35">26-35</option>
+                <option value="36-50">36-50</option>
+                <option value="51-65">51-65</option>
+                <option value="over65">Over 65</option>
+              </select>
+              <div class="error-message" id="ageError">
+                <i class="fas fa-exclamation-circle"></i> Please select your age group
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="country" class="form-label required">
+                <i class="fas fa-globe"></i> Country
+              </label>
+              <select id="country" name="country" class="form-select" required>
+                <option value="">Select your country</option>
+                <option value="US">United States</option>
+                <option value="UK">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="AU">Australia</option>
+                <option value="IN">India</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="error-message" id="countryError">
+                <i class="fas fa-exclamation-circle"></i> Please select your country
+              </div>
+            </div>
           </div>
         </div>
-        
-        <!-- Submit Button -->
+
+        <!-- Service Feedback Section -->
+        <div class="form-section">
+          <h2 class="section-title"><i class="fas fa-star"></i> Service Feedback</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">
+                <i class="fas fa-star-half-alt"></i> Service Rating
+              </label>
+              <div class="rating-container">
+                <div class="rating-option">
+                  <input type="radio" id="rating5" name="rating" value="5">
+                  <label for="rating5" class="rating-label">
+                    <span class="stars">★★★★★</span>
+                    <span>Excellent</span>
+                  </label>
+                </div>
+                <div class="rating-option">
+                  <input type="radio" id="rating4" name="rating" value="4">
+                  <label for="rating4" class="rating-label">
+                    <span class="stars">★★★★☆</span>
+                    <span>Very Good</span>
+                  </label>
+                </div>
+                <div class="rating-option">
+                  <input type="radio" id="rating3" name="rating" value="3">
+                  <label for="rating3" class="rating-label">
+                    <span class="stars">★★★☆☆</span>
+                    <span>Good</span>
+                  </label>
+                </div>
+                <div class="rating-option">
+                  <input type="radio" id="rating2" name="rating" value="2">
+                  <label for="rating2" class="rating-label">
+                    <span class="stars">★★☆☆☆</span>
+                    <span>Fair</span>
+                  </label>
+                </div>
+                <div class="rating-option">
+                  <input type="radio" id="rating1" name="rating" value="1">
+                  <label for="rating1" class="rating-label">
+                    <span class="stars">★☆☆☆☆</span>
+                    <span>Poor</span>
+                  </label>
+                </div>
+              </div>
+              <div class="error-message" id="ratingError">
+                <i class="fas fa-exclamation-circle"></i> Please select a rating
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subscription" class="form-label required">
+                <i class="fas fa-crown"></i> Subscription Type
+              </label>
+              <select id="subscription" name="subscription" class="form-select" required>
+                <option value="">Select subscription type</option>
+                <option value="free">Free</option>
+                <option value="basic">Basic ($9.99/month)</option>
+                <option value="premium">Premium ($19.99/month)</option>
+                <option value="enterprise">Enterprise (Custom)</option>
+              </select>
+              <div class="error-message" id="subscriptionError">
+                <i class="fas fa-exclamation-circle"></i> Please select subscription type
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="source" class="form-label required">
+                <i class="fas fa-bullhorn"></i> How did you hear about us?
+              </label>
+              <select id="source" name="source" class="form-select" required>
+                <option value="">Select an option</option>
+                <option value="search">Search Engine (Google, Bing, etc.)</option>
+                <option value="social">Social Media (Facebook, Twitter, etc.)</option>
+                <option value="friend">Friend/Word of Mouth</option>
+                <option value="ad">Advertisement</option>
+                <option value="email">Email Newsletter</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="error-message" id="sourceError">
+                <i class="fas fa-exclamation-circle"></i> Please tell us how you heard about us
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="form-section">
+          <h2 class="section-title"><i class="fas fa-comment-dots"></i> Your Feedback</h2>
+          <div class="form-group">
+            <label for="feedback" class="form-label required">
+              <i class="fas fa-edit"></i> Share your thoughts
+            </label>
+            <textarea id="feedback" name="feedback" class="form-textarea" 
+                      rows="6" placeholder="Please share your detailed feedback here..." 
+                      maxlength="1000" required></textarea>
+            <div class="character-counter" id="feedbackCount">
+              <span>0/1000 characters</span>
+              <span>Minimum 10 characters</span>
+            </div>
+            <div class="counter-progress">
+              <div class="counter-fill" id="feedbackProgress" style="width: 0%"></div>
+            </div>
+            <div class="error-message" id="feedbackError">
+              <i class="fas fa-exclamation-circle"></i> Feedback must be at least 10 characters
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="terms-group">
+          <div class="terms-content">
+            <div class="checkbox-container">
+              <input type="checkbox" id="terms" name="terms" required>
+              <span class="checkmark"></span>
+            </div>
+            <div class="terms-text">
+              <label for="terms" class="form-label required">
+                Terms & Conditions
+              </label>
+              <p>By checking this box, you consent to our terms and privacy policy. Your information will be kept confidential and used only for improving our services.</p>
+              <div class="terms-links">
+                <a href="#" target="_blank">
+                  <i class="fas fa-file-contract"></i> Terms and Conditions
+                </a>
+                <a href="#" target="_blank">
+                  <i class="fas fa-shield-alt"></i> Privacy Policy
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="error-message" id="termsError">
+            <i class="fas fa-exclamation-circle"></i> You must agree to the terms to continue
+          </div>
+        </div>
+
+        <!-- Submit Section -->
         <div class="submit-section">
           <button type="submit" id="submitBtn" class="submit-btn">
-            Submit Survey
+            <i class="fas fa-paper-plane"></i> Submit Survey
           </button>
-          <div id="loadingSpinner" style="display: none; margin-top: 10px;">
-            <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <span style="margin-left: 10px;">Submitting...</span>
+          <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: var(--gray-600);">Submitting your feedback...</p>
           </div>
         </div>
       </form>
+    </div>
+
+    <!-- Debug Info -->
+    <div class="debug-info" id="debugInfo">
+      <div class="debug-header">
+        <span><i class="fas fa-code"></i> Debug Information</span>
+        <button class="debug-toggle" onclick="toggleDebug()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+      <pre id="debugContent"></pre>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p><i class="far fa-copyright"></i> 2024 Customer Feedback System. All responses are anonymous and confidential.</p>
+      <p style="margin-top: 8px; font-size: 0.85rem; color: var(--gray-500);">
+        <i class="fas fa-lock"></i> Secure submission | <i class="fas fa-user-shield"></i> Privacy protected
+      </p>
     </div>
   </div>
 
@@ -384,21 +864,23 @@
     const loadingSpinner = document.getElementById('loadingSpinner');
     const responseMessage = document.getElementById('responseMessage');
     const debugInfo = document.getElementById('debugInfo');
+    const debugContent = document.getElementById('debugContent');
     const feedbackTextarea = document.getElementById('feedback');
     const feedbackCount = document.getElementById('feedbackCount');
+    const feedbackProgress = document.getElementById('feedbackProgress');
     
     let debugMode = false;
     
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
-      console.log('Survey Form Initializing...');
+      console.log('📋 Survey Form Initializing...');
       
       // Check URL parameters
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('debug') === 'true') {
         debugMode = true;
         debugInfo.style.display = 'block';
-        debugInfo.innerHTML = '<strong>Debug Mode Enabled</strong><br>Endpoint: ' + APPS_SCRIPT_URL;
+        debugContent.textContent = '🔧 Debug Mode Enabled\nEndpoint: ' + APPS_SCRIPT_URL;
       }
       
       // Set up event listeners
@@ -407,7 +889,7 @@
       // Test endpoint connection
       await testEndpointConnection();
       
-      console.log('Survey Form Ready - Always accepting submissions');
+      console.log('✅ Survey Form Ready - Always accepting submissions');
     });
     
     // Set up event listeners
@@ -421,6 +903,11 @@
         const field = document.getElementById(fieldId);
         if (field) {
           field.addEventListener('blur', () => validateField(fieldId));
+          field.addEventListener('input', () => {
+            if (field.classList.contains('error')) {
+              validateField(fieldId);
+            }
+          });
         }
       });
       
@@ -429,19 +916,42 @@
       
       // Form submission
       form.addEventListener('submit', handleSubmit);
+      
+      // Add visual feedback on focus
+      const inputs = form.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+          this.parentElement.classList.remove('focused');
+        });
+      });
     }
     
     // Update character count
     function updateCharacterCount() {
       const length = feedbackTextarea.value.length;
-      feedbackCount.textContent = `${length}/1000 characters`;
+      const percentage = Math.min((length / 1000) * 100, 100);
       
+      feedbackCount.textContent = `${length}/1000 characters`;
+      feedbackProgress.style.width = `${percentage}%`;
+      
+      // Update styling
+      feedbackCount.className = 'character-counter';
       if (length > 900) {
-        feedbackCount.className = 'character-count warning';
+        feedbackCount.classList.add('warning');
+        feedbackProgress.style.backgroundColor = 'var(--warning)';
       } else if (length > 1000) {
-        feedbackCount.className = 'character-count error';
+        feedbackCount.classList.add('error');
+        feedbackProgress.style.backgroundColor = 'var(--danger)';
       } else {
-        feedbackCount.className = 'character-count';
+        feedbackProgress.style.backgroundColor = 'var(--secondary)';
+      }
+      
+      // Auto-validate if content is long enough
+      if (length >= 10) {
+        validateField('feedback');
       }
     }
     
@@ -498,7 +1008,7 @@
           case 'terms':
             if (!value) {
               isValid = false;
-              message = 'You must agree to the terms';
+              message = 'You must agree to the terms to continue';
             }
             break;
         }
@@ -507,11 +1017,13 @@
       // Update UI
       if (isValid) {
         field.classList.remove('error');
+        field.classList.add('success');
         errorElement.style.display = 'none';
       } else {
+        field.classList.remove('success');
         field.classList.add('error');
         errorElement.textContent = message;
-        errorElement.style.display = 'block';
+        errorElement.style.display = 'flex';
       }
       
       return isValid;
@@ -548,7 +1060,7 @@
         phone: document.getElementById('phone').value.trim(),
         age: document.getElementById('age').value,
         country: document.getElementById('country').value,
-        rating: document.getElementById('rating').value,
+        rating: document.querySelector('input[name="rating"]:checked')?.value || '',
         subscription: document.getElementById('subscription').value,
         feedback: document.getElementById('feedback').value.trim(),
         source: document.getElementById('source').value,
@@ -558,15 +1070,11 @@
       // Show loading state
       submitBtn.disabled = true;
       loadingSpinner.style.display = 'block';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
       
       // Debug info
       if (debugMode) {
-        debugInfo.innerHTML = `
-          <strong>Submitting Data:</strong><br>
-          <pre>${JSON.stringify(formData, null, 2)}</pre>
-          <br><strong>To Endpoint:</strong><br>
-          ${APPS_SCRIPT_URL}
-        `;
+        debugContent.textContent = `📤 Submitting Data:\n${JSON.stringify(formData, null, 2)}\n\n🌐 To Endpoint:\n${APPS_SCRIPT_URL}`;
       }
       
       try {
@@ -574,32 +1082,39 @@
         const response = await submitToGoogleAppsScript(formData);
         
         if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Response:</strong><br><pre>${JSON.stringify(response, null, 2)}</pre>`;
+          debugContent.textContent += `\n\n✅ Response:\n${JSON.stringify(response, null, 2)}`;
         }
         
         if (response.ok) {
-          showResponse('✅ Thank you! Your response has been successfully recorded.', 'success');
+          showResponse('✅ Thank you! Your feedback has been successfully submitted.', 'success');
           form.reset();
           updateCharacterCount();
+          
+          // Add success animation
+          document.querySelector('.form-container').classList.add('success-animation');
+          setTimeout(() => {
+            document.querySelector('.form-container').classList.remove('success-animation');
+          }, 500);
           
           // Clear form after success
           setTimeout(() => {
             showResponse('', 'success');
           }, 5000);
         } else {
-          showResponse(`❌ Error: ${response.error || 'Submission failed'}`, 'error');
+          showResponse(`❌ ${response.error || 'Submission failed. Please try again.'}`, 'error');
         }
       } catch (error) {
         console.error('Submission error:', error);
         showResponse('❌ Network error. Please check your connection and try again.', 'error');
         
         if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Error:</strong><br>${error.message}`;
+          debugContent.textContent += `\n\n❌ Error:\n${error.message}`;
         }
       } finally {
         // Reset loading state
         submitBtn.disabled = false;
         loadingSpinner.style.display = 'none';
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Survey';
       }
     }
     
@@ -640,7 +1155,14 @@
     function showResponse(message, type) {
       responseMessage.textContent = message;
       responseMessage.className = `response-message response-${type}`;
-      responseMessage.style.display = message ? 'block' : 'none';
+      responseMessage.style.display = 'flex';
+      
+      // Auto-hide error messages after 5 seconds
+      if (type === 'error') {
+        setTimeout(() => {
+          responseMessage.style.display = 'none';
+        }, 5000);
+      }
     }
     
     // Test endpoint connection
@@ -650,25 +1172,40 @@
         const result = await response.json();
         
         if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Connection Test:</strong><br><pre>${JSON.stringify(result, null, 2)}</pre>`;
+          debugContent.textContent += `\n\n🔗 Connection Test:\n${JSON.stringify(result, null, 2)}`;
         }
         
-        console.log('Endpoint connection:', result.ok ? '✓ OK' : '✗ Failed');
+        console.log('✅ Endpoint connection:', result.ok ? 'OK' : 'Failed');
       } catch (error) {
-        console.warn('Endpoint test failed:', error);
+        console.warn('⚠️ Endpoint test failed:', error);
         
         if (debugMode) {
-          debugInfo.innerHTML += `<br><strong>Connection Test Failed:</strong><br>${error.message}`;
+          debugContent.textContent += `\n\n❌ Connection Test Failed:\n${error.message}`;
         }
       }
     }
     
-    // Add CSS for spinner animation
+    // Toggle debug panel
+    function toggleDebug() {
+      debugMode = !debugMode;
+      debugInfo.style.display = debugMode ? 'block' : 'none';
+      
+      if (debugMode) {
+        debugContent.textContent = '🔧 Debug Mode Enabled\nEndpoint: ' + APPS_SCRIPT_URL;
+      }
+    }
+    
+    // Add CSS for focused state
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+      .form-group.focused .form-label {
+        color: var(--primary);
+      }
+      
+      .form-group.focused .form-input,
+      .form-group.focused .form-select,
+      .form-group.focused .form-textarea {
+        border-color: var(--primary);
       }
     `;
     document.head.appendChild(style);
