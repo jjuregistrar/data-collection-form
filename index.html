@@ -3,15 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Student Information Collection</title>
+  <title>Student Information Collection - Jigjiga University</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary: #6366f1;
       --primary-dark: #4f46e5;
       --success: #10b981;
+      --success-dark: #059669;
       --danger: #ef4444;
+      --danger-dark: #dc2626;
       --warning: #f59e0b;
+      --info: #3b82f6;
       --light: #f8fafc;
       --dark: #1e293b;
       --gray-100: #f1f5f9;
@@ -229,6 +232,136 @@
       to { transform: rotate(360deg); }
     }
 
+    /* Enhanced Message Blocks */
+    .message-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      left: auto;
+      z-index: 1000;
+      max-width: 400px;
+      width: calc(100% - 40px);
+      pointer-events: none;
+    }
+
+    .message-block {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideInRight 0.3s ease;
+      pointer-events: auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOutRight {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    .message-block.hide {
+      animation: slideOutRight 0.3s ease forwards;
+    }
+
+    .message-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .message-content {
+      flex: 1;
+    }
+
+    .message-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .message-text {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .message-close {
+      cursor: pointer;
+      color: var(--gray-400);
+      font-size: 14px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .message-close:hover {
+      color: var(--gray-600);
+    }
+
+    .message-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      animation: progress 5s linear forwards;
+    }
+
+    @keyframes progress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    /* Message Types */
+    .message-success {
+      border-left: 4px solid var(--success);
+    }
+    .message-success .message-icon { color: var(--success); }
+    .message-success .message-title { color: var(--success-dark); }
+    .message-success .message-progress { background: var(--success); }
+
+    .message-error {
+      border-left: 4px solid var(--danger);
+    }
+    .message-error .message-icon { color: var(--danger); }
+    .message-error .message-title { color: var(--danger-dark); }
+    .message-error .message-progress { background: var(--danger); }
+
+    .message-info {
+      border-left: 4px solid var(--info);
+    }
+    .message-info .message-icon { color: var(--info); }
+    .message-info .message-title { color: var(--info); }
+    .message-info .message-progress { background: var(--info); }
+
+    .message-warning {
+      border-left: 4px solid var(--warning);
+    }
+    .message-warning .message-icon { color: var(--warning); }
+    .message-warning .message-title { color: var(--warning); }
+    .message-warning .message-progress { background: var(--warning); }
+
+    /* Old response message (kept for compatibility) */
     .response-message {
       padding: 20px;
       border-radius: var(--radius-sm);
@@ -253,6 +386,7 @@
       .form-container { padding: 25px 20px; }
       .header h1 { font-size: 1.5rem; }
       .info-grid { grid-template-columns: 1fr; }
+      .message-container { max-width: calc(100% - 40px); left: 20px; right: 20px; }
     }
   </style>
 </head>
@@ -264,10 +398,14 @@
       </div>
       <h1>JIGJIGA UNIVERSITY</h1>
       <h2>Registrar and Alumni Directorate</h2>
-      <h3>Remadial Student Information Collection</h3>
+      <h3>Remedial Student Information Collection</h3>
       <p>Please verify your identity and provide additional information</p>
     </div>
 
+    <!-- Enhanced Message Container -->
+    <div id="messageContainer" class="message-container"></div>
+
+    <!-- Old Response Message (kept for fallback) -->
     <div id="responseMessage" class="response-message"></div>
 
     <div class="form-container">
@@ -345,6 +483,7 @@
     // Student data cache
     let studentsData = [];
     let currentStudent = null;
+    let activeMessages = [];
     
     // ==================== DOM Elements ====================
     const verificationSection = document.getElementById('verificationSection');
@@ -354,11 +493,62 @@
     const submitBtn = document.getElementById('submitBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const responseMessage = document.getElementById('responseMessage');
+    const messageContainer = document.getElementById('messageContainer');
     
     const studentIdInput = document.getElementById('studentId');
     const admissionNumberInput = document.getElementById('admissionNumber');
     const fanNumberInput = document.getElementById('fanNumber');
     const phoneNumberInput = document.getElementById('phoneNumber');
+    
+    // ==================== Enhanced Message System ====================
+    function showFloatingMessage(title, message, type = 'success', duration = 5000) {
+      const messageId = Date.now() + Math.random();
+      const messageBlock = document.createElement('div');
+      messageBlock.className = `message-block message-${type}`;
+      messageBlock.id = `msg-${messageId}`;
+      
+      // Set icon based on type
+      let icon = 'fa-check-circle';
+      if (type === 'error') icon = 'fa-exclamation-circle';
+      if (type === 'info') icon = 'fa-info-circle';
+      if (type === 'warning') icon = 'fa-exclamation-triangle';
+      
+      messageBlock.innerHTML = `
+        <div class="message-icon">
+          <i class="fas ${icon}"></i>
+        </div>
+        <div class="message-content">
+          <div class="message-title">${title}</div>
+          <div class="message-text">${message}</div>
+        </div>
+        <div class="message-close" onclick="this.closest('.message-block').remove()">
+          <i class="fas fa-times"></i>
+        </div>
+        <div class="message-progress" style="animation-duration: ${duration/1000}s"></div>
+      `;
+      
+      messageContainer.appendChild(messageBlock);
+      activeMessages.push(messageId);
+      
+      // Auto remove after duration
+      setTimeout(() => {
+        const msgElement = document.getElementById(`msg-${messageId}`);
+        if (msgElement) {
+          msgElement.classList.add('hide');
+          setTimeout(() => {
+            if (msgElement && msgElement.parentNode) {
+              msgElement.remove();
+            }
+          }, 300);
+        }
+        activeMessages = activeMessages.filter(id => id !== messageId);
+      }, duration);
+      
+      // Also log to console
+      console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+      
+      return messageId;
+    }
     
     // ==================== Load Student Data from GitHub ====================
     async function loadStudentData() {
@@ -381,12 +571,11 @@
         }
         
         console.log(`Loaded ${studentsData.length} student records`);
-        showResponse(`Loaded ${studentsData.length} student records successfully`, 'success');
-        setTimeout(() => hideResponse(), 2000);
+        showFloatingMessage('Success', `Loaded ${studentsData.length} student records successfully`, 'success', 2000);
         
       } catch (error) {
         console.error('Error loading student data:', error);
-        showResponse('Failed to load student data. Please check your internet connection and try again.', 'error');
+        showFloatingMessage('Error', 'Failed to load student data. Please check your internet connection.', 'error', 5000);
         loadSampleData();
       } finally {
         showLoading(false);
@@ -438,6 +627,7 @@
         }
       ];
       console.log('Sample data loaded for testing');
+      showFloatingMessage('Info', 'Using sample data for testing', 'info', 3000);
     }
     
     // ==================== Verification ====================
@@ -449,11 +639,13 @@
       
       if (!studentId) {
         showFieldError('studentIdError', 'Please enter your Student ID');
+        showFloatingMessage('Verification Failed', 'Please enter your Student ID', 'error', 3000);
         return;
       }
       
       if (!admissionNumber) {
         showFieldError('admissionNumberError', 'Please enter your Admission Number');
+        showFloatingMessage('Verification Failed', 'Please enter your Admission Number', 'error', 3000);
         return;
       }
       
@@ -463,16 +655,19 @@
       );
       
       if (!student) {
+        showFloatingMessage('Verification Failed', 'Invalid Student ID or Admission Number. Please check and try again.', 'error', 4000);
         showResponse('❌ Invalid Student ID or Admission Number. Please check and try again.', 'error');
         return;
       }
       
+      // Student found - Success!
       currentStudent = student;
       displayStudentInfo(student);
       
       verificationSection.style.display = 'none';
       studentInfoSection.style.display = 'block';
       
+      showFloatingMessage('Verification Successful', `Welcome ${student['First Name']}! Please provide your FAN Number and Phone Number.`, 'success', 4000);
       showResponse('✅ Identity verified! Please provide your FAN Number and Phone Number.', 'success');
       setTimeout(() => hideResponse(), 3000);
     }
@@ -502,15 +697,12 @@
     function setupRealTimeValidation() {
       // Real-time FAN Number validation - exactly 16 digits
       fanNumberInput.addEventListener('input', function() {
-        // Remove any non-digit characters
         let value = this.value.replace(/\D/g, '');
         
-        // Limit to 16 digits
         if (value.length > 16) {
           value = value.slice(0, 16);
         }
         
-        // Update input value
         this.value = value;
         
         const fanRegex = /^\d{16}$/;
@@ -534,15 +726,12 @@
       
       // Real-time Phone Number validation - starts with 09, exactly 10 digits
       phoneNumberInput.addEventListener('input', function() {
-        // Remove any non-digit characters
         let value = this.value.replace(/\D/g, '');
         
-        // Limit to 10 digits
         if (value.length > 10) {
           value = value.slice(0, 10);
         }
         
-        // Update input value
         this.value = value;
         
         const phoneRegex = /^09\d{8}$/;
@@ -585,12 +774,12 @@
       const fanNumber = fanNumberInput.value.trim();
       const phoneNumber = phoneNumberInput.value.trim();
       
-      // Clear previous errors
       clearErrors();
       
       // Validate FAN Number - EXACTLY 16 digits
       if (!fanNumber) {
         showFieldError('fanNumberError', 'Please enter your FAN Number');
+        showFloatingMessage('Validation Error', 'Please enter your FAN Number', 'error', 3000);
         fanNumberInput.focus();
         return;
       }
@@ -598,6 +787,7 @@
       const fanRegex = /^\d{16}$/;
       if (!fanRegex.test(fanNumber)) {
         showFieldError('fanNumberError', 'FAN Number must be exactly 16 digits (numbers only)');
+        showFloatingMessage('Validation Error', 'FAN Number must be exactly 16 digits', 'error', 3000);
         fanNumberInput.focus();
         return;
       }
@@ -605,6 +795,7 @@
       // Validate Phone Number - starts with 09, exactly 10 digits
       if (!phoneNumber) {
         showFieldError('phoneNumberError', 'Please enter your phone number');
+        showFloatingMessage('Validation Error', 'Please enter your phone number', 'error', 3000);
         phoneNumberInput.focus();
         return;
       }
@@ -612,6 +803,7 @@
       const phoneRegex = /^09\d{8}$/;
       if (!phoneRegex.test(phoneNumber)) {
         showFieldError('phoneNumberError', 'Phone number must start with 09 and be exactly 10 digits (e.g., 0912345678)');
+        showFloatingMessage('Validation Error', 'Phone number must start with 09 and be exactly 10 digits', 'error', 3000);
         phoneNumberInput.focus();
         return;
       }
@@ -633,9 +825,9 @@
         submission_status: 'COMPLETED'
       };
       
-      // Submit to Google Sheets
       showLoading(true);
       submitBtn.disabled = true;
+      showFloatingMessage('Processing', 'Submitting your information...', 'info', 2000);
       
       try {
         const formData = new FormData();
@@ -649,14 +841,25 @@
           body: formData
         });
         
+        // Success!
+        const studentName = currentStudent['First Name'] || 'Student';
+        showFloatingMessage('Submission Successful', `Thank you ${studentName}! Your information has been successfully submitted.`, 'success', 5000);
         showResponse('✅ Thank you! Your information has been successfully submitted.', 'success');
+        
+        // Play success sound effect (optional - creates a subtle beep)
+        try {
+          const audio = new Audio('data:audio/wav;base64,U3RlYWx0aCBzb3VuZCBlZmZlY3Q=');
+          // Note: This is a placeholder - actual sound may not work without proper audio file
+        } catch(e) { console.log('Audio not supported'); }
         
         setTimeout(() => {
           resetForm();
+          showFloatingMessage('Form Reset', 'You can now help another student if needed', 'info', 3000);
         }, 2000);
         
       } catch (error) {
         console.error('Submission error:', error);
+        showFloatingMessage('Submission Failed', 'Network error. Please check your connection and try again.', 'error', 5000);
         showResponse('❌ Submission failed. Please try again or contact support.', 'error');
       } finally {
         showLoading(false);
@@ -672,7 +875,6 @@
       phoneNumberInput.value = '';
       currentStudent = null;
       
-      // Remove success/error classes
       fanNumberInput.classList.remove('success', 'error');
       phoneNumberInput.classList.remove('success', 'error');
       
@@ -718,7 +920,6 @@
     verifyBtn.addEventListener('click', verifyStudent);
     submitBtn.addEventListener('click', submitData);
     
-    // Enter key support
     studentIdInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') verifyStudent();
     });
@@ -738,6 +939,7 @@
       await loadStudentData();
       showLoading(false);
       setupRealTimeValidation();
+      showFloatingMessage('Welcome', 'Please verify your identity to continue', 'info', 4000);
     }
     
     init();
