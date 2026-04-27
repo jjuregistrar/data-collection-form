@@ -1,10 +1,5 @@
 Stream,Studentid,Admission Number,First Name,Father Name,Grand Father Name,Gender,Isblind,Isdeaf
-Science,S001,ADM2024001,John,Michael,Thomas,Male,No,No
-Science,S002,ADM2024002,Sarah,David,James,Female,No,No
-Arts,S003,ADM2024003,Michael,Robert,William,Male,Yes,No
-Commerce,S004,ADM2024004,Emily,Richard,Charles,Female,No,Yes
-Science,S005,ADM2024005,David,Joseph,George,Male,No,No
-Natural Science,JJURMRE180001,121212,SADAM,DAWUD,ADEM,Male,NO,NO
+Natural Science,JJURMRE190001,7654321,AHMED,ABDI,ADEM,Male,NO,NO
 Natural Science,JJURMRE180001,7100802,ABAS,EGGE,AWALE,Male,NO,NO
 Social Science,JJURMRE180004,6461394,ABBOMSA,MUSTEFA,MOHAMED,Male,NO,NO
 Social Science,JJURMRE180005,7143424,ABDALE,SHEIK,ABDI,Male,NO,NO
