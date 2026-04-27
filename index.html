@@ -287,18 +287,26 @@
 
         <div class="form-group">
           <label for="fanNumber" class="form-label required">
-            <i class="fas fa-qrcode"></i> FAN Number
+            <i class="fas fa-qrcode"></i> FAN Number (16 digits)
           </label>
-          <input type="text" id="fanNumber" class="form-input" placeholder="Enter your FAN Number" maxlength="50">
-          <div class="error-message" id="fanNumberError">Please enter a valid FAN Number</div>
+          <input type="text" id="fanNumber" class="form-input" 
+                 placeholder="Enter 16-digit FAN Number (e.g., 1234567890123456)" 
+                 maxlength="16"
+                 pattern="\d{16}"
+                 inputmode="numeric">
+          <div class="error-message" id="fanNumberError">FAN Number must be exactly 16 digits (numbers only)</div>
         </div>
 
         <div class="form-group">
           <label for="phoneNumber" class="form-label required">
-            <i class="fas fa-phone"></i> Phone Number
+            <i class="fas fa-phone"></i> Phone Number (starts with 09)
           </label>
-          <input type="tel" id="phoneNumber" class="form-input" placeholder="Enter your phone number">
-          <div class="error-message" id="phoneNumberError">Please enter a valid phone number (10-15 digits)</div>
+          <input type="tel" id="phoneNumber" class="form-input" 
+                 placeholder="Enter 10-digit phone number starting with 09 (e.g., 0912345678)" 
+                 maxlength="10"
+                 pattern="09\d{8}"
+                 inputmode="numeric">
+          <div class="error-message" id="phoneNumberError">Phone number must start with 09 and be exactly 10 digits</div>
         </div>
 
         <button type="button" id="submitBtn" class="submit-btn">
@@ -315,9 +323,8 @@
 
   <script>
     // ==================== CONFIGURATION ====================
-    // Update these URLs with your actual GitHub raw content URL and Apps Script URL
-    const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/jjuregistrar/data-collection-form/refs/heads/main/students.csv'; // Change this
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaFmqL_TyKQCgIoqz3cBbRe5RtCTAXKPcvCt-v6hJdkWn9V10FV6aPQDh8zlTDeBUW_g/exec'; // Change this
+    const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/jjuregistrar/data-collection-form/refs/heads/main/students.csv';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaFmqL_TyKQCgIoqz3cBbRe5RtCTAXKPcvCt-v6hJdkWn9V10FV6aPQDh8zlTDeBUW_g/exec';
     
     // Student data cache
     let studentsData = [];
@@ -343,17 +350,14 @@
       showLoading(true);
       
       try {
-        // Try CSV format first
         let response = await fetch(GITHUB_DATA_URL);
         
         if (!response.ok) {
-          // Try JSON format if CSV fails
           response = await fetch(GITHUB_DATA_URL.replace('.csv', '.json'));
         }
         
         const data = await response.text();
         
-        // Parse CSV data
         if (GITHUB_DATA_URL.endsWith('.csv')) {
           studentsData = parseCSV(data);
         } else {
@@ -367,8 +371,6 @@
       } catch (error) {
         console.error('Error loading student data:', error);
         showResponse('Failed to load student data. Please check your internet connection and try again.', 'error');
-        
-        // Load sample data for testing
         loadSampleData();
       } finally {
         showLoading(false);
@@ -393,7 +395,7 @@
       return students;
     }
     
-    // Load sample data for testing (remove in production)
+    // Load sample data for testing
     function loadSampleData() {
       studentsData = [
         {
@@ -427,10 +429,8 @@
       const studentId = studentIdInput.value.trim();
       const admissionNumber = admissionNumberInput.value.trim();
       
-      // Clear previous errors
       clearErrors();
       
-      // Validate inputs
       if (!studentId) {
         showFieldError('studentIdError', 'Please enter your Student ID');
         return;
@@ -441,7 +441,6 @@
         return;
       }
       
-      // Find student
       const student = studentsData.find(s => 
         (s.Studentid === studentId || s.Studentid?.toString() === studentId) &&
         (s['Admission Number'] === admissionNumber || s['Admission Number']?.toString() === admissionNumber)
@@ -452,11 +451,9 @@
         return;
       }
       
-      // Student found
       currentStudent = student;
       displayStudentInfo(student);
       
-      // Switch to info section
       verificationSection.style.display = 'none';
       studentInfoSection.style.display = 'block';
       
@@ -485,93 +482,171 @@
         `).join('');
     }
     
+    // ==================== Real-time Validation ====================
+    function setupRealTimeValidation() {
+      // Real-time FAN Number validation - exactly 16 digits
+      fanNumberInput.addEventListener('input', function() {
+        // Remove any non-digit characters
+        let value = this.value.replace(/\D/g, '');
+        
+        // Limit to 16 digits
+        if (value.length > 16) {
+          value = value.slice(0, 16);
+        }
+        
+        // Update input value
+        this.value = value;
+        
+        const fanRegex = /^\d{16}$/;
+        
+        if (value.length > 0) {
+          if (!fanRegex.test(value)) {
+            this.classList.add('error');
+            this.classList.remove('success');
+            if (value.length !== 16) {
+              showFieldError('fanNumberError', `FAN Number must be exactly 16 digits (currently ${value.length} digits)`);
+            }
+          } else {
+            this.classList.remove('error');
+            this.classList.add('success');
+            document.getElementById('fanNumberError').style.display = 'none';
+          }
+        } else {
+          this.classList.remove('error', 'success');
+        }
+      });
+      
+      // Real-time Phone Number validation - starts with 09, exactly 10 digits
+      phoneNumberInput.addEventListener('input', function() {
+        // Remove any non-digit characters
+        let value = this.value.replace(/\D/g, '');
+        
+        // Limit to 10 digits
+        if (value.length > 10) {
+          value = value.slice(0, 10);
+        }
+        
+        // Update input value
+        this.value = value;
+        
+        const phoneRegex = /^09\d{8}$/;
+        
+        if (value.length > 0) {
+          if (!phoneRegex.test(value)) {
+            this.classList.add('error');
+            this.classList.remove('success');
+            if (value.length > 0 && !value.startsWith('09')) {
+              showFieldError('phoneNumberError', 'Phone number must start with 09');
+            } else if (value.length !== 10) {
+              showFieldError('phoneNumberError', `Phone number must be exactly 10 digits (currently ${value.length} digits)`);
+            }
+          } else {
+            this.classList.remove('error');
+            this.classList.add('success');
+            document.getElementById('phoneNumberError').style.display = 'none';
+          }
+        } else {
+          this.classList.remove('error', 'success');
+        }
+      });
+      
+      // Prevent non-numeric input
+      fanNumberInput.addEventListener('keypress', function(e) {
+        if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+          e.preventDefault();
+        }
+      });
+      
+      phoneNumberInput.addEventListener('keypress', function(e) {
+        if (!/^\d$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+          e.preventDefault();
+        }
+      });
+    }
+    
     // ==================== Form Submission ====================
-// ==================== Form Submission - FIXED VERSION ====================
-async function submitData() {
-  const fanNumber = fanNumberInput.value.trim();
-  const phoneNumber = phoneNumberInput.value.trim();
-  
-  // Clear previous errors
-  clearErrors();
-  
-  // Validate FAN Number
-  if (!fanNumber) {
-    showFieldError('fanNumberError', 'Please enter your FAN Number');
-    fanNumberInput.focus();
-    return;
-  }
-  
-  if (fanNumber.length < 3) {
-    showFieldError('fanNumberError', 'FAN Number must be at least 3 characters');
-    fanNumberInput.focus();
-    return;
-  }
-  
-  // Validate Phone Number
-  if (!phoneNumber) {
-    showFieldError('phoneNumberError', 'Please enter your phone number');
-    phoneNumberInput.focus();
-    return;
-  }
-  
-  const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,15}$/;
-  if (!phoneRegex.test(phoneNumber)) {
-    showFieldError('phoneNumberError', 'Please enter a valid phone number (10-15 digits)');
-    phoneNumberInput.focus();
-    return;
-  }
-  
-  // Prepare data for submission
-  const submissionData = {
-    timestamp: new Date().toISOString(),
-    Stream: currentStudent.Stream || '',
-    Studentid: currentStudent.Studentid || '',
-    'Admission Number': currentStudent['Admission Number'] || '',
-    'FAN Number': fanNumber,
-    'First Name': currentStudent['First Name'] || '',
-    'Father Name': currentStudent['Father Name'] || '',
-    'Grand Father Name': currentStudent['Grand Father Name'] || '',
-    Gender: currentStudent.Gender || '',
-    Isblind: currentStudent.Isblind || 'No',
-    Isdeaf: currentStudent.Isdeaf || 'No',
-    'Phone Number': phoneNumber,
-    submission_status: 'COMPLETED'
-  };
-  
-  // Submit to Google Sheets
-  showLoading(true);
-  submitBtn.disabled = true;
-  
-  try {
-    // Method 1: Try using FormData instead of JSON (bypasses CORS issues)
-    const formData = new FormData();
-    Object.keys(submissionData).forEach(key => {
-      formData.append(key, submissionData[key]);
-    });
-    
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Important: Use no-cors mode
-      body: formData
-    });
-    
-    // When using no-cors, we can't read the response, so assume success
-    // The data will still be submitted to Google Sheets
-    showResponse('✅ Thank you! Your information has been successfully submitted.', 'success');
-    
-    // Reset form after success
-    setTimeout(() => {
-      resetForm();
-    }, 2000);
-    
-  } catch (error) {
-    console.error('Submission error:', error);
-    showResponse('❌ Submission failed. Please try again or contact support.', 'error');
-  } finally {
-    showLoading(false);
-    submitBtn.disabled = false;
-  }
-}
+    async function submitData() {
+      const fanNumber = fanNumberInput.value.trim();
+      const phoneNumber = phoneNumberInput.value.trim();
+      
+      // Clear previous errors
+      clearErrors();
+      
+      // Validate FAN Number - EXACTLY 16 digits
+      if (!fanNumber) {
+        showFieldError('fanNumberError', 'Please enter your FAN Number');
+        fanNumberInput.focus();
+        return;
+      }
+      
+      const fanRegex = /^\d{16}$/;
+      if (!fanRegex.test(fanNumber)) {
+        showFieldError('fanNumberError', 'FAN Number must be exactly 16 digits (numbers only)');
+        fanNumberInput.focus();
+        return;
+      }
+      
+      // Validate Phone Number - starts with 09, exactly 10 digits
+      if (!phoneNumber) {
+        showFieldError('phoneNumberError', 'Please enter your phone number');
+        phoneNumberInput.focus();
+        return;
+      }
+      
+      const phoneRegex = /^09\d{8}$/;
+      if (!phoneRegex.test(phoneNumber)) {
+        showFieldError('phoneNumberError', 'Phone number must start with 09 and be exactly 10 digits (e.g., 0912345678)');
+        phoneNumberInput.focus();
+        return;
+      }
+      
+      // Prepare data for submission
+      const submissionData = {
+        timestamp: new Date().toISOString(),
+        Stream: currentStudent.Stream || '',
+        Studentid: currentStudent.Studentid || '',
+        'Admission Number': currentStudent['Admission Number'] || '',
+        'FAN Number': fanNumber,
+        'First Name': currentStudent['First Name'] || '',
+        'Father Name': currentStudent['Father Name'] || '',
+        'Grand Father Name': currentStudent['Grand Father Name'] || '',
+        Gender: currentStudent.Gender || '',
+        Isblind: currentStudent.Isblind || 'No',
+        Isdeaf: currentStudent.Isdeaf || 'No',
+        'Phone Number': phoneNumber,
+        submission_status: 'COMPLETED'
+      };
+      
+      // Submit to Google Sheets
+      showLoading(true);
+      submitBtn.disabled = true;
+      
+      try {
+        const formData = new FormData();
+        Object.keys(submissionData).forEach(key => {
+          formData.append(key, submissionData[key]);
+        });
+        
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: formData
+        });
+        
+        showResponse('✅ Thank you! Your information has been successfully submitted.', 'success');
+        
+        setTimeout(() => {
+          resetForm();
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Submission error:', error);
+        showResponse('❌ Submission failed. Please try again or contact support.', 'error');
+      } finally {
+        showLoading(false);
+        submitBtn.disabled = false;
+      }
+    }
     
     // Reset form to initial state
     function resetForm() {
@@ -580,6 +655,10 @@ async function submitData() {
       fanNumberInput.value = '';
       phoneNumberInput.value = '';
       currentStudent = null;
+      
+      // Remove success/error classes
+      fanNumberInput.classList.remove('success', 'error');
+      phoneNumberInput.classList.remove('success', 'error');
       
       verificationSection.style.display = 'block';
       studentInfoSection.style.display = 'none';
@@ -606,7 +685,7 @@ async function submitData() {
       responseMessage.className = `response-message response-${type}`;
       responseMessage.style.display = 'block';
       
-      if (type === 'error') {
+      if (type === 'success') {
         setTimeout(() => hideResponse(), 5000);
       }
     }
@@ -642,6 +721,7 @@ async function submitData() {
       showLoading(true);
       await loadStudentData();
       showLoading(false);
+      setupRealTimeValidation();
     }
     
     init();
