@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Customer Feedback Survey</title>
+  <title>Student Information Collection</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary: #6366f1;
       --primary-dark: #4f46e5;
-      --secondary: #10b981;
+      --success: #10b981;
       --danger: #ef4444;
       --warning: #f59e0b;
       --light: #f8fafc;
@@ -21,34 +21,24 @@
       --gray-700: #334155;
       --gray-800: #1e293b;
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
       --radius: 16px;
       --radius-sm: 10px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition: all 0.3s ease;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: var(--dark);
-      line-height: 1.6;
       min-height: 100vh;
       padding: 20px;
     }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    .container { max-width: 700px; margin: 0 auto; }
 
-    /* Header */
     .header {
       text-align: center;
       margin-bottom: 30px;
@@ -65,7 +55,6 @@
       justify-content: center;
       margin: 0 auto 20px;
       box-shadow: var(--shadow-lg);
-      border: 4px solid rgba(255, 255, 255, 0.2);
     }
 
     .header-icon i {
@@ -76,104 +65,24 @@
     }
 
     .header h1 {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 800;
       color: white;
       margin-bottom: 8px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .header p {
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.9);
-      max-width: 500px;
-      margin: 0 auto;
-    }
+    .header p { color: rgba(255, 255, 255, 0.9); }
 
-    .required-note {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 8px;
-      display: inline-block;
-    }
-
-    /* Form Container */
     .form-container {
       background: white;
       border-radius: var(--radius);
       padding: 40px 30px;
       box-shadow: var(--shadow-lg);
       margin-bottom: 30px;
-      position: relative;
-      overflow: hidden;
     }
 
-    .form-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-    }
-
-    /* Progress Indicator */
-    .progress-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 30px;
-      position: relative;
-    }
-
-    .progress-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 2;
-    }
-
-    .step-circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--gray-200);
-      color: var(--gray-600);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      margin-bottom: 8px;
-      transition: var(--transition);
-    }
-
-    .step-circle.active {
-      background: var(--primary);
-      color: white;
-      transform: scale(1.1);
-    }
-
-    .step-label {
-      font-size: 0.85rem;
-      color: var(--gray-600);
-      font-weight: 500;
-    }
-
-    .progress-line {
-      position: absolute;
-      top: 20px;
-      left: 10%;
-      right: 10%;
-      height: 2px;
-      background: var(--gray-200);
-      z-index: 1;
-    }
-
-    /* Single Column Form */
     .form-group {
       margin-bottom: 24px;
-      position: relative;
     }
 
     .form-label {
@@ -182,198 +91,81 @@
       font-weight: 600;
       color: var(--gray-800);
       font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .form-label.required::after {
       content: '*';
       color: var(--danger);
-      font-size: 1.2rem;
       margin-left: 4px;
     }
 
-    .form-input,
-    .form-select,
-    .form-textarea {
+    .form-input, .form-select {
       width: 100%;
       padding: 14px 16px;
       border: 2px solid var(--gray-200);
       border-radius: var(--radius-sm);
       font-size: 1rem;
       font-family: inherit;
-      background-color: white;
-      color: var(--dark);
       transition: var(--transition);
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      background-size: 16px;
     }
 
-    .form-textarea {
-      background-image: none;
-      resize: vertical;
-      min-height: 120px;
-    }
-
-    .form-input:focus,
-    .form-select:focus,
-    .form-textarea:focus {
+    .form-input:focus, .form-select:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
     }
 
-    .form-input.error,
-    .form-select.error,
-    .form-textarea.error {
+    .form-input.error, .form-select.error {
       border-color: var(--danger);
-      background-color: rgba(239, 68, 68, 0.02);
     }
 
     .form-input.success {
-      border-color: var(--secondary);
+      border-color: var(--success);
     }
 
-    /* Custom Checkbox */
-    .checkbox-group {
-      background-color: var(--gray-100);
-      padding: 20px;
+    .student-info-card {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
       border-radius: var(--radius-sm);
-      margin: 30px 0;
-      border: 2px solid var(--gray-200);
-      transition: var(--transition);
+      padding: 20px;
+      margin: 20px 0;
+      border: 2px solid var(--primary);
     }
 
-    .checkbox-group:hover {
-      border-color: var(--gray-300);
+    .student-info-card h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 1.1rem;
     }
 
-    .checkbox-container {
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .info-item {
       display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      cursor: pointer;
+      flex-direction: column;
     }
 
-    .checkbox-container input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-      height: 0;
-      width: 0;
+    .info-label {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .checkmark {
-      position: relative;
-      height: 24px;
-      width: 24px;
-      background-color: white;
-      border: 2px solid var(--gray-300);
-      border-radius: 6px;
-      transition: var(--transition);
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .checkbox-container:hover input ~ .checkmark {
-      border-color: var(--primary);
-    }
-
-    .checkbox-container input:checked ~ .checkmark {
-      background-color: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .checkmark:after {
-      content: "";
-      position: absolute;
-      display: none;
-      left: 7px;
-      top: 3px;
-      width: 6px;
-      height: 12px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-    }
-
-    .checkbox-container input:checked ~ .checkmark:after {
-      display: block;
-    }
-
-    .checkbox-text {
-      flex: 1;
-    }
-
-    .checkbox-text label {
+    .info-value {
       font-weight: 600;
-      margin-bottom: 4px;
-      display: block;
-      color: var(--dark);
-      cursor: pointer;
+      color: var(--gray-800);
+      font-size: 0.95rem;
     }
 
-    .checkbox-description {
-      font-size: 0.9rem;
-      color: var(--gray-600);
-      line-height: 1.5;
-    }
-
-    /* Character Counter */
-    .character-counter {
-      text-align: right;
-      font-size: 0.85rem;
-      color: var(--gray-600);
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .character-counter.warning {
-      color: var(--warning);
-    }
-
-    .character-counter.error {
-      color: var(--danger);
-    }
-
-    .counter-progress {
-      width: 100%;
-      height: 4px;
-      background-color: var(--gray-200);
-      border-radius: 2px;
-      margin-top: 4px;
-      overflow: hidden;
-    }
-
-    .counter-fill {
-      height: 100%;
-      background-color: var(--secondary);
-      transition: width 0.3s ease;
-    }
-
-    /* Error Messages */
     .error-message {
       color: var(--danger);
       font-size: 0.85rem;
       margin-top: 6px;
       display: none;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .error-message i {
-      font-size: 0.9rem;
-    }
-
-    /* Submit Button */
-    .submit-section {
-      text-align: center;
-      margin-top: 40px;
     }
 
     .submit-btn {
@@ -386,12 +178,11 @@
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
-      display: inline-flex;
+      width: 100%;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
     }
 
     .submit-btn:hover:not(:disabled) {
@@ -399,36 +190,15 @@
       box-shadow: var(--shadow-lg);
     }
 
-    .submit-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
     .submit-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
     }
 
-    .submit-btn::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: 0.5s;
-    }
-
-    .submit-btn:hover::after {
-      left: 100%;
-    }
-
-    /* Loading Spinner */
     .loading-spinner {
       display: none;
-      margin-top: 20px;
       text-align: center;
+      margin-top: 20px;
     }
 
     .spinner {
@@ -445,35 +215,18 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Response Messages */
     .response-message {
       padding: 20px;
       border-radius: var(--radius-sm);
-      margin: 24px 0;
+      margin: 20px 0;
       text-align: center;
-      font-weight: 600;
       display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .response-success {
       background-color: rgba(16, 185, 129, 0.1);
-      border: 1px solid var(--secondary);
-      color: var(--secondary);
+      border: 1px solid var(--success);
+      color: var(--success);
     }
 
     .response-error {
@@ -482,577 +235,312 @@
       color: var(--danger);
     }
 
-    /* Footer */
-    .footer {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 0.85rem;
-      padding: 20px;
-      margin-top: 30px;
-    }
-
-    .footer a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-    /* Responsive */
     @media (max-width: 640px) {
-      body {
-        padding: 15px;
-      }
-      
-      .form-container {
-        padding: 25px 20px;
-      }
-      
-      .header h1 {
-        font-size: 1.8rem;
-      }
-      
-      .step-label {
-        font-size: 0.75rem;
-      }
-      
-      .submit-btn {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    /* Form Success Animation */
-    @keyframes successPulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.02);
-      }
-    }
-
-    .success-animation {
-      animation: successPulse 0.5s ease;
+      .form-container { padding: 25px 20px; }
+      .header h1 { font-size: 1.5rem; }
+      .info-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
     <div class="header">
       <div class="header-icon">
-        <i class="fas fa-comment-alt"></i>
+        <i class="fas fa-graduation-cap"></i>
       </div>
-      <h1>Customer Feedback Survey</h1>
-      <p>Your opinion helps us improve our services. Please take a moment to share your experience.</p>
-      <p class="required-note"><i class="fas fa-asterisk"></i> Required fields</p>
+      <h1>Student Information Collection</h1>
+      <p>Please verify your identity and provide additional information</p>
     </div>
 
-    <!-- Response Message -->
     <div id="responseMessage" class="response-message"></div>
 
-    <!-- Main Form -->
     <div class="form-container">
-      <!-- Progress Indicator -->
-      <div class="progress-container">
-        <div class="progress-line"></div>
-        <div class="progress-step">
-          <div class="step-circle active">1</div>
-          <div class="step-label">Personal</div>
+      <!-- Verification Section -->
+      <div id="verificationSection">
+        <div class="form-group">
+          <label for="studentId" class="form-label required">
+            <i class="fas fa-id-card"></i> Student ID
+          </label>
+          <input type="text" id="studentId" class="form-input" placeholder="Enter your Student ID" maxlength="50">
+          <div class="error-message" id="studentIdError">Please enter a valid Student ID</div>
         </div>
-        <div class="progress-step">
-          <div class="step-circle">2</div>
-          <div class="step-label">Feedback</div>
+
+        <div class="form-group">
+          <label for="admissionNumber" class="form-label required">
+            <i class="fas fa-hashtag"></i> Admission Number
+          </label>
+          <input type="text" id="admissionNumber" class="form-input" placeholder="Enter your Admission Number" maxlength="50">
+          <div class="error-message" id="admissionNumberError">Please enter a valid Admission Number</div>
         </div>
-        <div class="progress-step">
-          <div class="step-circle">3</div>
-          <div class="step-label">Submit</div>
-        </div>
+
+        <button type="button" id="verifyBtn" class="submit-btn">
+          <i class="fas fa-search"></i> Verify Identity
+        </button>
       </div>
 
-      <form id="surveyForm" novalidate>
-        <!-- Personal Information -->
-        <div class="form-group">
-          <label for="name" class="form-label required">
-            <i class="fas fa-user"></i> Full Name
-          </label>
-          <input type="text" id="name" name="name" class="form-input" 
-                 placeholder="Enter your full name" maxlength="100" required>
-          <div class="error-message" id="nameError">
-            <i class="fas fa-exclamation-circle"></i> Please enter your name (2-100 characters)
-          </div>
+      <!-- Student Info Display (Hidden initially) -->
+      <div id="studentInfoSection" style="display: none;">
+        <div class="student-info-card">
+          <h3><i class="fas fa-user-check"></i> Verified Student Information</h3>
+          <div class="info-grid" id="studentInfoGrid"></div>
         </div>
 
         <div class="form-group">
-          <label for="email" class="form-label required">
-            <i class="fas fa-envelope"></i> Email Address
+          <label for="fanNumber" class="form-label required">
+            <i class="fas fa-qrcode"></i> FAN Number
           </label>
-          <input type="email" id="email" name="email" class="form-input" 
-                 placeholder="your.email@example.com" required>
-          <div class="error-message" id="emailError">
-            <i class="fas fa-exclamation-circle"></i> Please enter a valid email address
-          </div>
+          <input type="text" id="fanNumber" class="form-input" placeholder="Enter your FAN Number" maxlength="50">
+          <div class="error-message" id="fanNumberError">Please enter a valid FAN Number</div>
         </div>
 
         <div class="form-group">
-          <label for="phone" class="form-label">
-            <i class="fas fa-phone"></i> Phone Number (Optional)
+          <label for="phoneNumber" class="form-label required">
+            <i class="fas fa-phone"></i> Phone Number
           </label>
-          <input type="tel" id="phone" name="phone" class="form-input" 
-                 placeholder="+1 (123) 456-7890">
-          <div class="error-message" id="phoneError">
-            <i class="fas fa-exclamation-circle"></i> Please enter a valid phone number
-          </div>
+          <input type="tel" id="phoneNumber" class="form-input" placeholder="Enter your phone number">
+          <div class="error-message" id="phoneNumberError">Please enter a valid phone number (10-15 digits)</div>
         </div>
 
-        <div class="form-group">
-          <label for="age" class="form-label required">
-            <i class="fas fa-users"></i> Age Group
-          </label>
-          <select id="age" name="age" class="form-select" required>
-            <option value="">Select your age group</option>
-            <option value="under18">Under 18</option>
-            <option value="18-25">18-25</option>
-            <option value="26-35">26-35</option>
-            <option value="36-50">36-50</option>
-            <option value="51-65">51-65</option>
-            <option value="over65">Over 65</option>
-          </select>
-          <div class="error-message" id="ageError">
-            <i class="fas fa-exclamation-circle"></i> Please select your age group
-          </div>
-        </div>
+        <button type="button" id="submitBtn" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Submit Information
+        </button>
+      </div>
 
-        <div class="form-group">
-          <label for="country" class="form-label required">
-            <i class="fas fa-globe"></i> Country
-          </label>
-          <select id="country" name="country" class="form-select" required>
-            <option value="">Select your country</option>
-            <option value="US">United States</option>
-            <option value="UK">United Kingdom</option>
-            <option value="CA">Canada</option>
-            <option value="AU">Australia</option>
-            <option value="IN">India</option>
-            <option value="other">Other</option>
-          </select>
-          <div class="error-message" id="countryError">
-            <i class="fas fa-exclamation-circle"></i> Please select your country
-          </div>
-        </div>
-
-        <!-- Service Feedback -->
-        <div class="form-group">
-          <label for="rating" class="form-label required">
-            <i class="fas fa-star"></i> Service Rating
-          </label>
-          <select id="rating" name="rating" class="form-select" required>
-            <option value="">Select a rating</option>
-            <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-            <option value="4">⭐⭐⭐⭐ - Very Good</option>
-            <option value="3">⭐⭐⭐ - Good</option>
-            <option value="2">⭐⭐ - Fair</option>
-            <option value="1">⭐ - Poor</option>
-          </select>
-          <div class="error-message" id="ratingError">
-            <i class="fas fa-exclamation-circle"></i> Please select a rating
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="subscription" class="form-label required">
-            <i class="fas fa-crown"></i> Subscription Type
-          </label>
-          <select id="subscription" name="subscription" class="form-select" required>
-            <option value="">Select subscription type</option>
-            <option value="free">Free</option>
-            <option value="basic">Basic ($9.99/month)</option>
-            <option value="premium">Premium ($19.99/month)</option>
-            <option value="enterprise">Enterprise (Custom)</option>
-          </select>
-          <div class="error-message" id="subscriptionError">
-            <i class="fas fa-exclamation-circle"></i> Please select subscription type
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="source" class="form-label required">
-            <i class="fas fa-bullhorn"></i> How did you hear about us?
-          </label>
-          <select id="source" name="source" class="form-select" required>
-            <option value="">Select an option</option>
-            <option value="search">Search Engine (Google, Bing, etc.)</option>
-            <option value="social">Social Media (Facebook, Twitter, etc.)</option>
-            <option value="friend">Friend/Word of Mouth</option>
-            <option value="ad">Advertisement</option>
-            <option value="email">Email Newsletter</option>
-            <option value="other">Other</option>
-          </select>
-          <div class="error-message" id="sourceError">
-            <i class="fas fa-exclamation-circle"></i> Please tell us how you heard about us
-          </div>
-        </div>
-
-        <!-- Feedback Text -->
-        <div class="form-group">
-          <label for="feedback" class="form-label required">
-            <i class="fas fa-edit"></i> Your Feedback
-          </label>
-          <textarea id="feedback" name="feedback" class="form-textarea" 
-                    placeholder="Please share your detailed feedback here..." 
-                    maxlength="1000" required></textarea>
-          <div class="character-counter" id="feedbackCount">
-            <span>0/1000 characters</span>
-            <span>Minimum 10 characters</span>
-          </div>
-          <div class="counter-progress">
-            <div class="counter-fill" id="feedbackProgress" style="width: 0%"></div>
-          </div>
-          <div class="error-message" id="feedbackError">
-            <i class="fas fa-exclamation-circle"></i> Feedback must be at least 10 characters
-          </div>
-        </div>
-
-        <!-- Consent Checkbox -->
-        <div class="checkbox-group">
-          <div class="checkbox-container">
-            <input type="checkbox" id="terms" name="terms" required>
-            <span class="checkmark"></span>
-            <div class="checkbox-text">
-              <label for="terms" class="form-label required">
-                <i class="fas fa-check-circle"></i> Consent & Agreement
-              </label>
-              <p class="checkbox-description">
-                I agree that my feedback and personal information may be used for service improvement purposes. 
-                I understand that my information will be kept confidential and used responsibly.
-              </p>
-            </div>
-          </div>
-          <div class="error-message" id="termsError">
-            <i class="fas fa-exclamation-circle"></i> You must agree to continue
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="submit-section">
-          <button type="submit" id="submitBtn" class="submit-btn">
-            <i class="fas fa-paper-plane"></i> Submit Feedback
-          </button>
-          <div class="loading-spinner" id="loadingSpinner">
-            <div class="spinner"></div>
-            <p style="margin-top: 10px; color: var(--gray-600);">Submitting your feedback...</p>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      <p><i class="far fa-copyright"></i> 2024 Customer Feedback System. All responses are anonymous and confidential.</p>
-      <p style="margin-top: 8px; font-size: 0.8rem;">
-        <i class="fas fa-lock"></i> Secure submission | <i class="fas fa-user-shield"></i> Privacy protected
-      </p>
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p style="margin-top: 10px;">Processing...</p>
+      </div>
     </div>
   </div>
 
   <script>
-    // CONFIGURATION - Update this with your deployed Apps Script URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwjlUN9Z20QiSok6KJKicb2a3kU_XQjdBKXHstJ6KnOz9DcwBk9yEnQR6FOEt8tn-KB5w/exec';
+    // ==================== CONFIGURATION ====================
+    // Update these URLs with your actual GitHub raw content URL and Apps Script URL
+    const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/students.csv'; // Change this
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_ID/exec'; // Change this
     
-    // DOM Elements
-    const form = document.getElementById('surveyForm');
+    // Student data cache
+    let studentsData = [];
+    let currentStudent = null;
+    
+    // ==================== DOM Elements ====================
+    const verificationSection = document.getElementById('verificationSection');
+    const studentInfoSection = document.getElementById('studentInfoSection');
+    const studentInfoGrid = document.getElementById('studentInfoGrid');
+    const verifyBtn = document.getElementById('verifyBtn');
     const submitBtn = document.getElementById('submitBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const responseMessage = document.getElementById('responseMessage');
-    const feedbackTextarea = document.getElementById('feedback');
-    const feedbackCount = document.getElementById('feedbackCount');
-    const feedbackProgress = document.getElementById('feedbackProgress');
-    const termsCheckbox = document.getElementById('terms');
-    const stepCircles = document.querySelectorAll('.step-circle');
     
-    // Initialize
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('📋 Survey Form Initializing...');
-      
-      // Set up event listeners
-      setupEventListeners();
-      
-      // Test endpoint connection
-      await testEndpointConnection();
-      
-      console.log('✅ Survey Form Ready - Single column layout');
-    });
+    const studentIdInput = document.getElementById('studentId');
+    const admissionNumberInput = document.getElementById('admissionNumber');
+    const fanNumberInput = document.getElementById('fanNumber');
+    const phoneNumberInput = document.getElementById('phoneNumber');
     
-    // Set up event listeners
-    function setupEventListeners() {
-      // Character counter for feedback
-      feedbackTextarea.addEventListener('input', updateCharacterCount);
+    // ==================== Load Student Data from GitHub ====================
+    async function loadStudentData() {
+      console.log('Loading student data from GitHub...');
+      showLoading(true);
       
-      // Real-time validation
-      const fields = ['name', 'email', 'phone', 'age', 'country', 'rating', 'subscription', 'source', 'feedback'];
-      fields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-          field.addEventListener('blur', () => {
-            validateField(fieldId);
-            updateProgress();
-          });
-          field.addEventListener('input', () => {
-            if (field.classList.contains('error')) {
-              validateField(fieldId);
-            }
-            updateProgress();
-          });
+      try {
+        // Try CSV format first
+        let response = await fetch(GITHUB_DATA_URL);
+        
+        if (!response.ok) {
+          // Try JSON format if CSV fails
+          response = await fetch(GITHUB_DATA_URL.replace('.csv', '.json'));
         }
-      });
-      
-      // Terms checkbox validation
-      termsCheckbox.addEventListener('change', () => {
-        validateField('terms');
-        updateProgress();
-      });
-      
-      // Form submission
-      form.addEventListener('submit', handleSubmit);
-      
-      // Add visual feedback on focus
-      const inputs = form.querySelectorAll('input, select, textarea');
-      inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-          this.parentElement.classList.add('focused');
-        });
-        input.addEventListener('blur', function() {
-          this.parentElement.classList.remove('focused');
-        });
-      });
-    }
-    
-    // Update progress indicator
-    function updateProgress() {
-      let completedFields = 0;
-      const totalFields = 9; // name, email, age, country, rating, subscription, source, feedback, terms
-      
-      // Check each required field
-      if (document.getElementById('name').value.trim().length >= 2) completedFields++;
-      if (document.getElementById('email').value.trim().length > 0 && validateEmail(document.getElementById('email').value)) completedFields++;
-      if (document.getElementById('age').value) completedFields++;
-      if (document.getElementById('country').value) completedFields++;
-      if (document.getElementById('rating').value) completedFields++;
-      if (document.getElementById('subscription').value) completedFields++;
-      if (document.getElementById('source').value) completedFields++;
-      if (document.getElementById('feedback').value.trim().length >= 10) completedFields++;
-      if (document.getElementById('terms').checked) completedFields++;
-      
-      // Update progress circles
-      const progress = Math.min(Math.floor((completedFields / totalFields) * 3), 3);
-      stepCircles.forEach((circle, index) => {
-        if (index < progress) {
-          circle.classList.add('active');
+        
+        const data = await response.text();
+        
+        // Parse CSV data
+        if (GITHUB_DATA_URL.endsWith('.csv')) {
+          studentsData = parseCSV(data);
         } else {
-          circle.classList.remove('active');
+          studentsData = JSON.parse(data);
         }
-      });
+        
+        console.log(`Loaded ${studentsData.length} student records`);
+        showResponse(`Loaded ${studentsData.length} student records successfully`, 'success');
+        setTimeout(() => hideResponse(), 2000);
+        
+      } catch (error) {
+        console.error('Error loading student data:', error);
+        showResponse('Failed to load student data. Please check your internet connection and try again.', 'error');
+        
+        // Load sample data for testing
+        loadSampleData();
+      } finally {
+        showLoading(false);
+      }
     }
     
-    // Email validation helper
-    function validateEmail(email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    }
-    
-    // Update character count
-    function updateCharacterCount() {
-      const length = feedbackTextarea.value.length;
-      const percentage = Math.min((length / 1000) * 100, 100);
+    // Parse CSV data
+    function parseCSV(csvText) {
+      const lines = csvText.trim().split('\n');
+      const headers = lines[0].split(',').map(h => h.trim());
       
-      feedbackCount.textContent = `${length}/1000 characters`;
-      feedbackProgress.style.width = `${percentage}%`;
-      
-      // Update styling
-      feedbackCount.className = 'character-counter';
-      if (length > 900) {
-        feedbackCount.classList.add('warning');
-        feedbackProgress.style.backgroundColor = 'var(--warning)';
-      } else if (length > 1000) {
-        feedbackCount.classList.add('error');
-        feedbackProgress.style.backgroundColor = 'var(--danger)';
-      } else {
-        feedbackProgress.style.backgroundColor = 'var(--secondary)';
+      const students = [];
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim());
+        const student = {};
+        headers.forEach((header, index) => {
+          student[header] = values[index] || '';
+        });
+        students.push(student);
       }
       
-      // Auto-validate if content is long enough
-      if (length >= 10) {
-        validateField('feedback');
-      }
-      
-      updateProgress();
+      return students;
     }
     
-    // Validate a single field
-    function validateField(fieldId) {
-      const field = document.getElementById(fieldId);
-      const errorElement = document.getElementById(fieldId + 'Error');
-      
-      if (!field) return true;
-      
-      let isValid = true;
-      let message = '';
-      
-      const value = field.type === 'checkbox' ? field.checked : field.value.trim();
-      const isRequired = field.hasAttribute('required');
-      
-      // Check required fields
-      if (isRequired && !value) {
-        isValid = false;
-        message = 'This field is required';
-      } else if (value) {
-        // Field-specific validation
-        switch (fieldId) {
-          case 'name':
-            if (value.length < 2 || value.length > 100) {
-              isValid = false;
-              message = 'Name must be 2-100 characters';
-            }
-            break;
-            
-          case 'email':
-            if (!validateEmail(value)) {
-              isValid = false;
-              message = 'Please enter a valid email address';
-            }
-            break;
-            
-          case 'phone':
-            const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/;
-            if (value && !phoneRegex.test(value)) {
-              isValid = false;
-              message = 'Please enter a valid phone number';
-            }
-            break;
-            
-          case 'feedback':
-            if (value.length < 10) {
-              isValid = false;
-              message = 'Feedback must be at least 10 characters';
-            }
-            break;
-            
-          case 'terms':
-            if (!value) {
-              isValid = false;
-              message = 'You must agree to continue';
-            }
-            break;
+    // Load sample data for testing (remove in production)
+    function loadSampleData() {
+      studentsData = [
+        {
+          Stream: 'Science',
+          Studentid: 'S001',
+          'Admission Number': 'ADM2024001',
+          'First Name': 'John',
+          'Father Name': 'Michael',
+          'Grand Father Name': 'Thomas',
+          Gender: 'Male',
+          Isblind: 'No',
+          Isdeaf: 'No'
+        },
+        {
+          Stream: 'Arts',
+          Studentid: 'S002',
+          'Admission Number': 'ADM2024002',
+          'First Name': 'Sarah',
+          'Father Name': 'David',
+          'Grand Father Name': 'James',
+          Gender: 'Female',
+          Isblind: 'No',
+          Isdeaf: 'No'
         }
-      }
-      
-      // Update UI
-      if (isValid) {
-        field.classList.remove('error');
-        field.classList.add('success');
-        errorElement.style.display = 'none';
-      } else {
-        field.classList.remove('success');
-        field.classList.add('error');
-        errorElement.textContent = message;
-        errorElement.style.display = 'flex';
-      }
-      
-      return isValid;
+      ];
+      console.log('Sample data loaded for testing');
     }
     
-    // Validate entire form
-    function validateForm() {
-      let isValid = true;
+    // ==================== Verification ====================
+    function verifyStudent() {
+      const studentId = studentIdInput.value.trim();
+      const admissionNumber = admissionNumberInput.value.trim();
       
-      ['name', 'email', 'age', 'country', 'rating', 'subscription', 'feedback', 'source', 'terms'].forEach(fieldId => {
-        if (!validateField(fieldId)) {
-          isValid = false;
-        }
-      });
+      // Clear previous errors
+      clearErrors();
       
-      return isValid;
-    }
-    
-    // Handle form submission
-    async function handleSubmit(event) {
-      event.preventDefault();
-      
-      // Validate form
-      if (!validateForm()) {
-        showResponse('Please fix the errors above.', 'error');
+      // Validate inputs
+      if (!studentId) {
+        showFieldError('studentIdError', 'Please enter your Student ID');
         return;
       }
       
-      // Prepare form data
-      const formData = {
-        timestamp: new Date().toISOString(),
-        name: document.getElementById('name').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        age: document.getElementById('age').value,
-        country: document.getElementById('country').value,
-        rating: document.getElementById('rating').value,
-        subscription: document.getElementById('subscription').value,
-        feedback: document.getElementById('feedback').value.trim(),
-        source: document.getElementById('source').value,
-        terms: document.getElementById('terms').checked ? 'Accepted' : 'Not Accepted'
-      };
-      
-      // Show loading state
-      submitBtn.disabled = true;
-      loadingSpinner.style.display = 'block';
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-      
-      try {
-        // Submit to Google Apps Script
-        const response = await submitToGoogleAppsScript(formData);
-        
-        if (response.ok) {
-          showResponse('✅ Thank you! Your feedback has been successfully submitted.', 'success');
-          form.reset();
-          updateCharacterCount();
-          
-          // Reset progress indicator
-          stepCircles.forEach((circle, index) => {
-            if (index === 0) {
-              circle.classList.add('active');
-            } else {
-              circle.classList.remove('active');
-            }
-          });
-          
-          // Add success animation
-          document.querySelector('.form-container').classList.add('success-animation');
-          setTimeout(() => {
-            document.querySelector('.form-container').classList.remove('success-animation');
-          }, 500);
-          
-          // Clear form after success
-          setTimeout(() => {
-            showResponse('', 'success');
-          }, 5000);
-        } else {
-          showResponse(`❌ ${response.error || 'Submission failed. Please try again.'}`, 'error');
-        }
-      } catch (error) {
-        console.error('Submission error:', error);
-        showResponse('❌ Network error. Please check your connection and try again.', 'error');
-      } finally {
-        // Reset loading state
-        submitBtn.disabled = false;
-        loadingSpinner.style.display = 'none';
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
+      if (!admissionNumber) {
+        showFieldError('admissionNumberError', 'Please enter your Admission Number');
+        return;
       }
+      
+      // Find student
+      const student = studentsData.find(s => 
+        (s.Studentid === studentId || s.Studentid?.toString() === studentId) &&
+        (s['Admission Number'] === admissionNumber || s['Admission Number']?.toString() === admissionNumber)
+      );
+      
+      if (!student) {
+        showResponse('❌ Invalid Student ID or Admission Number. Please check and try again.', 'error');
+        return;
+      }
+      
+      // Student found
+      currentStudent = student;
+      displayStudentInfo(student);
+      
+      // Switch to info section
+      verificationSection.style.display = 'none';
+      studentInfoSection.style.display = 'block';
+      
+      showResponse('✅ Identity verified! Please provide your FAN Number and Phone Number.', 'success');
+      setTimeout(() => hideResponse(), 3000);
     }
     
-    // Submit data to Google Apps Script
-    async function submitToGoogleAppsScript(data) {
-      // Method 1: Try JSON POST
+    // Display student information
+    function displayStudentInfo(student) {
+      const fieldsToShow = [
+        { label: 'Stream', value: student.Stream },
+        { label: 'Student ID', value: student.Studentid },
+        { label: 'Admission Number', value: student['Admission Number'] },
+        { label: 'Full Name', value: `${student['First Name'] || ''} ${student['Father Name'] || ''} ${student['Grand Father Name'] || ''}`.trim() },
+        { label: 'Gender', value: student.Gender },
+        { label: 'Status', value: `${student.Isblind === 'Yes' ? 'Blind, ' : ''}${student.Isdeaf === 'Yes' ? 'Deaf' : 'Normal'}`.replace(/,\s*$/, '') || 'Normal' }
+      ];
+      
+      studentInfoGrid.innerHTML = fieldsToShow
+        .filter(field => field.value)
+        .map(field => `
+          <div class="info-item">
+            <span class="info-label">${field.label}</span>
+            <span class="info-value">${field.value}</span>
+          </div>
+        `).join('');
+    }
+    
+    // ==================== Form Submission ====================
+    async function submitData() {
+      const fanNumber = fanNumberInput.value.trim();
+      const phoneNumber = phoneNumberInput.value.trim();
+      
+      // Clear previous errors
+      clearErrors();
+      
+      // Validate FAN Number
+      if (!fanNumber) {
+        showFieldError('fanNumberError', 'Please enter your FAN Number');
+        fanNumberInput.focus();
+        return;
+      }
+      
+      if (fanNumber.length < 3) {
+        showFieldError('fanNumberError', 'FAN Number must be at least 3 characters');
+        fanNumberInput.focus();
+        return;
+      }
+      
+      // Validate Phone Number
+      if (!phoneNumber) {
+        showFieldError('phoneNumberError', 'Please enter your phone number');
+        phoneNumberInput.focus();
+        return;
+      }
+      
+      const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,15}$/;
+      if (!phoneRegex.test(phoneNumber)) {
+        showFieldError('phoneNumberError', 'Please enter a valid phone number (10-15 digits)');
+        phoneNumberInput.focus();
+        return;
+      }
+      
+      // Prepare data for submission
+      const submissionData = {
+        timestamp: new Date().toISOString(),
+        Stream: currentStudent.Stream || '',
+        Studentid: currentStudent.Studentid || '',
+        'Admission Number': currentStudent['Admission Number'] || '',
+        'FAN Number': fanNumber,
+        'First Name': currentStudent['First Name'] || '',
+        'Father Name': currentStudent['Father Name'] || '',
+        'Grand Father Name': currentStudent['Grand Father Name'] || '',
+        Gender: currentStudent.Gender || '',
+        Isblind: currentStudent.Isblind || 'No',
+        Isdeaf: currentStudent.Isdeaf || 'No',
+        'Phone Number': phoneNumber,
+        submission_status: 'COMPLETED'
+      };
+      
+      // Submit to Google Sheets
+      showLoading(true);
+      submitBtn.disabled = true;
+      
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -1060,53 +548,102 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(submissionData)
         });
         
         const result = await response.json();
-        return result;
-      } catch (jsonError) {
-        console.log('JSON POST failed, trying FormData...', jsonError);
         
-        // Method 2: Try FormData POST
-        const formData = new FormData();
-        Object.keys(data).forEach(key => {
-          formData.append(key, data[key]);
-        });
-        
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          body: formData
-        });
-        
-        return await response.json();
+        if (result.ok) {
+          showResponse('✅ Thank you! Your information has been successfully submitted.', 'success');
+          
+          // Reset form
+          setTimeout(() => {
+            resetForm();
+          }, 2000);
+        } else {
+          showResponse(`❌ Submission failed: ${result.error || 'Please try again'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        showResponse('❌ Network error. Please check your connection and try again.', 'error');
+      } finally {
+        showLoading(false);
+        submitBtn.disabled = false;
       }
     }
     
-    // Show response message
+    // Reset form to initial state
+    function resetForm() {
+      studentIdInput.value = '';
+      admissionNumberInput.value = '';
+      fanNumberInput.value = '';
+      phoneNumberInput.value = '';
+      currentStudent = null;
+      
+      verificationSection.style.display = 'block';
+      studentInfoSection.style.display = 'none';
+      
+      setTimeout(() => hideResponse(), 3000);
+    }
+    
+    // ==================== Helper Functions ====================
+    function showFieldError(elementId, message) {
+      const errorElement = document.getElementById(elementId);
+      if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+    }
+    
+    function clearErrors() {
+      const errorElements = document.querySelectorAll('.error-message');
+      errorElements.forEach(el => el.style.display = 'none');
+    }
+    
     function showResponse(message, type) {
       responseMessage.textContent = message;
       responseMessage.className = `response-message response-${type}`;
-      responseMessage.style.display = 'flex';
+      responseMessage.style.display = 'block';
       
-      // Auto-hide error messages after 5 seconds
       if (type === 'error') {
-        setTimeout(() => {
-          responseMessage.style.display = 'none';
-        }, 5000);
+        setTimeout(() => hideResponse(), 5000);
       }
     }
     
-    // Test endpoint connection
-    async function testEndpointConnection() {
-      try {
-        const response = await fetch(`${APPS_SCRIPT_URL}?test=true`);
-        const result = await response.json();
-        console.log('✅ Endpoint connection:', result.ok ? 'OK' : 'Failed');
-      } catch (error) {
-        console.warn('⚠️ Endpoint test failed:', error);
-      }
+    function hideResponse() {
+      responseMessage.style.display = 'none';
     }
+    
+    function showLoading(show) {
+      loadingSpinner.style.display = show ? 'block' : 'none';
+    }
+    
+    // ==================== Event Listeners ====================
+    verifyBtn.addEventListener('click', verifyStudent);
+    submitBtn.addEventListener('click', submitData);
+    
+    // Enter key support
+    studentIdInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') verifyStudent();
+    });
+    admissionNumberInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') verifyStudent();
+    });
+    fanNumberInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitData();
+    });
+    phoneNumberInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitData();
+    });
+    
+    // ==================== Initialize ====================
+    async function init() {
+      showLoading(true);
+      await loadStudentData();
+      showLoading(false);
+    }
+    
+    init();
   </script>
 </body>
 </html>
