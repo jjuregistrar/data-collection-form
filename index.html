@@ -415,7 +415,7 @@
           <label for="studentId" class="form-label required">
             <i class="fas fa-id-card"></i> Student ID
           </label>
-          <input type="text" id="studentId" class="form-input" placeholder="Enter your Student ID" maxlength="50">
+          <input type="text" id="studentId" class="form-input" placeholder="Enter your Student ID" maxlength="50" autocomplete="off">
           <div class="error-message" id="studentIdError">Please enter a valid Student ID</div>
         </div>
 
@@ -423,7 +423,7 @@
           <label for="admissionNumber" class="form-label required">
             <i class="fas fa-hashtag"></i> Admission Number
           </label>
-          <input type="text" id="admissionNumber" class="form-input" placeholder="Enter your Admission Number" maxlength="50">
+          <input type="text" id="admissionNumber" class="form-input" placeholder="Enter your Admission Number" maxlength="50" autocomplete="off">
           <div class="error-message" id="admissionNumberError">Please enter a valid Admission Number</div>
         </div>
 
@@ -484,6 +484,7 @@
     let studentsData = [];
     let currentStudent = null;
     let activeMessages = [];
+    let dataLoaded = false;
     
     // ==================== DOM Elements ====================
     const verificationSection = document.getElementById('verificationSection');
@@ -550,10 +551,15 @@
       return messageId;
     }
     
-    // ==================== Load Student Data from GitHub ====================
+    // ==================== Case Insensitive String Comparison ====================
+    function caseInsensitiveCompare(str1, str2) {
+      if (!str1 || !str2) return false;
+      return str1.toString().toLowerCase().trim() === str2.toString().toLowerCase().trim();
+    }
+    
+    // ==================== Load Student Data from GitHub (Silent) ====================
     async function loadStudentData() {
       console.log('Loading student data from GitHub...');
-      showLoading(true);
       
       try {
         let response = await fetch(GITHUB_DATA_URL);
@@ -571,14 +577,12 @@
         }
         
         console.log(`Loaded ${studentsData.length} student records`);
-        showFloatingMessage('Success', `Loaded ${studentsData.length} student records successfully`, 'success', 2000);
+        dataLoaded = true;
         
       } catch (error) {
         console.error('Error loading student data:', error);
-        showFloatingMessage('Error', 'Failed to load student data. Please check your internet connection.', 'error', 5000);
+        showFloatingMessage('Error', 'Failed to load student data. Please refresh the page.', 'error', 5000);
         loadSampleData();
-      } finally {
-        showLoading(false);
       }
     }
     
@@ -627,15 +631,20 @@
         }
       ];
       console.log('Sample data loaded for testing');
-      showFloatingMessage('Info', 'Using sample data for testing', 'info', 3000);
+      dataLoaded = true;
     }
     
-    // ==================== Verification ====================
+    // ==================== Verification (Case Insensitive) ====================
     function verifyStudent() {
       const studentId = studentIdInput.value.trim();
       const admissionNumber = admissionNumberInput.value.trim();
       
       clearErrors();
+      
+      if (!dataLoaded) {
+        showFloatingMessage('Loading', 'Student data is still loading. Please wait a moment...', 'warning', 3000);
+        return;
+      }
       
       if (!studentId) {
         showFieldError('studentIdError', 'Please enter your Student ID');
@@ -649,9 +658,10 @@
         return;
       }
       
+      // Case-insensitive search
       const student = studentsData.find(s => 
-        (s.Studentid === studentId || s.Studentid?.toString() === studentId) &&
-        (s['Admission Number'] === admissionNumber || s['Admission Number']?.toString() === admissionNumber)
+        caseInsensitiveCompare(s.Studentid, studentId) &&
+        caseInsensitiveCompare(s['Admission Number'], admissionNumber)
       );
       
       if (!student) {
@@ -846,12 +856,6 @@
         showFloatingMessage('Submission Successful', `Thank you ${studentName}! Your information has been successfully submitted.`, 'success', 5000);
         showResponse('✅ Thank you! Your information has been successfully submitted.', 'success');
         
-        // Play success sound effect (optional - creates a subtle beep)
-        try {
-          const audio = new Audio('data:audio/wav;base64,U3RlYWx0aCBzb3VuZCBlZmZlY3Q=');
-          // Note: This is a placeholder - actual sound may not work without proper audio file
-        } catch(e) { console.log('Audio not supported'); }
-        
         setTimeout(() => {
           resetForm();
           showFloatingMessage('Form Reset', 'You can now help another student if needed', 'info', 3000);
@@ -916,6 +920,15 @@
       loadingSpinner.style.display = show ? 'block' : 'none';
     }
     
+    // ==================== Convert Input to Uppercase for Better UX ====================
+    studentIdInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+    
+    admissionNumberInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+    
     // ==================== Event Listeners ====================
     verifyBtn.addEventListener('click', verifyStudent);
     submitBtn.addEventListener('click', submitData);
@@ -933,13 +946,15 @@
       if (e.key === 'Enter') submitData();
     });
     
-    // ==================== Initialize ====================
+    // ==================== Initialize (Silent Loading) ====================
     async function init() {
-      showLoading(true);
+      // Load data silently - no loading message shown
       await loadStudentData();
-      showLoading(false);
       setupRealTimeValidation();
-      showFloatingMessage('Welcome', 'Please verify your identity to continue', 'info', 4000);
+      // Show welcome message only after data is ready
+      if (dataLoaded) {
+        showFloatingMessage('Welcome', 'Please verify your identity to continue', 'info', 4000);
+      }
     }
     
     init();
